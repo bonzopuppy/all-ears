@@ -1,3 +1,4 @@
+
 import MusicPlayer from "./MusicPlayer";
 import NavBar from "./NavBar";
 
@@ -14,3 +15,4 @@ function Explore() {
   );
 }
 export default Explore;
+

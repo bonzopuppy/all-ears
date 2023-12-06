@@ -1,11 +1,10 @@
 import { NavLink } from "react-router-dom";
-import "/Users/annehastings/Development/Code/phase-2/GP-AllEars/all-ears/src/styles/NavBar.css"
-
+import "./NavBar.css"
 
 function NavBar() {
     return (
         <nav className="navbar">
-            <NavLink to="/">
+           <NavLink to="/all-ears">
                 Home
             </NavLink>
             <NavLink to="/library">
