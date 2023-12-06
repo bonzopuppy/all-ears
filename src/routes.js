@@ -1,3 +1,4 @@
+
 import Home from './components/Home';
 import YourLibrary from './components/YourLibrary';
 import Explore from './components/Explore';
@@ -5,6 +6,7 @@ import Explore from './components/Explore';
 const routes = [
   {
     path: "/all-ears",
+
     element: <Home />,
   },
   {
@@ -13,8 +15,8 @@ const routes = [
   },
   {
     path: "/explore",
-    element: <Explore/>,
-  }
-]
+    element: <Explore />,
+  },
+];
 
 export default routes;

@@ -1,8 +1,12 @@
+
 import { useState, useEffect } from "react";
 import NavBar from "./NavBar";
 import "./NavBar.css"
 import MusicPlayer from "./MusicPlayer";
 import SearchBar from "./SearchBar";
+import harlots from "../music/Harlots-Gardens.mp3";
+import phil from "../music/In-the-Air-Tonight.mp3";
+import untold from "../music/Untold-Stories.mp3"
 
 // Home (App)
 // |- NavBar
@@ -22,6 +26,7 @@ import SearchBar from "./SearchBar";
 
 
 function Home() {
+  const songs = [harlots, phil, untold]
     return (
         <>
             <header className="navbar">
@@ -37,9 +42,10 @@ function Home() {
                 </div>
             </main>
             <footer>
-                <MusicPlayer />
+                <MusicPlayer songs={songs} />
             </footer>
         </>
     )
 }
 export default Home;
+
