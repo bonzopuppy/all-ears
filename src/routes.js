@@ -1,11 +1,11 @@
-import Home from './Home';
-import YourLibrary from './YourLibrary';
-import Explore from './Explore';
+import Home from './components/Home';
+import YourLibrary from './components/YourLibrary';
+import Explore from './components/Explore';
 
 const routes = [
   {
     path: "/all-ears",
-    element: <Home/>,
+    element: <Home />,
   },
   {
     path: "/library",
