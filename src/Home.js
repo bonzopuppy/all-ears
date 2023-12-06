@@ -14,6 +14,10 @@ function Home() {
                 <div>
                     <Search />
                 </div>
+                <div>
+                    <h1>New Releases:</h1>
+
+                </div>
             </main>
             <footer>
                 <MusicPlayer />
