@@ -18,7 +18,7 @@ async function getAccessToken(clientId = allEarsClientId, clientSecret = allEars
     return data.access_token;
 }
 
-function Search() {
+function SearchBar() {
 
     const [searchQuery, setSearchQuery] = useState('')
 
@@ -30,7 +30,7 @@ function Search() {
         e.preventDefault()
 
         const formattedQuery = encodeURIComponent(searchQuery)
-        const searchUrl = `${spotifyAPI}/search?q=${formattedQuery}&type=track,artist,album&limit=10`
+        const searchUrl = `${spotifyAPI}/search?q=${formattedQuery}&type=track,artist,album,playlist&limit=10`
 
         const accessToken = await getAccessToken()
 
@@ -58,10 +58,9 @@ function Search() {
                     onChange={handleQueryChange}
                 />
                 <button type="submit">Search</button>
-                <h2>Search Results:</h2>
             </form>
         </div>
     )
 }
 
-export default Search;
+export default SearchBar;
