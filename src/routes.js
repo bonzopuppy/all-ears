@@ -4,7 +4,7 @@ import Explore from './Explore';
 
 const routes = [
   {
-    path: "/",
+    path: "/all-ears",
     element: <Home/>,
   },
   {
