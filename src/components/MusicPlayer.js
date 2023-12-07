@@ -1,20 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, IconButton, Slider, Typography } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PauseIcon from '@mui/icons-material/Pause';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import MicIcon from '@mui/icons-material/Mic';
 import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import GraphicEqIcon from '@mui/icons-material/GraphicEq';
 import SongItem from './SongItem';
-import harlots from "../music/Harlots-Gardens.mp3";
+// import { useMusicContext } from './MusicContext';
+import frozen from "../music/LetItGo.mp3"
 import phil from "../music/In-the-Air-Tonight.mp3";
-import untold from "../music/Untold-Stories.mp3"
+import untold from "../music/Untold-Stories.mp3";
+import james from "../music/GetUpOffaThatThing.mp3"
 
 
 function MusicPlayer() {
 
-  const songs = [harlots, phil, untold]
+  const songs = [james, frozen, phil, untold]
 
 
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
@@ -61,7 +64,7 @@ function MusicPlayer() {
           justifyContent: 'space-between',
       }}>
            {/* Audio Element */}
-           <audio id="audio-element" ref={audioRef} src={song} preload="auto"></audio>
+           <audio id="audio-element" ref={audioRef}  src={song} preload="auto"></audio>
           <ul style={{ listStyleType: 'none', padding: 0, margin: 0 }}>
               <SongItem />
           </ul>
@@ -71,14 +74,15 @@ function MusicPlayer() {
               {/* Controls */}
               <Box>
                   <IconButton sx={{ color: '#626262', '&:hover': { color: 'secondary.main' } }}>
-                      <SkipPreviousIcon sx={{ fontSize: 36 }} />
+                      <SkipPreviousIcon sx={{ fontSize: 36 }} onClick={prevSongHandler} />
                   </IconButton>
-                  <IconButton sx={{ color: 'primary.main', '&:hover': { color: 'secondary.main' } }}>
-                      <PlayArrowIcon sx={{ fontSize: 36 }} />
+                  <IconButton sx={{ color: 'primary.main', '&:hover': { color: 'secondary.main' } }} onClick={playPauseHandler}>
+                      {!isPlaying ? <PlayArrowIcon sx={{ fontSize: 36 }} />
+                      : <PauseIcon sx={{ fontSize: 36 }} />}
                       {/* <img src={DBPlayArrow} alt="PlayArrow" style={{ width: 20, height: 23, objectFit: 'cover' }} /> */}
                   </IconButton>
                   <IconButton sx={{ color: '#626262', '&:hover': { color: 'secondary.main' } }}>
-                      <SkipNextIcon sx={{ fontSize: 36 }} />
+                      <SkipNextIcon sx={{ fontSize: 36 }} onClick={nextSongHandler} />
                   </IconButton>
 
               </Box>
