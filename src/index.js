@@ -1,12 +1,15 @@
 import React from "react";
-// import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import "./styles/index.css";
 import App from "./components/App";
-// import routes from "./routes";
+import { MusicProvider } from "./components/MusicContext";
 
-// const router = createBrowserRouter(routes)
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
-// root.render(<RouterProvider router={router} />);
+root.render(
+  <MusicProvider>
+    <App />
+  </MusicProvider>
+);
+
+

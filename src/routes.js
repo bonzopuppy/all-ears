@@ -6,8 +6,8 @@ import App from './components/App';
 
 const routes = [
   {
-    path: "/all-ears",
-
+    path: "/",
+    // element: <Home />,
     element: <App />,
   },
   {
@@ -19,5 +19,5 @@ const routes = [
     element: <Explore />,
   },
 ];
-
-export default routes;
+//
+// export default routes;

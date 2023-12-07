@@ -5,11 +5,9 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
 import logo from '../images/AELogo.svg';
-import { Link } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 
-
-function NavigationBar() {
+function NavBar() {
     const [activeLink, setActiveLink] = useState('home');
 
     const handleLinkClick = (link) => {
@@ -23,43 +21,36 @@ function NavigationBar() {
                     <IconButton edge="start" color="inherit" aria-label="menu">
                         <img src={logo} alt="logo" style={{ height: 32, width: 40 }} />
                     </IconButton>
-                </NavLink>
-                <Link
-                    to="/" 
-                    style={{ color: 'inherit', textDecoration: 'none'}}
-                >
-              
-                    <Typography
-                        sx={{
-                          marginLeft: '4em',
-                          fontSize: '.8em',
-                          fontWeight: 500,
-                          cursor: 'pointer',
-                          color: activeLink === 'home' ? '#FF6E1D' : 'white',
-                          position: 'relative', // Needed for absolute positioning of ::after
-                          '&::after': {
-                            content: '""', // Empty string, necessary for ::after
-                            display: activeLink === 'home' ? 'block' : 'none', // Only display if active
-                            width: '6px',
-                            height: '22px',
-                            backgroundColor: '#FF6E1D',
-                            position: 'absolute',
-                            bottom: '-20px',
-                            left: '42%',
-                            transform: 'rotate(90deg)',
-                            borderRadius: '50%',
-                          }
-                        }}
-                        onClick={() => handleLinkClick('home')}
-                    >
+                </NavLink>           
+                <NavLink to="/all-ears" style={{ color: 'inherit', textDecoration: 'none'}}>
+                  <Typography
+                    sx={{
+                        marginLeft: '4em',
+                        fontSize: '.8em',
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                        color: activeLink === 'home' ? '#FF6E1D' : 'white',
+                        position: 'relative', // Needed for absolute positioning of ::after
+                        '&::after': {
+                          content: '""', // Empty string, necessary for ::after
+                          display: activeLink === 'home' ? 'block' : 'none', // Only display if active
+                          width: '6px',
+                          height: '22px',
+                          backgroundColor: '#FF6E1D',
+                          position: 'absolute',
+                          bottom: '-20px',
+                          left: '42%',
+                          transform: 'rotate(90deg)',
+                          borderRadius: '50%',
+                        }
+                      }}
+                    onClick={() => handleLinkClick('home')}
+                  >
                     Home
-                    </Typography>
-                </Link>
-                <Link
-                    to="/library" 
-                    style={{ color: 'inherit', textDecoration: 'none'}}
-                >
-                <Typography
+                  </Typography>
+                </NavLink>
+                <NavLink to="/library" style={{ color: 'inherit', textDecoration: 'none'}}>
+                  <Typography
                     sx={{
                         marginLeft: '4em',
                         fontSize: '.8em',
@@ -81,23 +72,20 @@ function NavigationBar() {
                         }
                       }}
                     onClick={() => handleLinkClick('library')}
-                >
+                  >
                     Your Library
-                </Typography>
-                </Link>
-                <Link
-                    to="/explore" 
-                    style={{ color: 'inherit', textDecoration: 'none'}}
-                >
-                <Typography
-                  sx={{
-                    marginLeft: '4em',
-                    fontSize: '.8em',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                    color: activeLink === 'explore' ? '#FF6E1D' : 'white',
-                    position: 'relative', // Needed for absolute positioning of ::after
-                    '&::after': {
+                  </Typography>
+                </NavLink>
+                <NavLink to="/explore"  style={{ color: 'inherit', textDecoration: 'none'}}>
+                  <Typography
+                    sx={{
+                      marginLeft: '4em',
+                      fontSize: '.8em',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      color: activeLink === 'explore' ? '#FF6E1D' : 'white',
+                      position: 'relative', // Needed for absolute positioning of ::after
+                      '&::after': {
                       content: '""', // Empty string, necessary for ::after
                       display: activeLink === 'explore' ? 'block' : 'none', // Only display if active
                       width: '6px',
@@ -111,14 +99,16 @@ function NavigationBar() {
                     }
                   }}
                     onClick={() => handleLinkClick('explore')}
-                >
+                  >
                     Explore
-                </Typography>
-                </Link>
+
+                  </Typography>
+                </NavLink>
+
                 <Avatar style={{ marginLeft: 'auto', backgroundColor: 'white', color: 'black', fontSize: '.75em', fontWeight: '600', width: 32, height: 32 }}>DB</Avatar>
             </Toolbar>
         </AppBar>
     );
 }
 
-export default NavigationBar;
+export default NavBar;
