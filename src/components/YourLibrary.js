@@ -3,7 +3,7 @@ import React from "react";
 // import NavBar from "./NavBar";
 import { useMusicContext } from "./MusicContext";
 
-function YourLibrary() {
+function YourLibrary({getAccessToken, spotifyAPI}) {
   const {
     currentSongIndex,
     isPlaying,
