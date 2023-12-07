@@ -104,7 +104,7 @@ function GenreCarousel() {
 
     return (
         <Box sx={{ width: '1296px', margin: '20px auto', position: 'relative' }}>
-            <Typography variant="h6" sx={{ marginBottom: 2, marginLeft: 2, position: 'relative', zIndex: 1 }}>Music Type</Typography>
+            <Typography variant="h6" sx={{ marginBottom: 2, marginLeft: 2, position: 'relative', zIndex: 1 }}>Browse Genres</Typography>
             <CustomPrevArrow />
             <CustomNextArrow />
             <Slider ref={sliderRef} {...settings}>

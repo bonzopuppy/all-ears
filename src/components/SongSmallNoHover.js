@@ -2,17 +2,23 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 import musicPlayerAlbum from '../images/musicPlayerAlbum.png';
+import PlayHover from './PlayHover';
 
-function SongItem() {
+function SongSmallNoHover() {
     return (
         <li style={{ listStyleType: 'none' }}>
 
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                position: 'relative',
+            }}>
 
                 {/* Album Image */}
-                <Box sx={{ width: '64px', height: '64px', marginRight: '10px', marginLeft: '10px' }}>
+                <Box sx={{ width: '64px', height: '64px', marginRight: '10px', marginLeft: '10px', position: 'relative' }}>
                     <img src={musicPlayerAlbum} alt="Album" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </Box>
+        
 
                 {/* Song Info */}
                 <Box>
@@ -29,4 +35,4 @@ function SongItem() {
     );
 }
 
-export default SongItem;
+export default SongSmallNoHover;

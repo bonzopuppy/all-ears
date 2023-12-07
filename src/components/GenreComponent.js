@@ -26,6 +26,10 @@ function GenreComponent({ title, background, imageUrl}) {
                 backgroundPosition: 'center',
                 // opacity: 0.5,
                 zIndex: 1
+            },
+            ':hover': {
+                boxShadow: '4px 4px 4px rgba(0, 0, 0, 0.4)',
+                cursor: 'pointer',
             }
         }}>
             <Typography variant="h6" sx={{ color: 'white', position: 'relative', zIndex: 2}}>{title}</Typography>

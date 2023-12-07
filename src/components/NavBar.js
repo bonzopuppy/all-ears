@@ -15,7 +15,7 @@ function NavBar() {
     }
 
     return (
-        <AppBar position="static" style={{ backgroundColor: '#181C1E' }} elevation={0}>
+        <AppBar position="fixed" style={{ backgroundColor: '#181C1E' }} elevation={0}>
             <Toolbar>
                 <NavLink to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
                     <IconButton edge="start" color="inherit" aria-label="menu">
@@ -26,7 +26,7 @@ function NavBar() {
                   <Typography
                     sx={{
                         marginLeft: '4em',
-                        fontSize: '.8em',
+                        fontSize: '.9em',
                         fontWeight: 500,
                         cursor: 'pointer',
                         color: activeLink === 'home' ? '#FF6E1D' : 'white',
@@ -53,7 +53,7 @@ function NavBar() {
                   <Typography
                     sx={{
                         marginLeft: '4em',
-                        fontSize: '.8em',
+                        fontSize: '.9em',
                         fontWeight: 500,
                         cursor: 'pointer',
                         color: activeLink === 'library' ? '#FF6E1D' : 'white',
@@ -80,7 +80,7 @@ function NavBar() {
                   <Typography
                     sx={{
                       marginLeft: '4em',
-                      fontSize: '.8em',
+                      fontSize: '.9em',
                       fontWeight: 500,
                       cursor: 'pointer',
                       color: activeLink === 'explore' ? '#FF6E1D' : 'white',
