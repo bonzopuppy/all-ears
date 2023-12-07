@@ -83,11 +83,20 @@ function App() {
   const [newReleases, setNewReleases] = useState([])
   const [whatsHot, setWhatsHot] = useState([])
 
-  useEffect(() => {
+  useEffect(async () => {
     
-    const accessToken = getAccessToken()
+    const accessToken = await getAccessToken()
     
-    const response = fetch
+    const response = await fetch(`${spotifyAPI}/browse/new-releases?country=US&limit=3`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    })
+
+    const data = await response.json()
+    setNewReleases(data)
+    console.log(newReleases)
   }, [])
 
 
