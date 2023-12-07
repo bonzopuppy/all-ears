@@ -1,12 +1,11 @@
 
 import { useState, useEffect } from "react";
 import NavBar from "./NavBar";
-import "./NavBar.css"
+// import "./NavBar.css"
 import MusicPlayer from "./MusicPlayer";
 import SearchBar from "./SearchBar";
-import harlots from "../music/Harlots-Gardens.mp3";
-import phil from "../music/In-the-Air-Tonight.mp3";
-import untold from "../music/Untold-Stories.mp3"
+import ListContainerWrapper from "./ListContainerWrapper";
+import GenreCarousel from "./GenreCarousel";
 
 // Home (App)
 // |- NavBar
@@ -26,23 +25,20 @@ import untold from "../music/Untold-Stories.mp3"
 
 
 function Home() {
-  const songs = [harlots, phil, untold]
+   
     return (
         <>
             <header className="navbar">
-                <NavBar />
+                {/* <NavBar /> */}
             </header>
-            <main>
                 <div>
                     <SearchBar />
+                    <ListContainerWrapper />
+                    <GenreCarousel />
                 </div>
-                <div>
-                    <h1>New Releases:</h1>
-
-                </div>
-            </main>
             <footer>
-                <MusicPlayer songs={songs} />
+                <MusicPlayer />
+
             </footer>
         </>
     )
