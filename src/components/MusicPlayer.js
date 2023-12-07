@@ -11,12 +11,13 @@ import SongItem from './SongItem';
 // import { useMusicContext } from './MusicContext';
 import frozen from "../music/LetItGo.mp3"
 import phil from "../music/In-the-Air-Tonight.mp3";
-import untold from "../music/Untold-Stories.mp3"
+import untold from "../music/Untold-Stories.mp3";
+import james from "../music/GetUpOffaThatThing.mp3"
 
 
 function MusicPlayer() {
 
-  const songs = [frozen, phil, untold]
+  const songs = [james, frozen, phil, untold]
 
 
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
@@ -91,7 +92,7 @@ function MusicPlayer() {
                   {/* Current Time */}
                   <Typography sx={{ marginRight: 1, fontSize: 12, marginBottom: 1.5}}>0:00</Typography>
                   {/* Scrubber */}    
-                  {/* <Slider
+                  <Slider
                       sx={{
                           width: 500,
                           marginTop: -1.5, // Adjust as needed
@@ -110,7 +111,7 @@ function MusicPlayer() {
                       }}
                       defaultValue={30}
                       aria-label="Song scrubber"
-                  /> */}
+                  />
                   {/* Total Duration */}
                   <Typography sx={{ marginLeft: 1, fontSize: 12, marginBottom: 1.5 }}>3:30</Typography>
               </Box>
