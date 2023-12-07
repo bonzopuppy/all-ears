@@ -73,7 +73,7 @@ function NavBar() {
                       }}
                     onClick={() => handleLinkClick('library')}
                   >
-                    Your Library
+                    Library
                   </Typography>
                 </NavLink>
                 <NavLink to="/explore"  style={{ color: 'inherit', textDecoration: 'none'}}>

@@ -11,7 +11,7 @@ import ArtistItem from "./ArtistItem";
 import SongMedium from "./SongMedium";
 import Typography from "@mui/material/Typography";
 
-function Explore() {
+function Explore({getAccessToken, spotifyAPI}) {
   const {
     currentSongIndex,
     isPlaying,

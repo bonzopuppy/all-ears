@@ -2,25 +2,7 @@ import { useState } from "react";
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 
-const allEarsClientId = "600f950452a84657b5a28a42c739ceac"
-const allEarsClientSecret = "21203cc6dd96448d9e1751b1debe3e38"
-
-const spotifyAPI = "https://api.spotify.com/v1"
-
-async function getAccessToken(clientId = allEarsClientId, clientSecret = allEarsClientSecret) {
-    const result = await fetch('https://accounts.spotify.com/api/token', {
-        method: 'POST',
-        headers: {
-            'Content-type': 'application/x-www-form-urlencoded'
-        },
-        body: `grant_type=client_credentials&client_id=${clientId}&client_secret=${clientSecret}`
-    })
-
-    const data = await result.json();
-    return data.access_token;
-}
-
-function SearchBar() {
+function SearchBar({getAccessToken, spotifyAPI}) {
 
     const [searchQuery, setSearchQuery] = useState('')
 
@@ -29,6 +11,7 @@ function SearchBar() {
     }
 
     async function handleSubmit(e) {
+        if (e.key === 'Enter') {
         e.preventDefault()
 
         const formattedQuery = encodeURIComponent(searchQuery)
@@ -46,27 +29,21 @@ function SearchBar() {
         const data = await response.json()
         console.log(data)
 
-        setSearchQuery("")
+        setSearchQuery("");
+        
+    }
     }
 
     return (
-        // <div>
-        //     <form onSubmit={handleSubmit}>
-        //         <input 
-        //             id="search-input"
-        //             type="text"
-        //             placeholder="Search tracks, artists, and more..."
-        //             value={searchQuery}
-        //             onChange={handleQueryChange}
-        //         />
-        //         <button type="submit">Search</button>
-        //     </form>
-        // </div>
+    
             <Box sx={{ display: 'flex', justifyContent: 'center', padding: '0 30px' }}>
                 <TextField
                     fullWidth
                     placeholder="What do you want to listen to?"
                     variant="outlined"
+                    value={searchQuery}
+                    onChange={handleQueryChange}
+                    onKeyDown={handleSubmit}
                     sx={{
                         maxWidth: '1296px', // Maximum width
                         width: '100%', // Ensure it takes up the available space

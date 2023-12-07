@@ -11,8 +11,9 @@ import Typography from "@mui/material/Typography";
 import { Tabs, Tab } from "@mui/material";
 import AlbumPlaylistItem from "./AlbumPlaylistItem";
 
-function YourLibrary() {
+function YourLibrary({getAccessToken, spotifyAPI}) {
   const [selectedTab, setSelectedTab] = useState(0);
+
   const {
     currentSongIndex,
     isPlaying,
