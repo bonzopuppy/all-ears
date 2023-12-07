@@ -1,13 +1,12 @@
 import * as React from 'react';
-import NavigationBar from './NavBar';
+import NavBar from './NavBar';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-// import MusicPlayer from './MusicPlayer';
+import MusicPlayer from './MusicPlayer';
 import Home from './Home';
 import YourLibrary from './YourLibrary';
 import Explore from './Explore';
-
-
+import { MusicProvider } from './MusicContext';
 
 const theme = createTheme({
     typography: {
@@ -32,17 +31,19 @@ const theme = createTheme({
 });
 
 function App() {
-    return (
-        <ThemeProvider theme={theme}>
+  return (
+    <ThemeProvider theme={theme}>
       <Router>
         <div className="App">
-          <NavigationBar />
+          <NavBar />
+          <MusicProvider>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/all-ears" element={<Home />} />
             <Route path="/library" element={<YourLibrary />} />
             <Route path="/explore" element={<Explore />} />
           </Routes>
-          {/* <MusicPlayer /> */}
+          </MusicProvider>
+          <MusicPlayer />
         </div>
       </Router>
     </ThemeProvider>

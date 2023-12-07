@@ -5,9 +5,9 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
 import logo from '../images/AELogo.svg';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
-function NavigationBar() {
+function NavBar() {
     const [activeLink, setActiveLink] = useState('home');
 
     const handleLinkClick = (link) => {
@@ -17,12 +17,13 @@ function NavigationBar() {
     return (
         <AppBar position="static" style={{ backgroundColor: '#181C1E' }} elevation={0}>
             <Toolbar>
-                <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
+                <NavLink to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
                     <IconButton edge="start" color="inherit" aria-label="menu">
                         <img src={logo} alt="logo" style={{ height: 32, width: 40 }} />
                     </IconButton>
-                </Link>
-                <Typography
+                </NavLink>
+                <NavLink to="/all-ears" >
+                  <Typography
                     sx={{
                         marginLeft: '4em',
                         fontSize: '.8em',
@@ -44,10 +45,12 @@ function NavigationBar() {
                         }
                       }}
                     onClick={() => handleLinkClick('home')}
-                >
+                  >
                     Home
-                </Typography>
-                <Typography
+                  </Typography>
+                </NavLink>
+                <NavLink to="/library" >
+                  <Typography
                     sx={{
                         marginLeft: '4em',
                         fontSize: '.8em',
@@ -69,18 +72,20 @@ function NavigationBar() {
                         }
                       }}
                     onClick={() => handleLinkClick('library')}
-                >
+                  >
                     Your Library
-                </Typography>
-                <Typography
-                  sx={{
-                    marginLeft: '4em',
-                    fontSize: '.8em',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                    color: activeLink === 'explore' ? '#FF6E1D' : 'white',
-                    position: 'relative', // Needed for absolute positioning of ::after
-                    '&::after': {
+                  </Typography>
+                </NavLink>
+                <NavLink to="/explore">
+                  <Typography
+                    sx={{
+                      marginLeft: '4em',
+                      fontSize: '.8em',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      color: activeLink === 'explore' ? '#FF6E1D' : 'white',
+                      position: 'relative', // Needed for absolute positioning of ::after
+                      '&::after': {
                       content: '""', // Empty string, necessary for ::after
                       display: activeLink === 'explore' ? 'block' : 'none', // Only display if active
                       width: '6px',
@@ -94,13 +99,14 @@ function NavigationBar() {
                     }
                   }}
                     onClick={() => handleLinkClick('explore')}
-                >
+                  >
                     Explore
-                </Typography>
+                  </Typography>
+                </NavLink>
                 <Avatar style={{ marginLeft: 'auto', backgroundColor: 'white', color: 'black', fontSize: '.75em', fontWeight: '600', width: 32, height: 32 }}>DB</Avatar>
             </Toolbar>
         </AppBar>
     );
 }
 
-export default NavigationBar;
+export default NavBar;
