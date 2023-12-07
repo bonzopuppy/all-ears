@@ -1,5 +1,5 @@
 
-import MusicPlayer from "./MusicPlayer";
+// import MusicPlayer from "./MusicPlayer";
 import NavBar from "./NavBar";
 
 function Explore() {
@@ -9,7 +9,7 @@ function Explore() {
         <NavBar />
       </header>
       <footer>
-        <MusicPlayer />
+        {/* <MusicPlayer /> */}
       </footer>
     </>
   );
