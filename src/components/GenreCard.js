@@ -12,23 +12,24 @@ function GenreComponent({ title, background, imageUrl}) {
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: '8px',
-            position: 'relative',
+            position: 'absolute',
             overflow: 'hidden',
-            '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundImage: `url(${imageUrl})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                // opacity: 0.5,
-                zIndex: 1
+            // '&::before': {
+            //     content: '""',
+            //     position: 'relative',
+            //     top: 0,
+            //     left: 0,
+            //     right: 0,
+            //     bottom: 0,
+            //     backgroundImage: imageUrl,
+            //     backgroundSize: 'cover',
+            //     backgroundPosition: 'center',
+            //     // opacity: 0.5,
+            //     zIndex: -1000,
             }
-        }}>
-            <Typography variant="h6" sx={{ color: 'white',}}>{title}</Typography>
+        }>
+            <Typography variant="h6" sx={{ color: 'white', position: 'relative', zIndex: 2}}>{title}</Typography>
+            <img src={imageUrl} alt="genre" style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', zIndex: -1000}} />
         </Box>
     );
 }

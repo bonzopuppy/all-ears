@@ -1,6 +1,6 @@
-
+import React from "react";
 // import MusicPlayer from "./MusicPlayer";
-import NavBar from "./NavBar";
+// import NavBar from "./NavBar";
 import { useMusicContext } from "./MusicContext";
 
 function YourLibrary() {
@@ -13,14 +13,13 @@ function YourLibrary() {
   } = useMusicContext();
 
   return (
-    <>
-      <header className="navbar">
-        {/* <NavBar /> */}
-      </header>
-      <footer>
-        {/* <MusicPlayer /> */}
-      </footer>
-    </>
+
+    <div>
+      <h1>
+        Your Library
+      </h1>
+    </div>
+
   );
 }
 

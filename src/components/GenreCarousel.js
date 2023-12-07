@@ -8,6 +8,11 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import GenreComponent from './GenreComponent';
+import blueOvals from '../images/blueOvals.svg';
+import orangeOvals from '../images/orangeOvals.svg';
+import purpleOvals from '../images/purpleOvals.svg';
+import redOvals from '../images/redOvals.svg';
+import lightBlueOvals from '../images/lightBlueOvals.svg';
 
 function GenreCarousel() {
     const sliderRef = React.useRef(null);
@@ -74,26 +79,26 @@ function GenreCarousel() {
     };
 
     const genres = [
-        { title: 'Rock', background: '#31334F', imageUrl: 'src/blueOvals.png'},
-        { title: 'Pop', background: '#C86E04' },
-        { title: 'Hip Hop', background: '#444551' },
-        { title: 'Jazz', background: '#E13535' },
-        { title: 'Country', background: '#37A7E7' },
-        { title: 'Classical', background: 'lightcoral' },
-        { title: 'Electronic', background: 'lightseagreen' },
-        { title: 'Folk', background: 'lightsalmon' },
-        { title: 'R&B', background: 'lightcyan' },
-        { title: 'Reggae', background: 'lightgoldenrodyellow' },
-        { title: 'Blues', background: 'lightskyblue' },
-        { title: 'Metal', background: 'lightsteelblue' },
-        { title: 'Funk', background: 'lightpink' },
-        { title: 'Disco', background: 'lightgreen' },
-        { title: 'Techno', background: 'lightblue' },
-        { title: 'Soul', background: 'lightgray' },
-        { title: 'Punk', background: 'lightcoral' },
-        { title: 'Gospel', background: 'lightyellow' },
-        { title: 'Indie', background: 'lightseagreen' },
-        { title: 'Alternative', background: 'lightgoldenrodyellow' },
+        { title: 'Rock', background: '#31334F', imageUrl: blueOvals },
+        { title: 'Pop', background: '#EA9633', imageUrl: orangeOvals },
+        { title: 'Hip Hop', background: '#8340D9', imageUrl: purpleOvals },
+        { title: 'Jazz', background: '#E13535', imageUrl: redOvals },
+        { title: 'Country', background: '#75C6F4', imageUrl: lightBlueOvals },
+        { title: 'Classical', background: '#31334F', imageUrl: blueOvals },
+        { title: 'Electronic', background: '#EA9633', imageUrl: orangeOvals },
+        { title: 'Folk', background: '#8340D9', imageUrl: purpleOvals },
+        { title: 'R&B', background: '#E13535', imageUrl: redOvals },
+        { title: 'Reggae', background: '#75C6F4', imageUrl: lightBlueOvals },
+        { title: 'Blues', background: '#31334F', imageUrl: blueOvals },
+        { title: 'Metal', background: '#EA9633', imageUrl: orangeOvals },
+        { title: 'Funk', background: '#8340D9', imageUrl: purpleOvals },
+        { title: 'Disco', background: '#E13535', imageUrl: redOvals },
+        { title: 'Techno', background: '#75C6F4', imageUrl: lightBlueOvals },
+        { title: 'Soul', background: '#31334F', imageUrl: blueOvals },
+        { title: 'Punk', background: '#EA9633', imageUrl: orangeOvals },
+        { title: 'Gospel', background: '#8340D9', imageUrl: purpleOvals },
+        { title: 'Indie', background: '#E13535', imageUrl: redOvals },
+        { title: 'Alternative', background: '#75C6F4', imageUrl: lightBlueOvals },
     ];
 
 

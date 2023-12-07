@@ -28,7 +28,7 @@ function GenreComponent({ title, background, imageUrl}) {
                 zIndex: 1
             }
         }}>
-            <Typography variant="h6" sx={{ color: 'white',}}>{title}</Typography>
+            <Typography variant="h6" sx={{ color: 'white', position: 'relative', zIndex: 2}}>{title}</Typography>
         </Box>
     );
 }

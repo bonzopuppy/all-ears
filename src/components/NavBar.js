@@ -21,8 +21,8 @@ function NavBar() {
                     <IconButton edge="start" color="inherit" aria-label="menu">
                         <img src={logo} alt="logo" style={{ height: 32, width: 40 }} />
                     </IconButton>
-                </NavLink>
-                <NavLink to="/all-ears" >
+                </NavLink>           
+                <NavLink to="/all-ears" style={{ color: 'inherit', textDecoration: 'none'}}>
                   <Typography
                     sx={{
                         marginLeft: '4em',
@@ -49,7 +49,7 @@ function NavBar() {
                     Home
                   </Typography>
                 </NavLink>
-                <NavLink to="/library" >
+                <NavLink to="/library" style={{ color: 'inherit', textDecoration: 'none'}}>
                   <Typography
                     sx={{
                         marginLeft: '4em',
@@ -76,7 +76,7 @@ function NavBar() {
                     Your Library
                   </Typography>
                 </NavLink>
-                <NavLink to="/explore">
+                <NavLink to="/explore"  style={{ color: 'inherit', textDecoration: 'none'}}>
                   <Typography
                     sx={{
                       marginLeft: '4em',
@@ -101,8 +101,10 @@ function NavBar() {
                     onClick={() => handleLinkClick('explore')}
                   >
                     Explore
+
                   </Typography>
                 </NavLink>
+
                 <Avatar style={{ marginLeft: 'auto', backgroundColor: 'white', color: 'black', fontSize: '.75em', fontWeight: '600', width: 32, height: 32 }}>DB</Avatar>
             </Toolbar>
         </AppBar>

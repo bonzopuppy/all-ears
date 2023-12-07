@@ -1,6 +1,7 @@
 
+import React from "react";
 // import MusicPlayer from "./MusicPlayer";
-import NavBar from "./NavBar";
+// import NavBar from "./NavBar";
 import { useMusicContext } from "./MusicContext";
 
 function Explore() {
@@ -13,14 +14,13 @@ function Explore() {
   } = useMusicContext();
 
   return (
-    <>
-      <header className="navbar">
-        {/* <NavBar /> */}
-      </header>
-      <footer>
-        {/* <MusicPlayer /> */}
-      </footer>
-    </>
+
+    <div>
+     <h1>
+        Explore
+    </h1>
+    </div>
+
   );
 }
 export default Explore;
