@@ -6,6 +6,8 @@ import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
 import logo from '../images/AELogo.svg';
 import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+
 
 function NavigationBar() {
     const [activeLink, setActiveLink] = useState('home');
@@ -17,36 +19,46 @@ function NavigationBar() {
     return (
         <AppBar position="static" style={{ backgroundColor: '#181C1E' }} elevation={0}>
             <Toolbar>
-                <Link to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
+                <NavLink to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
                     <IconButton edge="start" color="inherit" aria-label="menu">
                         <img src={logo} alt="logo" style={{ height: 32, width: 40 }} />
                     </IconButton>
-                </Link>
-                <Typography
-                    sx={{
-                        marginLeft: '4em',
-                        fontSize: '.8em',
-                        fontWeight: 500,
-                        cursor: 'pointer',
-                        color: activeLink === 'home' ? '#FF6E1D' : 'white',
-                        position: 'relative', // Needed for absolute positioning of ::after
-                        '&::after': {
-                          content: '""', // Empty string, necessary for ::after
-                          display: activeLink === 'home' ? 'block' : 'none', // Only display if active
-                          width: '6px',
-                          height: '22px',
-                          backgroundColor: '#FF6E1D',
-                          position: 'absolute',
-                          bottom: '-20px',
-                          left: '42%',
-                          transform: 'rotate(90deg)',
-                          borderRadius: '50%',
-                        }
-                      }}
-                    onClick={() => handleLinkClick('home')}
+                </NavLink>
+                <Link
+                    to="/" 
+                    style={{ color: 'inherit', textDecoration: 'none'}}
                 >
+              
+                    <Typography
+                        sx={{
+                          marginLeft: '4em',
+                          fontSize: '.8em',
+                          fontWeight: 500,
+                          cursor: 'pointer',
+                          color: activeLink === 'home' ? '#FF6E1D' : 'white',
+                          position: 'relative', // Needed for absolute positioning of ::after
+                          '&::after': {
+                            content: '""', // Empty string, necessary for ::after
+                            display: activeLink === 'home' ? 'block' : 'none', // Only display if active
+                            width: '6px',
+                            height: '22px',
+                            backgroundColor: '#FF6E1D',
+                            position: 'absolute',
+                            bottom: '-20px',
+                            left: '42%',
+                            transform: 'rotate(90deg)',
+                            borderRadius: '50%',
+                          }
+                        }}
+                        onClick={() => handleLinkClick('home')}
+                    >
                     Home
-                </Typography>
+                    </Typography>
+                </Link>
+                <Link
+                    to="/library" 
+                    style={{ color: 'inherit', textDecoration: 'none'}}
+                >
                 <Typography
                     sx={{
                         marginLeft: '4em',
@@ -72,6 +84,11 @@ function NavigationBar() {
                 >
                     Your Library
                 </Typography>
+                </Link>
+                <Link
+                    to="/explore" 
+                    style={{ color: 'inherit', textDecoration: 'none'}}
+                >
                 <Typography
                   sx={{
                     marginLeft: '4em',
@@ -97,6 +114,7 @@ function NavigationBar() {
                 >
                     Explore
                 </Typography>
+                </Link>
                 <Avatar style={{ marginLeft: 'auto', backgroundColor: 'white', color: 'black', fontSize: '.75em', fontWeight: '600', width: 32, height: 32 }}>DB</Avatar>
             </Toolbar>
         </AppBar>

@@ -1,18 +1,22 @@
-.navbar {
-    background-color: black;
-    padding: 10px;
-}
-
-.navbar > a {
-    padding: 15px;
+/* In your CSS file */
+.navLink {
+    color: white;
     text-decoration: none;
-    text-align: left;
-    font-size: large ;
-    font-weight: bold;
-    color: rgb(248, 246, 246);
-}
-
-a.active {
-    color: rgb(228, 105, 23);
-}
-
+  }
+  
+  .navLinkActive {
+    color: #FF6E1D;
+  }
+  
+  .navLinkActive::after {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 22px;
+    background-color: #FF6E1D;
+    position: absolute;
+    bottom: -20px;
+    left: 42%;
+    transform: rotate(90deg);
+    border-radius: 50%;
+  }

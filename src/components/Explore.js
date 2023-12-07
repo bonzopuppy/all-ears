@@ -1,17 +1,12 @@
-
-// import MusicPlayer from "./MusicPlayer";
-import NavBar from "./NavBar";
+import React from "react";
 
 function Explore() {
   return (
-    <>
-      <header className="navbar">
-        <NavBar />
-      </header>
-      <footer>
-        {/* <MusicPlayer /> */}
-      </footer>
-    </>
+    <div>
+     <h1>
+        Explore
+    </h1>
+    </div>
   );
 }
 export default Explore;

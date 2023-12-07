@@ -2,7 +2,7 @@ import * as React from 'react';
 import NavigationBar from './NavBar';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-// import MusicPlayer from './MusicPlayer';
+import MusicPlayer from './MusicPlayer';
 import Home from './Home';
 import YourLibrary from './YourLibrary';
 import Explore from './Explore';
@@ -42,7 +42,7 @@ function App() {
             <Route path="/library" element={<YourLibrary />} />
             <Route path="/explore" element={<Explore />} />
           </Routes>
-          {/* <MusicPlayer /> */}
+          <MusicPlayer />
         </div>
       </Router>
     </ThemeProvider>

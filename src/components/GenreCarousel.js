@@ -8,6 +8,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import GenreComponent from './GenreComponent';
+import blueOvals from '../images/blueOvals.png';
 
 function GenreCarousel() {
     const sliderRef = React.useRef(null);
@@ -74,9 +75,9 @@ function GenreCarousel() {
     };
 
     const genres = [
-        { title: 'Rock', background: '#31334F', imageUrl: 'src/blueOvals.png'},
+        { title: 'Rock', background: '#31334F', imageUrl: blueOvals },
         { title: 'Pop', background: '#C86E04' },
-        { title: 'Hip Hop', background: '#444551' },
+        { title: 'Hip Hop', background: '#691EC8' },
         { title: 'Jazz', background: '#E13535' },
         { title: 'Country', background: '#37A7E7' },
         { title: 'Classical', background: 'lightcoral' },

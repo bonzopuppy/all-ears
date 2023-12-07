@@ -1,17 +1,12 @@
-
-// import MusicPlayer from "./MusicPlayer";
-import NavBar from "./NavBar";
+import React from "react";
 
 function YourLibrary() {
   return (
-    <>
-      <header className="navbar">
-        <NavBar />
-      </header>
-      <footer>
-        {/* <MusicPlayer /> */}
-      </footer>
-    </>
+    <div>
+      <h1>
+        Your Library
+      </h1>
+    </div>
   );
 }
 
