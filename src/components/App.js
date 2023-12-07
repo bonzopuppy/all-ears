@@ -14,6 +14,11 @@ const theme = createTheme({
             fontFamily: "'Prompt', sans-serif",
             color: '#181C1E',
         },
+        h5: {
+            fontSize: '1.2rem',
+            fontWeight: '500',
+            marginBottom: '0',
+        },
         h6: {
             fontSize: '1.1rem',
             fontWeight: '500',
@@ -37,11 +42,13 @@ function App() {
         <div className="App">
           <NavBar />
           <MusicProvider>
+        <div style ={{ paddingTop: '64px', paddingBottom: '88px'}}>
           <Routes>
             <Route path="/all-ears" element={<Home />} />
             <Route path="/library" element={<YourLibrary />} />
             <Route path="/explore" element={<Explore />} />
           </Routes>
+          </div>
           </MusicProvider>
           <MusicPlayer />
         </div>

@@ -15,7 +15,7 @@ function NavBar() {
     }
 
     return (
-        <AppBar position="static" style={{ backgroundColor: '#181C1E' }} elevation={0}>
+        <AppBar position="fixed" style={{ backgroundColor: '#181C1E' }} elevation={0}>
             <Toolbar>
                 <NavLink to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
                     <IconButton edge="start" color="inherit" aria-label="menu">

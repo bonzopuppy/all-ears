@@ -4,11 +4,13 @@ import { Typography } from '@mui/material';
 import musicPlayerAlbum from '../images/musicPlayerAlbum.png';
 import PlayHover from './PlayHover';
 
-function SongSmall() {
+function SongMedium() {
     return (
         <li style={{ listStyleType: 'none' }}>
 
             <Box sx={{
+                width: 413,
+                height: 76,
                 display: 'flex',
                 alignItems: 'center',
                 position: 'relative',
@@ -58,9 +60,15 @@ function SongSmall() {
                     </Typography>
                 </Box>
 
+                {/* Song Duration */}
+                <Box sx={{ marginLeft: 'auto', marginRight: '10px' }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: '400' }}>
+                        3:41
+                    </Typography>
+                </Box>
             </Box>
         </li>
     );
 }
 
-export default SongSmall;
+export default SongMedium;
