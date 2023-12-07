@@ -26,7 +26,7 @@ function NavBar() {
                   <Typography
                     sx={{
                         marginLeft: '4em',
-                        fontSize: '.8em',
+                        fontSize: '.9em',
                         fontWeight: 500,
                         cursor: 'pointer',
                         color: activeLink === 'home' ? '#FF6E1D' : 'white',
@@ -53,7 +53,7 @@ function NavBar() {
                   <Typography
                     sx={{
                         marginLeft: '4em',
-                        fontSize: '.8em',
+                        fontSize: '.9em',
                         fontWeight: 500,
                         cursor: 'pointer',
                         color: activeLink === 'library' ? '#FF6E1D' : 'white',
@@ -80,7 +80,7 @@ function NavBar() {
                   <Typography
                     sx={{
                       marginLeft: '4em',
-                      fontSize: '.8em',
+                      fontSize: '.9em',
                       fontWeight: 500,
                       cursor: 'pointer',
                       color: activeLink === 'explore' ? '#FF6E1D' : 'white',

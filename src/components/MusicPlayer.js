@@ -7,7 +7,7 @@ import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import MicIcon from '@mui/icons-material/Mic';
 import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import GraphicEqIcon from '@mui/icons-material/GraphicEq';
-import SongItem from './SongItem';
+import SongItem from './SongSmall';
 // import { useMusicContext } from './MusicContext';
 import frozen from "../music/LetItGo.mp3"
 import phil from "../music/In-the-Air-Tonight.mp3";
