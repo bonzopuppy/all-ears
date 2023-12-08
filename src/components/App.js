@@ -32,6 +32,13 @@ const theme = createTheme({
             main: '#FF6E1D',
         },
     },
+    components: {
+        MuiButtonBase: {
+          defaultProps: {
+            disableRipple: true,
+          },
+        },
+    },
     // Include any other theme customizations here
 });
 

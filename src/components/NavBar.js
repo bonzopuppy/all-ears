@@ -17,7 +17,7 @@ function NavBar() {
     return (
         <AppBar position="fixed" style={{ backgroundColor: '#181C1E' }} elevation={0}>
             <Toolbar>
-                <NavLink to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
+                <NavLink to="/all-ears" style={{ color: 'inherit', textDecoration: 'none' }} onClick={() => handleLinkClick('home')}>
                     <IconButton edge="start" color="inherit" aria-label="menu">
                         <img src={logo} alt="logo" style={{ height: 32, width: 40 }} />
                     </IconButton>
