@@ -81,6 +81,8 @@ function App() {
 
   const allEarsClientId = "600f950452a84657b5a28a42c739ceac"
   const allEarsClientSecret = "21203cc6dd96448d9e1751b1debe3e38"
+
+  const [searchResults, setSearchResults] = useState(null);
   
   const spotifyAPI = "https://api.spotify.com/v1"
   
@@ -173,7 +175,7 @@ function App() {
         <div className="App">
           <NavBar />
           <MusicProvider>
-        <div style ={{ paddingTop: '64px', paddingBottom: '88px'}}>
+        <div style ={{ paddingTop: '64px', paddingBottom: '108px'}}>
           <Routes>
             <Route path="/all-ears" element={
               <Home 
@@ -183,6 +185,8 @@ function App() {
                 whatsHot={whatsHot}
                 handleRefresh={handleRefresh}
                 genres={genres}
+                searchResults={searchResults}
+                setSearchResults={setSearchResults}
               />
             }/>
             <Route path="/library" element={

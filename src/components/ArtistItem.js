@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import PlayHover from "./PlayHover";
 
-const ArtistItem = ({ imageUrl, textLine1, albumCount, songCount }) => {
+const ArtistItem = ({ imageUrl, artist }) => {
     return (
       <Box
         sx={{
@@ -31,7 +31,7 @@ const ArtistItem = ({ imageUrl, textLine1, albumCount, songCount }) => {
           }
         }}
       >
-        <img src={imageUrl} alt="Album Cover" style={{ width: 118, height: 118, borderRadius: '50%' }} />
+        <img src={imageUrl} alt="Artist Image" style={{ width: 118, height: 118, borderRadius: '50%' }} />
         {/* <Box className="playButton" 
         sx={{ 
           position: 'absolute', 
@@ -51,10 +51,10 @@ const ArtistItem = ({ imageUrl, textLine1, albumCount, songCount }) => {
                 fontSize: '.9em' 
             }}
         >
-            {textLine1}
+            {artist}
             
         </Typography>
-        <Typography 
+        {/* <Typography 
             variant="body1"
             sx={{
                 fontWeight: 400, 
@@ -63,7 +63,7 @@ const ArtistItem = ({ imageUrl, textLine1, albumCount, songCount }) => {
             }}
             >
              {`${albumCount} Albums, ${songCount} Songs`}
-        </Typography>
+        </Typography> */}
       </Box>
     );
   };
