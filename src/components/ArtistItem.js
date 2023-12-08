@@ -32,7 +32,7 @@ const ArtistItem = ({ imageUrl, textLine1, artist }) => {
           }
         }}
       >
-        <img src={imageUrl} alt="Album Cover" style={{ width: 118, height: 118, borderRadius: '50%' }} />
+        <img src={imageUrl} alt="Artist Image" style={{ width: 118, height: 118, borderRadius: '50%' }} />
         {/* <Box className="playButton" 
         sx={{ 
           position: 'absolute', 
@@ -52,10 +52,10 @@ const ArtistItem = ({ imageUrl, textLine1, artist }) => {
                 fontSize: '.9em' 
             }}
         >
-            {textLine1}
+            {artist}
             
         </Typography>
-        <Typography 
+        {/* <Typography 
             variant="body1"
             sx={{
                 fontWeight: 400, 
