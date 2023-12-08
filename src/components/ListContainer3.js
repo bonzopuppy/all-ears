@@ -39,8 +39,7 @@ function ListContainer3({ title }) {
                 <ArtistItem
                     imageUrl={artistImage}
                     textLine1="Ariane Grande"
-                    albumCount="16"
-                    songCount="187"
+                    followers="80,308,012"
                 />
             </Box>
         </Box>
