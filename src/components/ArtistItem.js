@@ -3,7 +3,8 @@ import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import PlayHover from "./PlayHover";
 
-const ArtistItem = ({ imageUrl, textLine1, albumCount, songCount }) => {
+const ArtistItem = ({ imageUrl, textLine1, artist }) => {
+  
     return (
       <Box
         sx={{
@@ -62,7 +63,7 @@ const ArtistItem = ({ imageUrl, textLine1, albumCount, songCount }) => {
                 fontSize: '.8em'
             }}
             >
-             {`${albumCount} Albums, ${songCount} Songs`}
+             {artist && `${artist.followers.total} Followers`}
         </Typography>
       </Box>
     );

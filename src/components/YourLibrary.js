@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import MusicPlayer from "./MusicPlayer";
 // import NavBar from "./NavBar";
 import { useMusicContext } from "./MusicContext";
@@ -12,6 +12,7 @@ import { Tabs, Tab } from "@mui/material";
 import AlbumPlaylistItem from "./AlbumPlaylistItem";
 
 function YourLibrary({getAccessToken, spotifyAPI}) {
+
   const [selectedTab, setSelectedTab] = useState(0);
 
   const {
@@ -21,11 +22,6 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
     nextSongHandler,
     prevSongHandler,
   } = useMusicContext();
-
-  const songData = new Array(5).fill(null);
-  const albumData = new Array(1).fill(null); // Replace with actual data
-  const artistData = new Array(1).fill(null); // Replace with actual data
-  const playlistData = new Array(1).fill(null); // Replace with actual data
 
   const handleChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -59,9 +55,104 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
   });
 
 
+  const songData = new Array(5).fill(null);
+  const albumData = new Array(1).fill(null); // Replace with actual data
+  const artistData = new Array(1).fill(null); // Replace with actual data
+  const playlistData = new Array(1).fill(null); // Replace with actual data
+
+  const [playlists, setPlaylists] = useState([])
+  const [artists, setArtists] = useState([])
+  const [songs, setSongs] = useState([])
+
+  useEffect(() => {
+
+    async function fetchPlaylists() {
+
+      const accessToken = await getAccessToken()
+
+      const response = await fetch(`${spotifyAPI}/browse/featured-playlists?country=US&limit=21`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
+
+        const data = await response.json()
+        setPlaylists(data.playlists.items)
+    }
+
+    async function fetchArtists() {
+
+      const accessToken = await getAccessToken()
+
+      const artistIds = [
+        { id: 1, name: 'Drake', spotifyId: '3TVXtAsR1Inumwj472S9r4' },
+        { id: 2, name: 'Taylor Swift', spotifyId: '06HL4z0CvFAxyc27GXpf02' },
+        { id: 3, name: 'Bad Bunny', spotifyId: '4q3ewBCX7sLwd24euuV69X' },
+        { id: 4, name: 'The Weeknd', spotifyId: '1Xyo4u8uXC1ZmMpatF05PJ' },
+        { id: 5, name: 'Billie Eilish', spotifyId: '6qqNVTkY8uBg9cP3Jd7DAH' },
+        { id: 6, name: 'Harry Styles', spotifyId: '6KImCVD70vtIoJWnq6nGn3' },
+        { id: 7, name: 'Rell Nice', spotifyId: '5de6jFMvo1aI3pSzzmWbWT' },
+        { id: 8, name: 'J. Cole', spotifyId: '6l3HvQ5sa6mXTsMTB19rO5' },
+        { id: 9, name: 'Doja Cat', spotifyId: '5cj0lLjcoR7YOSnhnX0Po5' },
+        { id: 10, name: 'Kendrick Lamar', spotifyId: '2YZyLoL8N0Wb9xBt1NhZWg' },
+        { id: 11, name: 'Bruno Mars', spotifyId: '0du5cEVh5yTK9QJze8zA0C' },
+        { id: 12, name: 'Ed Sheeran', spotifyId: '6eUKZXaKkcviH0Ku9w2n3V' },
+        { id: 13, name: 'Ivy Sole', spotifyId: '4NcMrSi3B8eUVy6e1Ni3wu' },
+        { id: 14, name: 'Adele', spotifyId: '4dpARuHxo51G3z768sgnrY' },
+        { id: 15, name: 'Majid Jordan', spotifyId: '4HzKw8XcD0piJmDrrPRCYk' },
+        { id: 16, name: 'The Foreign Exchange', spotifyId: '60R4M19QBXvs0gO4IL6CpS' },
+        { id: 17, name: 'J Balvin', spotifyId: '1vyhD5VmyZ7KMfW5gqLgo5' },
+        { id: 18, name: 'Bathe', spotifyId: '3BBN1P1JNw0sSdYEdBkOZK' },
+        { id: 19, name: 'Tyla', spotifyId: '3SozjO3Lat463tQICI9LcE' },
+        { id: 20, name: 'Beyonce', spotifyId: '6vWDO969PvNqNYHIOW5v0m' },
+        { id: 21, name: 'Nas', spotifyId: '20qISvAhX20dpIbOOzGK3q' }
+      ]
+
+      const spotifyIds = artistIds.map(artist => artist.spotifyId)
+      const artistIdsString = spotifyIds.join(',')
+
+      const response = await fetch(`${spotifyAPI}/artists?ids=${artistIdsString}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
+
+      const data = await response.json()
+      setArtists(data.artists)
+    }
+
+    async function fetchSongs() {
+
+      const accessToken = await getAccessToken()
+  
+      const response = await fetch(`${spotifyAPI}/recommendations?country=US&limit=21&seed_genres=hip-hop,r-n-b,afrobeat,pop&min_popularity=75`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
+  
+      const data = await response.json()
+      const topTracks = data.tracks.sort((a, b) => b.popularity - a.popularity);
+      setSongs(topTracks);
+    
+    }
+
+    fetchSongs()
+    fetchArtists()
+    fetchPlaylists()
+    
+  }, [])
+
+
   return (
+
     <div>
+
       <Box sx={{ display: 'flex', flexDirection: 'column', maxWidth: 1296, margin: '10px auto', padding: '0 30px', gap: '20px' }}>
+
         <Box sx={{
           backgroundColor: '#F4F2F7',
           borderRadius: '8px',
@@ -108,9 +199,14 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
 
       {selectedTab === 0 && (
         <>
-          <Typography variant="h5">Songs</Typography>
+          <Typography variant="h5">Popular Songs</Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-            {songData.map((_, index) => <SongMedium key={index} />)}
+            {songs.map((song, index) => (
+              <SongMedium 
+                song={song}
+                key={index}
+              />
+            ))}
           </Box>
         </>
       )}
@@ -133,15 +229,14 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
 
       {selectedTab === 2 && (
         <>
-          <Typography variant="h5">Artists</Typography>
+          <Typography variant="h5">Top Artists</Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-            {artistData.map((_, index) => (
+            {artists.map((artist, index) => (
               <ArtistItem
                 key={index}
-                imageUrl={artistImage}
-                textLine1="Ariane Grande"
-                albumCount="16"
-                songCount="187"
+                artist={artist}
+                imageUrl={artist.images[0].url}
+                textLine1={artist.name}
               />
             ))}
           </Box>
@@ -150,14 +245,15 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
 
       {selectedTab === 3 && (
         <>
-          <Typography variant="h5">Playlists</Typography>
+          <Typography variant="h5">Popular Playlists</Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-            {playlistData.map((_, index) => (
+            {playlists.map((playlist, index) => (
               <AlbumPlaylistItem
                 key={index}
-                imageUrl={coverImage}
-                textLine1="The Beatles"
-                textLine2="Abbey Road"
+                playlist={playlist}
+                imageUrl={playlist.images[0].url}
+                textLine1={playlist.name}
+                textLine2={playlist.owner.display_name}
               />
             ))}
           </Box>
