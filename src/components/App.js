@@ -79,10 +79,11 @@ const theme = createTheme({
 
 function App() {
 
-  const allEarsClientId = "600f950452a84657b5a28a42c739ceac"
-  const allEarsClientSecret = "21203cc6dd96448d9e1751b1debe3e38"
+  const allEarsClientId = "dabca092fe0b46d8aea268eb47f61bf7"
+  const allEarsClientSecret = "6db5e30985a04ff38867b491ff81c749"
 
   const [searchResults, setSearchResults] = useState(null);
+
   
   const spotifyAPI = "https://api.spotify.com/v1"
   
