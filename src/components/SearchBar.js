@@ -1,13 +1,24 @@
 import { useState } from "react";
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
-function SearchBar({getAccessToken, spotifyAPI}) {
+
+function SearchBar({getAccessToken, spotifyAPI, onResultsFetched}) {
 
     const [searchQuery, setSearchQuery] = useState('')
 
     function handleQueryChange(e) {
         setSearchQuery(e.target.value)
+    }
+
+    function clearSearch() {
+        setSearchQuery('');
+        if (onResultsFetched) {
+            onResultsFetched(null); // Reset the search results
+        }
     }
 
     async function handleSubmit(e) {
@@ -27,9 +38,13 @@ function SearchBar({getAccessToken, spotifyAPI}) {
         })
 
         const data = await response.json()
-        console.log(data)
+       
+        //Call the callback function with the data
+        if (onResultsFetched) {
+            onResultsFetched(data)
+        }
 
-        setSearchQuery("");
+        // setSearchQuery("");
         
     }
     }
@@ -44,6 +59,17 @@ function SearchBar({getAccessToken, spotifyAPI}) {
                     value={searchQuery}
                     onChange={handleQueryChange}
                     onKeyDown={handleSubmit}
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                {searchQuery && (
+                                    <IconButton onClick={clearSearch} style={{ color: '#181C1E' }}>
+                                        <CloseIcon />
+                                    </IconButton>
+                                )}
+                            </InputAdornment>
+                        ),
+                    }}
                     sx={{
                         maxWidth: '1296px', // Maximum width
                         width: '100%', // Ensure it takes up the available space

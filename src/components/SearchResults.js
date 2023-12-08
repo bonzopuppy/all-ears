@@ -10,6 +10,12 @@ import ArtistItem from "./ArtistItem";
 import SongMedium from "./SongMedium";
 import Typography from "@mui/material/Typography";
 
+function SearchResults ({ results }) {
+
+  console.log (results);
+
+    return (
+
 <Box sx={{
         display: 'flex',
         flexDirection: 'column', // Stack sections vertically
@@ -73,3 +79,7 @@ import Typography from "@mui/material/Typography";
         </Box>
 
       </Box>
+    );
+}
+
+export default SearchResults;
