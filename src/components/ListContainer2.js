@@ -3,7 +3,7 @@ import { Box, Typography, Link } from '@mui/material';
 // import musicPlayerAlbum from './musicPlayerAlbum.png';
 import SongSmall from './SongSmall';
 
-function ListContainer2({ title, whatsHot }) {
+function ListContainer2({ title, whatsHot, handleRefresh }) {
 
     return (
         <Box sx={{
@@ -17,7 +17,10 @@ function ListContainer2({ title, whatsHot }) {
             {/* Title */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', margin: '4px 0 20px 8px' }}>
                 <Typography variant="h6">{title}</Typography>
-                <Link href="#" sx={{ textDecoration: 'none', fontWeight: '500', color: 'primary.main', fontFamily: "'Prompt', sans serif", margin: '3px 12px 0 0', '&:hover': { color: 'secondary.main' }, fontSize: '14px'}}>View All</Link>
+                <Link href="#" 
+                sx={{ textDecoration: 'none', fontWeight: '500', color: 'primary.main', fontFamily: "'Prompt', sans serif", margin: '3px 12px 0 0', '&:hover': { color: 'secondary.main' }, fontSize: '14px'}}
+                onClick={handleRefresh}
+                >Refresh</Link>
             </Box>
 
             {/* List Items */}

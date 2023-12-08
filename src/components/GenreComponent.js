@@ -2,9 +2,10 @@ import React from "react";
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 
-function GenreComponent({ title, background, imageUrl}) {
+function GenreComponent({ title, background, imageUrl, openGenreUrl, genre, id}) {
     return (
-        <Box sx={{
+        <Box id={id} onClick={(e) => openGenreUrl(e, genre)}
+            sx={{
             width: 310,
             height: 170,
             backgroundColor: background,
