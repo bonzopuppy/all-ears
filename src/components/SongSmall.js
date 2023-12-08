@@ -32,7 +32,7 @@ function SongSmall({hotTrack}) {
 
                 {/* Album Image */}
                 <Box sx={{ width: '64px', height: '64px', marginRight: '10px', marginLeft: '10px', position: 'relative' }}>
-                    <img src={hotTrack.album.images[0].url} alt="Album" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={hotTrack.album.images[0].url} alt="Album" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 4}} />
                     <Box className="playHover"
                         sx={{
                             position: 'absolute',
