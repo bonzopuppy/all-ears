@@ -169,7 +169,7 @@ function MusicPlayer() {
               <img
                 src={song.image}
                 alt="Album"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 4 }}
               />
             </Box>
             {/* Song Info */}
