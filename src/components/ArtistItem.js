@@ -5,6 +5,10 @@ import PlayHover from "./PlayHover";
 
 const ArtistItem = ({ imageUrl, textLine1, followers, artist }) => {
   
+    const formatNumberWithCommas = (number) => {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      };
+
     return (
       <Box
         sx={{
@@ -63,7 +67,8 @@ const ArtistItem = ({ imageUrl, textLine1, followers, artist }) => {
                 fontSize: '.8em'
             }}
             >
-             {artist && artist.followers?.total && `${artist.followers.total} Followers`}
+            {/* {artist && artist.followers?.total && `${artist.followers.total} Followers`} */}
+            {artist && artist.followers?.total && `${formatNumberWithCommas(artist.followers.total)} Followers`}
         </Typography>
       </Box>
     );
