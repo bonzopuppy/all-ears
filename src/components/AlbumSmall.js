@@ -4,9 +4,9 @@ import { Typography } from '@mui/material';
 import musicPlayerAlbum from '../images/musicPlayerAlbum.png';
 import PlayHover from './PlayHover';
 
-function SongSmall({hotTrack}) {
-    
-    if (!hotTrack) {
+function AlbumSmall({release}) {
+
+    if (!release) {
         return null; // or return a loading spinner
     } else return (
         
@@ -31,7 +31,7 @@ function SongSmall({hotTrack}) {
 
                 {/* Album Image */}
                 <Box sx={{ width: '64px', height: '64px', marginRight: '10px', marginLeft: '10px', position: 'relative' }}>
-                    <img src={hotTrack.album.images[0].url} alt="Album" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={release.images[0].url} alt="Album" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     <Box className="playHover"
                         sx={{
                             position: 'absolute',
@@ -55,10 +55,10 @@ function SongSmall({hotTrack}) {
                 {/* Song Info */}
                 <Box>
                     <Typography variant="subtitle1" sx={{ fontWeight: '500' }}>
-                        {hotTrack.name}
+                        {release.name}
                     </Typography>
                     <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                        {hotTrack.artists[0].name}
+                        {release.artists[0].name}
                     </Typography>
                 </Box>
 
@@ -67,4 +67,4 @@ function SongSmall({hotTrack}) {
     );
 }
 
-export default SongSmall;
+export default AlbumSmall;

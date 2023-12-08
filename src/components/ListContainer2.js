@@ -3,7 +3,7 @@ import { Box, Typography, Link } from '@mui/material';
 // import musicPlayerAlbum from './musicPlayerAlbum.png';
 import SongSmall from './SongSmall';
 
-function ListContainer2({ title, newReleases }) {
+function ListContainer2({ title, whatsHot }) {
 
     return (
         <Box sx={{
@@ -29,9 +29,7 @@ function ListContainer2({ title, newReleases }) {
                     marginBottom: '10px' // Spacing between items
                 }
             }}>
-                <SongSmall />
-                <SongSmall />
-                <SongSmall />
+                {whatsHot && whatsHot.map(hotTrack => <SongSmall hotTrack={hotTrack} />)}
             </Box>
         </Box>
     );

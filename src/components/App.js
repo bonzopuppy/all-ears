@@ -107,7 +107,26 @@ function App() {
         
         }
   
-        fetchNewReleases()
+      fetchNewReleases()
+
+      async function fetchWhatsHot() {
+
+        const accessToken = await getAccessToken()
+
+        const response = await fetch(`${spotifyAPI}/recommendations?country=US&limit=30&seed_genres=hip-hop,r-n-b,afrobeat,pop&min_popularity=75`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
+        })
+
+        const data = await response.json()
+        const sortedTracks = data.tracks.sort((a, b) => b.popularity - a.popularity);
+        const whatsHot = sortedTracks.slice(0, 3);
+        setWhatsHot(whatsHot);
+      }
+
+      fetchWhatsHot()
 
   }, [])
 
@@ -125,6 +144,7 @@ function App() {
                 getAccessToken={getAccessToken}
                 spotifyAPI={spotifyAPI} 
                 newReleases={newReleases}
+                whatsHot={whatsHot}
               />
             }/>
             <Route path="/library" element={
