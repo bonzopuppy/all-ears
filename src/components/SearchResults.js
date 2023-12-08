@@ -12,8 +12,6 @@ import Typography from "@mui/material/Typography";
 
 function SearchResults({ results }) {
 
-  console.log(results);
-
   return (
 
     <Box sx={{

@@ -12,7 +12,7 @@ function SongMedium({song}) {
         return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
     }
 
-    const songDuration = song.duration_ms;
+    const songDuration = song?.duration_ms;
     const formattedDuration = millisToMinutesAndSeconds(songDuration)
     
     if (song) {

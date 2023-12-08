@@ -54,7 +54,6 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
     },
   });
 
-
   const songData = new Array(5).fill(null);
   const albumData = new Array(1).fill(null); // Replace with actual data
   const artistData = new Array(1).fill(null); // Replace with actual data
@@ -63,6 +62,7 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
   const [playlists, setPlaylists] = useState([])
   const [artists, setArtists] = useState([])
   const [songs, setSongs] = useState([])
+  const [albums, setAlbums] = useState([])
 
   useEffect(() => {
 
@@ -140,7 +140,23 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
     
     }
 
+    async function fetchAlbums() {
+
+      const accessToken = await getAccessToken()
+        
+        const response = await fetch(`${spotifyAPI}/browse/new-releases?country=US&limit=21`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
+        })
+  
+          const data = await response.json()
+          setAlbums(data.albums.items)
+      }
+
     fetchSongs()
+    fetchAlbums()
     fetchArtists()
     fetchPlaylists()
     
@@ -213,14 +229,15 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
 
       {selectedTab === 1 && (
         <>
-          <Typography variant="h5">Albums</Typography>
+          <Typography variant="h5">Top Albums</Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-            {albumData.map((_, index) => (
+            {albums.map((album, index) => (
               <AlbumPlaylistItem
                 key={index}
-                imageUrl={coverImage}
-                textLine1="The Beatles"
-                textLine2="Abbey Road"
+                imageUrl={album.images[0].url}
+                album={album}
+                textLine1={album.name}
+                textLine2={album.artists[0].name}
               />
             ))}
           </Box>

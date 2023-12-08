@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import PlayHover from "./PlayHover";
 
-const ArtistItem = ({ imageUrl, textLine1, artist }) => {
+const ArtistItem = ({ imageUrl, textLine1, followers, artist }) => {
   
     return (
       <Box
@@ -52,10 +52,10 @@ const ArtistItem = ({ imageUrl, textLine1, artist }) => {
                 fontSize: '.9em' 
             }}
         >
-            {artist}
+            {artist && `${artist.name}`}
             
         </Typography>
-        {/* <Typography 
+        <Typography 
             variant="body1"
             sx={{
                 fontWeight: 400, 
@@ -63,7 +63,7 @@ const ArtistItem = ({ imageUrl, textLine1, artist }) => {
                 fontSize: '.8em'
             }}
             >
-             {artist && `${artist.followers.total} Followers`}
+             {artist && artist.followers?.total && `${artist.followers.total} Followers`}
         </Typography>
       </Box>
     );
