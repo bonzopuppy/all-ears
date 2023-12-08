@@ -217,7 +217,7 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
       {selectedTab === 0 && (
         <>
           <Typography variant="h5">Popular Songs</Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
             {songs.map((song, index) => (
               <SongMedium 
                 song={song}
@@ -231,7 +231,7 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
       {selectedTab === 1 && (
         <>
           <Typography variant="h5">Top Albums</Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
             {albums.map((album, index) => (
               <AlbumPlaylistItem
                 key={index}
