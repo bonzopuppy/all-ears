@@ -3,20 +3,19 @@ import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import PlayHover from "./PlayHover";
 
-const ArtistItem = ({ imageUrl, artist, followers }) => {
+const ArtistItemSearch = ({ imageUrl, artist, followers }) => {
   
     return (
       <Box
         sx={{
           width: 166,
-          height: 248,
+          minHeight: 248,
           backgroundColor: 'white',
-          padding: '8px',
+          padding: '20px 8px 10px 8px',
           boxSizing: 'border-box',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          justifyContent: 'center',
           position: 'relative',
           borderRadius: '8px',
         '&:hover': {
@@ -49,10 +48,12 @@ const ArtistItem = ({ imageUrl, artist, followers }) => {
                 fontWeight: 600, 
                 marginLeft: '8px',
                 marginTop: '10px',
-                fontSize: '.9em' 
+                fontSize: '.9em', 
+                textAlign: 'center',
+                wordWrap: 'break-word',
             }}
         >
-            {artist}    
+            {artist}
             
         </Typography>
         <Typography 
@@ -63,10 +64,10 @@ const ArtistItem = ({ imageUrl, artist, followers }) => {
                 fontSize: '.8em'
             }}
             >
-             {followers} Followers
+             {followers}
         </Typography>
       </Box>
     );
   };
 
-export default ArtistItem;
+export default ArtistItemSearch;

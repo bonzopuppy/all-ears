@@ -4,7 +4,8 @@ import { Typography } from '@mui/material';
 import musicPlayerAlbum from '../images/musicPlayerAlbum.png';
 import PlayHover from './PlayHover';
 
-function SongMedium({song}) {
+
+function SongMediumSearch({title, artist, album, image, duration}) {
 
     function millisToMinutesAndSeconds(millis) {
         const minutes = Math.floor(millis / 60000);
@@ -12,10 +13,9 @@ function SongMedium({song}) {
         return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
     }
 
-    const songDuration = song?.duration_ms;
+    const songDuration = duration;
     const formattedDuration = millisToMinutesAndSeconds(songDuration)
     
-    if (song) {
         return (
             <li style={{ listStyleType: 'none' }}>
 
@@ -41,7 +41,7 @@ function SongMedium({song}) {
 
                     {/* Album Image */}
                     <Box sx={{ width: '64px', height: '64px', marginRight: '10px', marginLeft: '10px', position: 'relative' }}>
-                        <img src={song.album.images[0].url} alt="Album" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }} />
+                        <img src={image} alt="Album" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }} />
                         <Box className="playHover"
                             sx={{
                                 position: 'absolute',
@@ -66,10 +66,10 @@ function SongMedium({song}) {
                     {/* Song Info */}
                     <Box>
                         <Typography variant="subtitle1" sx={{ fontWeight: '500' }}>
-                            {song.name}
+                            {title}
                         </Typography>
                         <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                            {song.artists[0].name}
+                            {artist}
                         </Typography>
                     </Box>
 
@@ -84,6 +84,4 @@ function SongMedium({song}) {
         );
     }
 
-}
-
-export default SongMedium;
+export default SongMediumSearch;

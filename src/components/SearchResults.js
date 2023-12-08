@@ -6,12 +6,12 @@ import AlbumPlaylistItem from "./AlbumPlaylistItem";
 import coverImage from "../images/coverImage.png";
 import artistImage from "../images/artistImage.png";
 import Box from "@mui/material/Box";
-import ArtistItem from "./ArtistItem";
-import SongMedium from "./SongMedium";
+import ArtistItemSearch from "./ArtistItemSearch";
+import SongMediumSearch from "./SongMediumSearch";
 import Typography from "@mui/material/Typography";
 
 function SearchResults({ results }) {
-
+console.log(results.tracks);
   return (
 
     <Box sx={{
@@ -30,7 +30,7 @@ function SearchResults({ results }) {
         gap: '10px'
       }}>
         {results.tracks.items.map(track => (
-        <SongMedium
+        <SongMediumSearch
           key={track.id}
           title={track.name}
           artist={track.artists[0].name}
@@ -64,12 +64,11 @@ function SearchResults({ results }) {
         gap: '20px'
       }}>
         {results.artists.items.map(artist => (
-          <ArtistItem
+          <ArtistItemSearch
             key={artist.id}
             imageUrl={artist.images[0]?.url || artistImage}
             artist={artist.name}
-            albumCount="Unknown" // Spotify API does not provide album count in search results
-            songCount="Unknown" // Spotify API does not provide song count in search results
+            // followers={artist.followers.total}
           />
         ))}
       </Box>
