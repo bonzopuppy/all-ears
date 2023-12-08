@@ -8,7 +8,7 @@ function ListContainer({ title, newReleases }) {
     return (
         <Box sx={{
             width: 413,
-            height: 300,
+            height: 337,
             backgroundColor: '#F4F2F7',
             padding: '10px', // Adjust padding as needed
             borderRadius: '8px', // Optional: if you want rounded corners
