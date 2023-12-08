@@ -33,12 +33,17 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
 
   const tabStyle = (isActive) => ({
     backgroundColor: isActive ? '#181C1E' : '',
-    color: isActive ? 'white' : 'rgba(0, 0, 0, 0.7)',
+    color: isActive ? 'white !important' : 'rgba(0, 0, 0, 0.7)',
     borderRadius: isActive ? '8px' : '0',
     opacity: 1,
     textTransform: 'none',
-    fontSize: '1.2rem',
-    padding: '10px 15px', // Padding added to each tab
+    fontSize: '1.1rem',
+    // padding: '10px 15px', // Padding added to each tab
+    '&.Mui-selected': {
+      marginTop: '15px',
+      marginBottom: '15px',
+      
+     },
     '& .MuiTab-wrapper': {
       flexDirection: 'row',
       justifyContent: 'center',
@@ -46,8 +51,9 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
     '& .count': {
       backgroundColor: isActive ? 'white' : '#181C1E',
       borderRadius: '30px',
-      padding: '2px 6px',
+      padding: '2px 12px',
       marginLeft: '4px',
+      fontSize: '.9rem',
       color: isActive ? '#181C1E' : 'white',
     },
   });
@@ -62,23 +68,26 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          width: '809px',
+          width: 'auto',
+          boxSizing: 'border-box',
           height: '64px',
-          margin: '0 auto',
+          margin: '20px auto',
         }}>
           <Tabs
             value={selectedTab}
             onChange={handleChange}
             variant="scrollable" // Changed to scrollable
             scrollButtons="auto"
+            TabIndicatorProps={{ style: { display: 'none' }}}
             sx={{
               minHeight: '64px',
               '& .MuiTabs-flexContainer': {
                 height: '100%',
               },
               '& .MuiTab-root': {
-                height: '100%',
+                height: 'auto',
                 alignItems: 'center',
+                margin: '15px 12px',
               },
             }}
           >
@@ -90,7 +99,7 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
                     {label} <span className="count">{[songData, albumData, artistData, playlistData][index].length}</span>
                   </span>
                 }
-                sx={tabStyle(selectedTab === index)}
+                sx={tabStyle(selectedTab === index)} // Added padding
               />
             ))}
           </Tabs>
