@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, Link } from '@mui/material';
 // import musicPlayerAlbum from './musicPlayerAlbum.png';
-import SongSmall from './SongSmall';
+import AlbumSmall from './AlbumSmall';
 
 function ListContainer({ title, newReleases }) {
 
@@ -29,7 +29,7 @@ function ListContainer({ title, newReleases }) {
                     marginBottom: '10px' // Spacing between items
                 }
             }}>
-                {newReleases && newReleases.map(release => <SongSmall release={release} /> )}
+                {newReleases && newReleases.map(release => <AlbumSmall release={release} /> )}
             </Box>
         </Box>
     );
