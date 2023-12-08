@@ -57,10 +57,10 @@ function SearchBar({getAccessToken, spotifyAPI}) {
                                 border: 'none', // Removes the default border
                             },
                             '&:hover fieldset': {
-                                border: 'none', // Removes border on hover
+                                border: '1px solid #181C1E'
                             },
                             '&.Mui-focused fieldset': {
-                                border: 'none', // Removes border on focus
+                                border: '1px solid #181C1E'
                             },
                             '& .MuiInputBase-input': { // Targeting the input text
                                 fontWeight: '500', // Change font weight here
