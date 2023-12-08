@@ -8,13 +8,9 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import GenreComponent from './GenreComponent';
-import blueOvals from '../images/blueOvals.svg';
-import orangeOvals from '../images/orangeOvals.svg';
-import purpleOvals from '../images/purpleOvals.svg';
-import redOvals from '../images/redOvals.svg';
-import lightBlueOvals from '../images/lightBlueOvals.svg';
 
-function GenreCarousel() {
+function GenreCarousel({genres}) {
+   
     const sliderRef = React.useRef(null);
 
     function CustomPrevArrow() {
@@ -78,28 +74,13 @@ function GenreCarousel() {
         slidesToScroll: 4
     };
 
-    const genres = [
-        { title: 'Rock', background: '#31334F', imageUrl: blueOvals },
-        { title: 'Pop', background: '#EA9633', imageUrl: orangeOvals },
-        { title: 'Hip Hop', background: '#8340D9', imageUrl: purpleOvals },
-        { title: 'Jazz', background: '#E13535', imageUrl: redOvals },
-        { title: 'Country', background: '#75C6F4', imageUrl: lightBlueOvals },
-        { title: 'Classical', background: '#31334F', imageUrl: blueOvals },
-        { title: 'Electronic', background: '#EA9633', imageUrl: orangeOvals },
-        { title: 'Folk', background: '#8340D9', imageUrl: purpleOvals },
-        { title: 'R&B', background: '#E13535', imageUrl: redOvals },
-        { title: 'Reggae', background: '#75C6F4', imageUrl: lightBlueOvals },
-        { title: 'Blues', background: '#31334F', imageUrl: blueOvals },
-        { title: 'Metal', background: '#EA9633', imageUrl: orangeOvals },
-        { title: 'Funk', background: '#8340D9', imageUrl: purpleOvals },
-        { title: 'Disco', background: '#E13535', imageUrl: redOvals },
-        { title: 'Techno', background: '#75C6F4', imageUrl: lightBlueOvals },
-        { title: 'Soul', background: '#31334F', imageUrl: blueOvals },
-        { title: 'Punk', background: '#EA9633', imageUrl: orangeOvals },
-        { title: 'Gospel', background: '#8340D9', imageUrl: purpleOvals },
-        { title: 'Indie', background: '#E13535', imageUrl: redOvals },
-        { title: 'Alternative', background: '#75C6F4', imageUrl: lightBlueOvals },
-    ];
+
+    function openGenreUrl(e, genre) {
+        e.preventDefault()
+        if (genre.id === e.currentTarget.id) {
+           window.open(genre.url, '_blank');
+        }
+    }
 
 
     return (
@@ -108,9 +89,18 @@ function GenreCarousel() {
             <CustomPrevArrow />
             <CustomNextArrow />
             <Slider ref={sliderRef} {...settings}>
-                {genres.map((genre, index) => (
-                    <GenreComponent key={index} title={genre.title} background={genre.background} imageUrl={genre.imageUrl} />
-                ))}
+                {genres.map((genre, index) => 
+                    <GenreComponent 
+                        id={genre.id}
+                        key={index}
+                        url={genre.url}
+                        title={genre.title}
+                        background={genre.background}
+                        imageUrl={genre.imageUrl}
+                        genre={genre}
+                        openGenreUrl={openGenreUrl}
+                    />
+                )}
             </Slider>
         </Box>
     );

@@ -8,7 +8,7 @@ const ArtistItem = ({ imageUrl, textLine1, albumCount, songCount }) => {
       <Box
         sx={{
           width: 166,
-          height: 218,
+          height: 248,
           backgroundColor: 'white',
           padding: '8px',
           boxSizing: 'border-box',

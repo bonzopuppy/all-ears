@@ -4,7 +4,7 @@ import ListContainer from './ListContainer'; // Import your ListContainer compon
 import ListContainer2 from './ListContainer2'
 import ListContainer3 from './ListContainer3'; // Import your ListContainer component
 
-function ListContainerWrapper({newReleases, whatsHot}) {
+function ListContainerWrapper({newReleases, whatsHot, handleRefresh}) {
     return (
         <Box sx={{
             display: 'flex',
@@ -16,8 +16,8 @@ function ListContainerWrapper({newReleases, whatsHot}) {
             gap: '20px' // Space between ListContainer components
         }}>
             <ListContainer title={"New Releases"} newReleases={newReleases} />
-            <ListContainer2 title={"What's Hot"} whatsHot={whatsHot}/>
-            <ListContainer3 title={"Recent"}/>
+            <ListContainer2 title={"What's Hot"} whatsHot={whatsHot} handleRefresh={handleRefresh}/>
+            <ListContainer3 title={"Recent Selections"}/>
             
         </Box>
     );

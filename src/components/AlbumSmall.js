@@ -16,6 +16,7 @@ function AlbumSmall({release}) {
                 display: 'flex',
                 alignItems: 'center',
                 position: 'relative',
+                height: 76,
                 '&:hover': {
                     backgroundColor: 'rgba(24, 28, 30, 0.08)', // Background color on hover
                     cursor: 'pointer',

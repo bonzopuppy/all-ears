@@ -7,19 +7,29 @@ import Home from './Home';
 import YourLibrary from './YourLibrary';
 import Explore from './Explore';
 import { MusicProvider } from './MusicContext';
+import blueOvals from '../images/blueOvals.svg';
+import orangeOvals from '../images/orangeOvals.svg';
+import purpleOvals from '../images/purpleOvals.svg';
+import redOvals from '../images/redOvals.svg';
+import lightBlueOvals from '../images/lightBlueOvals.svg';
 
 
-// App 1
-// |- Home 2
-//    |- Nav Bar 3
-//    |- Search Bar 4
-//    |- Search Results Container 5
-//       |- Search Results Card 6
-//    |- List Container Wrapper 7
-//       |- List Container 8
-//          |- Song Item 9
-//    |- Genre Carousel 10
-//       |- Genre Component 11
+// App
+// |- Home
+//    |- Nav Bar
+//    |- Search Bar
+//    |- Search Results Container
+//       |- Search Results Card
+//    |- List Container Wrapper
+//       |- List Container 1
+//          |- Album Small (3)
+//       |- List Container 2
+//          |- Song Small (3)
+//       |- List Container 3 (Hard-coded)
+//          |- Album Playlist Item
+//          |- Artist Item
+//    |- Genre Carousel
+//       |- Genre Component
 // |- Your Library 12
 //    |- Nav Bar 3
 //    |- Library Summary Bar 13
@@ -90,6 +100,23 @@ function App() {
   const [newReleases, setNewReleases] = useState([])
   const [whatsHot, setWhatsHot] = useState([])
 
+  async function fetchWhatsHot() {
+
+    const accessToken = await getAccessToken()
+
+    const response = await fetch(`${spotifyAPI}/recommendations?country=US&limit=30&seed_genres=hip-hop,r-n-b,afrobeat,pop&min_popularity=75`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    })
+
+    const data = await response.json()
+    const sortedTracks = data.tracks.sort((a, b) => b.popularity - a.popularity);
+    const whatsHot = sortedTracks.slice(0, 3);
+    setWhatsHot(whatsHot);
+  }
+
   useEffect(() => {
       async function fetchNewReleases() {
 
@@ -106,30 +133,39 @@ function App() {
           setNewReleases(data.albums.items)
         
         }
-  
+
       fetchNewReleases()
-
-      async function fetchWhatsHot() {
-
-        const accessToken = await getAccessToken()
-
-        const response = await fetch(`${spotifyAPI}/recommendations?country=US&limit=30&seed_genres=hip-hop,r-n-b,afrobeat,pop&min_popularity=75`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`
-          }
-        })
-
-        const data = await response.json()
-        const sortedTracks = data.tracks.sort((a, b) => b.popularity - a.popularity);
-        const whatsHot = sortedTracks.slice(0, 3);
-        setWhatsHot(whatsHot);
-      }
-
       fetchWhatsHot()
 
   }, [])
 
+  function handleRefresh(e) {
+    e.preventDefault()
+    fetchWhatsHot()
+  }
+
+  const genres = [
+    { id: '1', title: 'Rock', background: '#31334F', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFDXXwE9BDJAr', imageUrl: blueOvals },
+    { id: '2', title: 'Pop', background: '#EA9633', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFEC4WFtoNRpw', imageUrl: orangeOvals },
+    { id: '3', title: 'Hip Hop', background: '#8340D9', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFQ00XGBls6ym', imageUrl: purpleOvals },
+    { id: '4', title: 'Jazz', background: '#E13535', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFAJ5xb0fwo9m', imageUrl: redOvals },
+    { id: '5', title: 'Country', background: '#75C6F4', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFKLfwjuJMoNC', imageUrl: lightBlueOvals },
+    { id: '6', title: 'Classical', background: '#31334F', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFPrEiAOxgac3', imageUrl: blueOvals },
+    { id: '7', title: 'Electronic', background: '#EA9633', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFHOzuVTgTizF', imageUrl: orangeOvals },
+    { id: '8', title: 'Folk', background: '#8340D9', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFy78wprEpAjl', imageUrl: purpleOvals },
+    { id: '9', title: 'R&B', background: '#E13535', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFEZPnFQSFB1T', imageUrl: redOvals },
+    { id: '10', title: 'Caribbean', background: '#75C6F4', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFObNLOHydSW8', imageUrl: lightBlueOvals },
+    { id: '11', title: 'Blues', background: '#31334F', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFQiK2EHwyjcU', imageUrl: blueOvals },
+    { id: '12', title: 'Metal', background: '#EA9633', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFDkd668ypn6O', imageUrl: orangeOvals },
+    { id: '13', title: 'Funk & Disco', background: '#8340D9', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFFsW9N8maB6z', imageUrl: purpleOvals },
+    { id: '14', title: 'Latin', background: '#E13535', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFxXaXKP7zcDp', imageUrl: redOvals },
+    { id: '15', title: 'Afrobeats', background: '#75C6F4', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFNQ0fGp4byGU', imageUrl: lightBlueOvals },
+    { id: '16', title: 'Soul', background: '#31334F', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFIpEuaCnimBj', imageUrl: blueOvals },
+    { id: '17', title: 'Punk', background: '#EA9633', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFAjfauKLOZiv', imageUrl: orangeOvals },
+    { id: '18', title: 'Gospel', background: '#8340D9', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFy0OenPG51Av', imageUrl: purpleOvals },
+    { id: '19', title: 'Indie', background: '#E13535', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFCWjUTdzaG0e', imageUrl: redOvals },
+    { id: '20', title: 'Alternative', background: '#75C6F4', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFFtlLYUHv8bT', imageUrl: lightBlueOvals },
+];
 
   return (
     <ThemeProvider theme={theme}>
@@ -145,6 +181,8 @@ function App() {
                 spotifyAPI={spotifyAPI} 
                 newReleases={newReleases}
                 whatsHot={whatsHot}
+                handleRefresh={handleRefresh}
+                genres={genres}
               />
             }/>
             <Route path="/library" element={
@@ -167,6 +205,7 @@ function App() {
       </Router>
     </ThemeProvider>
     );
+
 }
 
 export default App;

@@ -6,7 +6,7 @@ import ListContainerWrapper from "./ListContainerWrapper";
 import GenreCarousel from "./GenreCarousel";
 import { useMusicContext } from "./MusicContext";
 
-function Home({getAccessToken, spotifyAPI, newReleases, whatsHot}) {
+function Home({getAccessToken, spotifyAPI, newReleases, whatsHot, handleRefresh, genres}) {
     const {
         currentSongIndex,
         isPlaying,
@@ -18,9 +18,15 @@ function Home({getAccessToken, spotifyAPI, newReleases, whatsHot}) {
     return (
         <>
                 <div>
-                    <SearchBar getAccessToken={getAccessToken} spotifyAPI={spotifyAPI} />
-                    <ListContainerWrapper newReleases={newReleases} whatsHot={whatsHot} />
-                    <GenreCarousel />
+                    <SearchBar
+                        getAccessToken={getAccessToken}
+                        spotifyAPI={spotifyAPI} />
+                    <ListContainerWrapper 
+                        newReleases={newReleases}
+                        whatsHot={whatsHot}
+                        handleRefresh={handleRefresh}
+                    />
+                    <GenreCarousel genres={genres}/>
                 </div>
         </>
     )
