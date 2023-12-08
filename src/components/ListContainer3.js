@@ -4,6 +4,7 @@ import AlbumPlaylistItem from './AlbumPlaylistItem';
 import ArtistItem from './ArtistItem';
 import coverImage from '../images/coverImage.png';
 import artistImage from '../images/artistImage.png';
+import ArtistItemHome from './ArtistItemHome';
 
 function ListContainer3({ title }) {
     return (
@@ -36,9 +37,9 @@ function ListContainer3({ title }) {
                     textLine1="The Beatles"
                     textLine2="Abbey Road"
                 />
-                <ArtistItem
+                <ArtistItemHome
                     imageUrl={artistImage}
-                    textLine1="Ariane Grande"
+                    artist="Ariana Grande"
                     followers="80,308,012"
                 />
             </Box>
