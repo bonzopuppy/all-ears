@@ -195,17 +195,17 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
               '& .MuiTab-root': {
                 height: 'auto',
                 alignItems: 'center',
-                margin: '15px 12px',
+                margin: '15px 30px',
               },
             }}
           >
             {['Songs', 'Albums', 'Artists', 'Playlists'].map((label, index) => (
               <Tab
                 key={label}
-                label={
-                  <span>
-                    {label} <span className="count">{[songData, albumData, artistData, playlistData][index].length}</span>
-                  </span>
+                label={label
+                  // <span>
+                  //   {label} <span className="count">{[songData, albumData, artistData, playlistData][index].length}</span>
+                  // </span>
                 }
                 sx={tabStyle(selectedTab === index)} // Added padding
               />
