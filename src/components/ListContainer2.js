@@ -1,11 +1,10 @@
 import React from 'react';
 import { Box, Typography, Link } from '@mui/material';
-import AlbumPlaylistItem from './AlbumPlaylistItem';
-import ArtistItem from './ArtistItem';
-import coverImage from '../images/coverImage.png';
-import artistImage from '../images/artistImage.png';
+// import musicPlayerAlbum from './musicPlayerAlbum.png';
+import SongSmall from './SongSmall';
 
-function ListContainer({ title }) {
+function ListContainer2({ title, newReleases }) {
+
     return (
         <Box sx={{
             width: 413,
@@ -23,28 +22,19 @@ function ListContainer({ title }) {
 
             {/* List Items */}
             <Box component="ul" sx={{ 
-                display: 'flex',  // Set display to flex
-                flexDirection: 'row', // Align items side by side
-                justifyContent: 'center', // Adjust space between items
                 padding: 0, 
                 margin: 0, 
-                gap: '24px', // Space between ListContainer components
                 listStyleType: 'none', 
+                '& > li': { 
+                    marginBottom: '10px' // Spacing between items
+                }
             }}>
-                <AlbumPlaylistItem
-                    imageUrl={coverImage}
-                    textLine1="The Beatles"
-                    textLine2="Abbey Road"
-                />
-                <ArtistItem
-                    imageUrl={artistImage}
-                    textLine1="Ariane Grande"
-                    albumCount="16"
-                    songCount="187"
-                />
+                <SongSmall />
+                <SongSmall />
+                <SongSmall />
             </Box>
         </Box>
     );
 }
 
-export default ListContainer;
+export default ListContainer2;

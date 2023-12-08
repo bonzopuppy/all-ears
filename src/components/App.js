@@ -83,26 +83,26 @@ function App() {
   const [newReleases, setNewReleases] = useState([])
   const [whatsHot, setWhatsHot] = useState([])
 
-  useEffect(async () => {
-    
-    const accessToken = await getAccessToken()
-    
-    const response = await fetch(`${spotifyAPI}/browse/new-releases?country=US&limit=3`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`
-      }
-    })
+  useEffect(() => {
+      async function fetchNewReleases() {
 
-    const data = await response.json()
-    setNewReleases(data)
-    console.log(newReleases)
+        const accessToken = await getAccessToken()
+        
+        const response = await fetch(`${spotifyAPI}/browse/new-releases?country=US&limit=3`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`
+          }
+        })
+  
+          const data = await response.json()
+          setNewReleases(data.albums.items)
+        
+        }
+  
+        fetchNewReleases()
+
   }, [])
-
-
-
-
-
 
 
   return (
@@ -117,6 +117,7 @@ function App() {
               <Home 
                 getAccessToken={getAccessToken}
                 spotifyAPI={spotifyAPI} 
+                newReleases={newReleases}
               />
             }/>
             <Route path="/library" element={

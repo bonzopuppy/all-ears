@@ -1,9 +1,10 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import ListContainer from './ListContainer'; // Import your ListContainer component
-import ListContainer2 from './ListContainer2'; // Import your ListContainer component
+import ListContainer2 from './ListContainer2'
+import ListContainer3 from './ListContainer3'; // Import your ListContainer component
 
-function ListContainerWrapper() {
+function ListContainerWrapper({newReleases}) {
     return (
         <Box sx={{
             display: 'flex',
@@ -14,9 +15,10 @@ function ListContainerWrapper() {
             padding: '0 30px', // Similar to the search bar
             gap: '20px' // Space between ListContainer components
         }}>
-            <ListContainer title={"New Releases"} />
-            <ListContainer title={"What's Hot"}/>
-            <ListContainer2 title={"Recent"}/>
+            <ListContainer title={"New Releases"} newReleases={newReleases} />
+            <ListContainer2 title={"What's Hot"}/>
+            <ListContainer3 title={"Recent"}/>
+            
         </Box>
     );
 }
