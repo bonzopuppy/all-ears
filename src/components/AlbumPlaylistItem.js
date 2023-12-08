@@ -8,7 +8,7 @@ const AlbumPlaylistItem = ({ imageUrl, textLine1, textLine2 }) => {
       <Box
         sx={{
           width: 166,
-          height: 248,
+          minHeight: 248,
           backgroundColor: 'white',
           padding: '8px',
           boxSizing: 'border-box',

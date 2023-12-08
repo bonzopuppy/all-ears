@@ -10,76 +10,90 @@ import ArtistItem from "./ArtistItem";
 import SongMedium from "./SongMedium";
 import Typography from "@mui/material/Typography";
 
-function SearchResults ({ results }) {
+function SearchResults({ results }) {
 
-  console.log (results);
+  console.log(results);
 
-    return (
+  return (
 
-<Box sx={{
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column', // Stack sections vertically
+      maxWidth: 1296,
+      margin: '10px auto',
+      padding: '0 30px',
+      gap: '30px' // Increase gap for better separation of sections
+    }}>
+
+      <Typography variant="h5">Songs</Typography>
+      <Box sx={{
         display: 'flex',
-        flexDirection: 'column', // Stack sections vertically
-        maxWidth: 1296,
-        margin: '10px auto',
-        padding: '0 30px',
-        gap: '20px' // Increase gap for better separation of sections
+        flexWrap: 'wrap',
+        gap: '10px'
       }}>
-
-        <Typography variant="h5">Songs</Typography>
-        <Box sx={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '10px'
-        }}>
-          <SongMedium />
-          <SongMedium />
-          <SongMedium />
-          <SongMedium />
-          <SongMedium />
-        </Box>
-
-        <Typography variant="h5">Albums</Typography>
-        <Box sx={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '20px'
-        }}>
-          <AlbumPlaylistItem
-            imageUrl={coverImage}
-            textLine1="The Beatles"
-            textLine2="Abbey Road"
-          />
-        </Box>
-
-        <Typography variant="h5">Artists</Typography>
-        <Box sx={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '20px'
-        }}>
-          <ArtistItem
-            imageUrl={artistImage}
-            textLine1="Ariane Grande"
-            albumCount="16"
-            songCount="187"
-          />
-        </Box>
-
-        <Typography variant="h5">Playlists</Typography>
-        <Box sx={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '20px'
-        }}>
-          <AlbumPlaylistItem
-            imageUrl={coverImage}
-            textLine1="The Beatles"
-            textLine2="Abbey Road"
-          />
-        </Box>
-
+        {results.tracks.items.map(track => (
+        <SongMedium
+          key={track.id}
+          title={track.name}
+          artist={track.artists[0].name}
+          album={track.album.name}
+          image={track.album.images[0].url || coverImage}
+          duration={track.duration_ms}
+        />
+        ))}
       </Box>
-    );
+
+      <Typography variant="h5">Albums</Typography>
+      <Box sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '20px'
+      }}>
+        {results.albums.items.map(album => (
+          <AlbumPlaylistItem
+            key={album.id}
+            imageUrl={album.images[0].url || coverImage}
+            textLine1={album.name}
+            textLine2={album.artists[0].name}
+          />
+        ))}
+      </Box>
+
+      <Typography variant="h5">Artists</Typography>
+      <Box sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '20px'
+      }}>
+        {results.artists.items.map(artist => (
+          <ArtistItem
+            key={artist.id}
+            imageUrl={artist.images[0]?.url || artistImage}
+            artist={artist.name}
+            albumCount="Unknown" // Spotify API does not provide album count in search results
+            songCount="Unknown" // Spotify API does not provide song count in search results
+          />
+        ))}
+      </Box>
+
+      <Typography variant="h5">Playlists</Typography>
+      <Box sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '20px'
+      }}>
+        {results.playlists.items.map(playlist => (
+          <AlbumPlaylistItem
+            key={playlist.id}
+            imageUrl={playlist.images[0]?.url || coverImage} // Using the first image or a default cover image
+            textLine1={playlist.name}
+            textLine2={`Curated by ${playlist.owner.display_name}`} // Example of using the playlist owner's name
+          />
+        ))}
+      </Box>
+
+    </Box>
+  );
 }
 
 export default SearchResults;

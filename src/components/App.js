@@ -175,7 +175,7 @@ function App() {
         <div className="App">
           <NavBar />
           <MusicProvider>
-        <div style ={{ paddingTop: '64px', paddingBottom: '88px'}}>
+        <div style ={{ paddingTop: '64px', paddingBottom: '108px'}}>
           <Routes>
             <Route path="/all-ears" element={
               <Home 
