@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
-import frozen from "../music/LetItGo.mp3"
-import phil from "../music/In-the-Air-Tonight.mp3";
-import untold from "../music/Untold-Stories.mp3"
+import taylor from "../music/YoureLosingMe.mp3";
+import tyla from "../music/Water.mp3";
+import bey from "../music/MyHouse.mp3"
 
 const MusicContext = createContext();
 
@@ -12,7 +12,26 @@ const useMusicContext = () => {
 const MusicProvider = ({ children }) => {
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const songs = [frozen, phil, untold]
+  const songs = [
+    {
+        song: tyla,
+        title: "Water",
+        artist: "Tyla",
+        time: "3:21"
+    },
+    {
+        song: bey,
+        title: "My House",
+        artist: "Beyoncé",
+        time: "4:23"
+    },
+    {
+        song: taylor,
+        title: "You're Losing Me",
+        artist: "Taylor Swift",
+        time: "4:38"
+    }
+  ]
 
   const playPauseHandler = () => {
     setIsPlaying((prevIsPlaying) => !prevIsPlaying);
