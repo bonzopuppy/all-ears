@@ -7,11 +7,5 @@
       "source": "/(.*)",
       "destination": "/index.html"
     }
-  ],
-  "env": {
-    "SPOTIFY_CLIENT_ID": "@spotify-client-id",
-    "SPOTIFY_CLIENT_SECRET": "@spotify-client-secret",
-    "REDIRECT_URI": "@redirect-uri",
-    "FRONTEND_URL": "@frontend-url"
-  }
+  ]
 }
