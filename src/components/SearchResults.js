@@ -1,7 +1,4 @@
 import React from "react";
-// import MusicPlayer from "./MusicPlayer";
-// import NavBar from "./NavBar";
-import { useMusicContext } from "./MusicContext";
 import AlbumPlaylistItem from "./AlbumPlaylistItem";
 import coverImage from "../images/coverImage.png";
 import artistImage from "../images/artistImage.png";
@@ -29,14 +26,10 @@ function SearchResults({ results }) {
         flexWrap: 'wrap',
         gap: '10px'
       }}>
-        {results.tracks.items.map(track => (
+        {results.tracks.items.filter(track => track).map(track => (
         <SongMedium
           key={track.id}
-          title={track.name}
-          artist={track.artists[0].name}
-          album={track.album.name}
-          image={track.album.images[0].url || coverImage}
-          duration={track.duration_ms}
+          song={track}
         />
         ))}
       </Box>
@@ -47,7 +40,7 @@ function SearchResults({ results }) {
         flexWrap: 'wrap',
         gap: '20px'
       }}>
-        {results.albums.items.map(album => (
+        {results.albums.items.filter(album => album && album.images && album.images.length > 0).map(album => (
           <AlbumPlaylistItem
             key={album.id}
             imageUrl={album.images[0].url || coverImage}
@@ -63,10 +56,10 @@ function SearchResults({ results }) {
         flexWrap: 'wrap',
         gap: '20px'
       }}>
-        {results.artists.items.map(artist => (
+        {results.artists.items.filter(artist => artist).map(artist => (
           <ArtistItem
             key={artist.id}
-            imageUrl={artist.images[0]?.url || artistImage}
+            imageUrl={artist.images?.[0]?.url || artistImage}
             artist={artist.name}
             albumCount="Unknown" // Spotify API does not provide album count in search results
             songCount="Unknown" // Spotify API does not provide song count in search results
@@ -80,7 +73,7 @@ function SearchResults({ results }) {
         flexWrap: 'wrap',
         gap: '20px'
       }}>
-        {results.playlists.items.map(playlist => (
+        {results.playlists.items.filter(playlist => playlist && playlist.images && playlist.images.length > 0).map(playlist => (
           <AlbumPlaylistItem
             key={playlist.id}
             imageUrl={playlist.images[0]?.url || coverImage} // Using the first image or a default cover image

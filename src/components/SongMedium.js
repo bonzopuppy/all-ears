@@ -1,10 +1,17 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
-import musicPlayerAlbum from '../images/musicPlayerAlbum.png';
 import PlayHover from './PlayHover';
+import { useMusicContext } from './MusicContext';
 
 function SongMedium({song}) {
+    const { playTrack } = useMusicContext();
+
+    const handleClick = () => {
+        if (song) {
+            playTrack(song);
+        }
+    };
 
     function millisToMinutesAndSeconds(millis) {
         const minutes = Math.floor(millis / 60000);
@@ -14,12 +21,14 @@ function SongMedium({song}) {
 
     const songDuration = song?.duration_ms;
     const formattedDuration = millisToMinutesAndSeconds(songDuration)
-    
+
     if (song) {
         return (
             <li style={{ listStyleType: 'none' }}>
 
-                <Box sx={{
+                <Box
+                    onClick={handleClick}
+                    sx={{
                     width: 413,
                     height: 76,
                     display: 'flex',

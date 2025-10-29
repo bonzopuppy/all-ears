@@ -4,15 +4,46 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import logo from '../images/AELogo.svg';
 import { NavLink } from 'react-router-dom';
+import { useSpotifyAuth } from '../hooks/useSpotifyAuth';
 
-function NavBar() {
+function NavBar({ user }) {
     const [activeLink, setActiveLink] = useState('home');
+    const [anchorEl, setAnchorEl] = useState(null);
+    const { logout } = useSpotifyAuth();
 
     const handleLinkClick = (link) => {
         setActiveLink(link);
     }
+
+    const handleAvatarClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+    const handleLogout = () => {
+        handleMenuClose();
+        logout();
+    };
+
+    // Get user initials for avatar
+    const getUserInitials = () => {
+        if (!user) return 'DB';
+        if (user.display_name) {
+            const names = user.display_name.split(' ');
+            if (names.length >= 2) {
+                return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+            }
+            return user.display_name.substring(0, 2).toUpperCase();
+        }
+        return 'U';
+    };
 
     return (
         <AppBar position="fixed" style={{ backgroundColor: '#181C1E' }} elevation={0}>
@@ -105,7 +136,43 @@ function NavBar() {
                   </Typography>
                 </NavLink>
 
-                <Avatar style={{ marginLeft: 'auto', backgroundColor: 'white', color: 'black', fontSize: '.75em', fontWeight: '600', width: 32, height: 32 }}>DB</Avatar>
+                <Avatar
+                    onClick={handleAvatarClick}
+                    style={{
+                        marginLeft: 'auto',
+                        backgroundColor: 'white',
+                        color: 'black',
+                        fontSize: '.75em',
+                        fontWeight: '600',
+                        width: 32,
+                        height: 32,
+                        cursor: 'pointer'
+                    }}
+                >
+                    {getUserInitials()}
+                </Avatar>
+                <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleMenuClose}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                >
+                    {user && (
+                        <MenuItem disabled>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                                {user.display_name || user.email}
+                            </Typography>
+                        </MenuItem>
+                    )}
+                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                </Menu>
             </Toolbar>
         </AppBar>
     );

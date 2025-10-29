@@ -6,7 +6,9 @@ import MusicPlayer from './MusicPlayer';
 import Home from './Home';
 import YourLibrary from './YourLibrary';
 import Explore from './Explore';
+import Login from './Login';
 import { MusicProvider } from './MusicContext';
+import { useSpotifyAuth } from '../hooks/useSpotifyAuth';
 import blueOvals from '../images/blueOvals.svg';
 import orangeOvals from '../images/orangeOvals.svg';
 import purpleOvals from '../images/purpleOvals.svg';
@@ -78,9 +80,10 @@ const theme = createTheme({
 });
 
 function App() {
+  const { isAuthenticated, accessToken, user } = useSpotifyAuth();
 
-  const allEarsClientId = "dabca092fe0b46d8aea268eb47f61bf7"
-  const allEarsClientSecret = "6db5e30985a04ff38867b491ff81c749"
+  const allEarsClientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID
+  const allEarsClientSecret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET
 
   const [searchResults, setSearchResults] = useState(null);
 
@@ -104,42 +107,77 @@ function App() {
   const [whatsHot, setWhatsHot] = useState([])
 
   async function fetchWhatsHot() {
+    try {
+      console.log('[Top 50] Starting fetch...');
+      const accessToken = await getAccessToken()
+      console.log('[Top 50] Access token:', accessToken ? 'Yes' : 'No');
 
-    const accessToken = await getAccessToken()
+      // Fetch from Spotify's Global Top 50 playlist
+      const url = `${spotifyAPI}/playlists/37i9dQZEVXbMDoHDwVN2tF/tracks?limit=3`;
+      console.log('[Top 50] Fetching URL:', url);
 
-    const response = await fetch(`${spotifyAPI}/recommendations?country=US&limit=30&seed_genres=hip-hop,r-n-b,afrobeat,pop&min_popularity=75`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
+
+      console.log('[Top 50] Response status:', response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[Top 50] Failed:', response.status, response.statusText, errorText);
+        return;
       }
-    })
 
-    const data = await response.json()
-    const sortedTracks = data.tracks.sort((a, b) => b.popularity - a.popularity);
-    const whatsHot = sortedTracks.slice(0, 3);
-    setWhatsHot(whatsHot);
+      const data = await response.json()
+      console.log('[Top 50] Full response data:', data);
+      console.log('[Top 50] Items:', data.items);
+
+      if (data.items && data.items.length > 0) {
+        // Extract track objects from playlist items
+        const tracks = data.items.map(item => item.track).filter(track => track);
+        console.log('[Top 50] Extracted tracks:', tracks);
+        console.log('[Top 50] Setting whatsHot state with', tracks.length, 'tracks');
+        setWhatsHot(tracks);
+      } else {
+        console.warn('[Top 50] No items in response');
+      }
+    } catch (error) {
+      console.error('[Top 50] Error:', error);
+    }
   }
 
   useEffect(() => {
       async function fetchNewReleases() {
+        try {
+          const accessToken = await getAccessToken()
 
-        const accessToken = await getAccessToken()
-        
-        const response = await fetch(`${spotifyAPI}/browse/new-releases?country=US&limit=3`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`
+          const response = await fetch(`${spotifyAPI}/browse/new-releases?country=US&limit=3`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`
+            }
+          })
+
+          if (!response.ok) {
+            console.error('Failed to fetch new releases:', response.status, response.statusText);
+            return;
           }
-        })
-  
+
           const data = await response.json()
-          setNewReleases(data.albums.items)
-        
+          if (data.albums && data.albums.items) {
+            setNewReleases(data.albums.items)
+          }
+        } catch (error) {
+          console.error('Error fetching new releases:', error);
         }
+      }
 
       fetchNewReleases()
       fetchWhatsHot()
-
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function handleRefresh(e) {
@@ -170,11 +208,20 @@ function App() {
     { id: '20', title: 'Alternative', background: '#75C6F4', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFFtlLYUHv8bT', imageUrl: lightBlueOvals },
 ];
 
+  // Show login page if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <ThemeProvider theme={theme}>
+        <Login />
+      </ThemeProvider>
+    );
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <Router>
         <div className="App">
-          <NavBar />
+          <NavBar user={user} />
           <MusicProvider>
         <div style ={{ paddingTop: '64px', paddingBottom: '108px'}}>
           <Routes>

@@ -7,12 +7,7 @@ import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import MicIcon from "@mui/icons-material/Mic";
 import QueueMusicIcon from "@mui/icons-material/QueueMusic";
 import GraphicEqIcon from "@mui/icons-material/GraphicEq";
-import SongSmallNoHover from "./SongSmallNoHover";
-// import { useMusicContext } from './MusicContext';
-import taylor from "../music/YoureLosingMe.mp3";
-import tyla from "../music/Water.mp3";
-import bey from "../music/MyHouse.mp3";
-import republic from "../music/CountingStars.mp3"
+import { useMusicContext } from './MusicContext';
 
 function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60);
@@ -21,81 +16,47 @@ function formatTime(seconds) {
 }
 
 function MusicPlayer() {
-  const songs = [
-    {
-      song: tyla,
-      title: "Water",
-      artist: "Tyla",
-      minutes: 3,
-      seconds: 21,
-      image: "https://upload.wikimedia.org/wikipedia/en/1/1e/Tyla_album.jpg",
-    },
-    {
-      song: bey,
-      title: "My House",
-      artist: "Beyoncé",
-      minutes: 4,
-      seconds: 23,
-      image:
-        "https://media.pitchfork.com/photos/6569e8059df35b9503950ce8/1:1/w_320,c_limit/Beyonce-My-House.jpg",
-    },
-    {
-      song: taylor,
-      title: "You're Losing Me",
-      artist: "Taylor Swift",
-      minutes: 4,
-      seconds: 38,
-      image:
-        "https://upload.wikimedia.org/wikipedia/en/9/9b/Taylor_Swift_-_You%27re_Losing_Me.png",
-    },
-    {
-        song: republic,
-        title: "Counting Stars",
-        artist: "One Republic",
-        minutes: 4,
-        seconds: 17,
-        image: "https://upload.wikimedia.org/wikipedia/en/9/96/OneRepublic_-_Native.png",
-      },
-  ];
+  const { playlist, currentSongIndex, isPlaying, nextSongHandler, prevSongHandler, setIsPlaying } = useMusicContext();
 
-  const [currentSongIndex, setCurrentSongIndex] = useState(0);
-  const song = songs[currentSongIndex];
+  const song = playlist[currentSongIndex];
   const audioRef = useRef(new Audio(song.song));
-  const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [pausedTime, setPausedTime] = useState(null);
 
   useEffect(() => {
-    const updateTime = () => setCurrentTime(audioRef.current.currentTime);
-    audioRef.current.addEventListener("timeupdate", updateTime);
-    return () => {
-        audioRef.current.removeEventListener("timeupdate", updateTime)
-    }
-  }, [])
-
-  useEffect(() => {
-    audioRef.current.src = song.song;
-    if (isPlaying) {
-      audioRef.current.play();
-      if (pausedTime > 0) {
-        audioRef.current.currentTime = pausedTime;
-        setPausedTime(0);
+    const audio = audioRef.current;
+    const updateTime = () => {
+      if (audio) {
+        setCurrentTime(audio.currentTime);
       }
+    };
+
+    if (audio) {
+      audio.addEventListener("timeupdate", updateTime);
     }
-  }, [currentSongIndex, isPlaying, song.song]);
 
-  
-
-  useEffect(() => {
-    const updateTime = () => setCurrentTime(audioRef.current.currentTime);
-    audioRef.current.addEventListener("timeupdate", updateTime);
     return () => {
-      // Clean up the event listener
-      audioRef.current.removeEventListener("timeupdate", updateTime);
+      if (audio) {
+        audio.removeEventListener("timeupdate", updateTime);
+      }
     };
   }, []);
 
-  const playPauseHandler = () => {
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio && song.song) {
+      audio.src = song.song;
+      if (isPlaying) {
+        audio.play().catch(err => console.error('Error playing audio:', err));
+        if (pausedTime > 0) {
+          audio.currentTime = pausedTime;
+          setPausedTime(0);
+        }
+      }
+    }
+  }, [currentSongIndex, isPlaying, song.song, pausedTime]);
+
+  const handlePlayPause = () => {
     if (audioRef.current.paused) {
       audioRef.current.play();
       setIsPlaying(true);
@@ -108,16 +69,6 @@ function MusicPlayer() {
       setIsPlaying(false);
       setPausedTime(audioRef.current.currentTime)
     }
-  };
-
-  const nextSongHandler = () => {
-    setCurrentSongIndex((prevIndex) => (prevIndex + 1) % songs.length);
-  };
-
-  const prevSongHandler = () => {
-    setCurrentSongIndex(
-      (prevIndex) => (prevIndex - 1 + songs.length) % songs.length
-    );
   };
 
   
@@ -202,7 +153,7 @@ function MusicPlayer() {
               color: "primary.main",
               "&:hover": { color: "secondary.main" },
             }}
-            onClick={playPauseHandler}
+            onClick={handlePlayPause}
           >
             {!isPlaying ? (
               <PlayArrowIcon sx={{ fontSize: 36 }} />
