@@ -106,47 +106,46 @@ function App() {
   const [newReleases, setNewReleases] = useState([])
   const [whatsHot, setWhatsHot] = useState([])
 
-  async function fetchWhatsHot(userToken) {
+  async function fetchWhatsHot() {
     try {
-      console.log('[Top 50] Starting fetch...');
-      console.log('[Top 50] User token:', userToken ? 'Yes' : 'No');
+      const token = await getAccessToken();
 
-      if (!userToken) {
-        console.warn('[Top 50] No user token available');
-        return;
-      }
-
-      // Fetch from Spotify's Global Top 50 playlist
-      const url = `${spotifyAPI}/playlists/37i9dQZEVXbMDoHDwVN2tF/tracks?limit=3`;
-      console.log('[Top 50] Fetching URL:', url);
+      // Use browse/featured-playlists to get currently popular tracks
+      const url = `${spotifyAPI}/browse/featured-playlists?limit=1`;
 
       const response = await fetch(url, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${userToken}`
+          'Authorization': `Bearer ${token}`
         }
       })
 
-      console.log('[Top 50] Response status:', response.status);
-
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('[Top 50] Failed:', response.status, response.statusText, errorText);
+        console.error('[Top 50] Failed to fetch featured playlists:', response.status);
         return;
       }
 
-      const data = await response.json()
-      console.log('[Top 50] Full response data:', data);
-      console.log('[Top 50] Items:', data.items);
+      const data = await response.json();
 
-      if (data.items && data.items.length > 0) {
-        // Extract track objects from playlist items
-        const tracks = data.items.map(item => item.track).filter(track => track);
-        console.log('[Top 50] Extracted tracks:', tracks);
-        console.log('[Top 50] Setting whatsHot state with', tracks.length, 'tracks');
-        setWhatsHot(tracks);
-      } else {
-        console.warn('[Top 50] No items in response');
+      // Get the first featured playlist
+      if (data.playlists && data.playlists.items && data.playlists.items.length > 0) {
+        const playlistId = data.playlists.items[0].id;
+
+        // Now fetch tracks from that playlist
+        const tracksResponse = await fetch(`${spotifyAPI}/playlists/${playlistId}/tracks?limit=3`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (tracksResponse.ok) {
+          const tracksData = await tracksResponse.json();
+          if (tracksData.items && tracksData.items.length > 0) {
+            const tracks = tracksData.items.map(item => item.track).filter(track => track);
+            setWhatsHot(tracks);
+          }
+        }
       }
     } catch (error) {
       console.error('[Top 50] Error:', error);
@@ -179,16 +178,14 @@ function App() {
         }
       }
 
-      if (accessToken) {
-        fetchNewReleases()
-        fetchWhatsHot(accessToken)
-      }
+      fetchNewReleases()
+      fetchWhatsHot()
       // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accessToken])
+  }, [])
 
   function handleRefresh(e) {
     e.preventDefault()
-    fetchWhatsHot(accessToken)
+    fetchWhatsHot()
   }
 
   const genres = [
