@@ -106,11 +106,15 @@ function App() {
   const [newReleases, setNewReleases] = useState([])
   const [whatsHot, setWhatsHot] = useState([])
 
-  async function fetchWhatsHot() {
+  async function fetchWhatsHot(userToken) {
     try {
       console.log('[Top 50] Starting fetch...');
-      const accessToken = await getAccessToken()
-      console.log('[Top 50] Access token:', accessToken ? 'Yes' : 'No');
+      console.log('[Top 50] User token:', userToken ? 'Yes' : 'No');
+
+      if (!userToken) {
+        console.warn('[Top 50] No user token available');
+        return;
+      }
 
       // Fetch from Spotify's Global Top 50 playlist
       const url = `${spotifyAPI}/playlists/37i9dQZEVXbMDoHDwVN2tF/tracks?limit=3`;
@@ -119,7 +123,7 @@ function App() {
       const response = await fetch(url, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${accessToken}`
+          'Authorization': `Bearer ${userToken}`
         }
       })
 
@@ -152,12 +156,12 @@ function App() {
   useEffect(() => {
       async function fetchNewReleases() {
         try {
-          const accessToken = await getAccessToken()
+          const token = await getAccessToken()
 
           const response = await fetch(`${spotifyAPI}/browse/new-releases?country=US&limit=3`, {
             method: 'GET',
             headers: {
-              'Authorization': `Bearer ${accessToken}`
+              'Authorization': `Bearer ${token}`
             }
           })
 
@@ -175,14 +179,16 @@ function App() {
         }
       }
 
-      fetchNewReleases()
-      fetchWhatsHot()
+      if (accessToken) {
+        fetchNewReleases()
+        fetchWhatsHot(accessToken)
+      }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [accessToken])
 
   function handleRefresh(e) {
     e.preventDefault()
-    fetchWhatsHot()
+    fetchWhatsHot(accessToken)
   }
 
   const genres = [
