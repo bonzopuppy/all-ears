@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const MusicContext = createContext();
 
@@ -10,6 +10,15 @@ const MusicProvider = ({ children, spotifyPlayer }) => {
   const [playlist, setPlaylist] = useState([]);
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [, forceUpdate] = useState({});
+
+  // Force re-render when Spotify player state changes
+  useEffect(() => {
+    if (spotifyPlayer?.currentTrack) {
+      console.log('🔄 MusicContext - currentTrack updated:', spotifyPlayer.currentTrack);
+      forceUpdate({});
+    }
+  }, [spotifyPlayer?.currentTrack, spotifyPlayer?.isPaused, spotifyPlayer?.position]);
 
   const playTrack = (spotifyTrack) => {
     if (!spotifyPlayer || !spotifyPlayer.isReady) {

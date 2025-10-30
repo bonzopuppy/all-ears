@@ -42,6 +42,13 @@ export const useSpotifyPlayer = (accessToken) => {
       spotifyPlayer.addListener('player_state_changed', state => {
         if (!state) return;
 
+        console.log('🎵 Player state changed:', {
+          track: state.track_window.current_track,
+          paused: state.paused,
+          position: state.position,
+          duration: state.duration
+        });
+
         setCurrentTrack(state.track_window.current_track);
         setIsPaused(state.paused);
         setPosition(state.position);
