@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Recommendations Endpoint</title>
+</head>
+<body>
+    <h1>Test Spotify Recommendations Endpoint</h1>
+    <button onclick="testRecommendations()">Test Recommendations</button>
+    <pre id="output"></pre>
+
+    <script>
+        async function testRecommendations() {
+            const output = document.getElementById('output');
+            output.textContent = 'Testing...\n\n';
+
+            try {
+                // Get access token
+                output.textContent += '1. Getting access token from /api/refresh...\n';
+                const tokenResponse = await fetch('http://localhost:3000/api/refresh', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (!tokenResponse.ok) {
+                    output.textContent += `Failed to get token: ${tokenResponse.status}\n`;
+                    return;
+                }
+
+                const tokenData = await tokenResponse.json();
+                const token = tokenData.access_token;
+                output.textContent += `Got token: ${token.substring(0, 20)}...\n\n`;
+
+                // Test a known track ID (Taylor Swift - Anti-Hero)
+                const testTrackId = '0V3wPSX9ygBnCm8psDIegu';
+
+                output.textContent += `2. Testing recommendations with track seed: ${testTrackId}\n`;
+
+                // Test WITHOUT market parameter (like Python example)
+                const url1 = `https://api.spotify.com/v1/recommendations?seed_tracks=${testTrackId}&limit=5`;
+                output.textContent += `URL: ${url1}\n\n`;
+
+                const response1 = await fetch(url1, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                output.textContent += `Response status: ${response1.status}\n`;
+
+                if (response1.ok) {
+                    const data = await response1.json();
+                    output.textContent += `SUCCESS! Got ${data.tracks?.length || 0} recommendations\n\n`;
+                    output.textContent += 'First 3 tracks:\n';
+                    data.tracks?.slice(0, 3).forEach((track, i) => {
+                        output.textContent += `${i + 1}. ${track.name} by ${track.artists[0].name}\n`;
+                    });
+                } else {
+                    const errorText = await response1.text();
+                    output.textContent += `FAILED: ${errorText}\n\n`;
+
+                    // Try WITH market parameter
+                    output.textContent += '3. Trying WITH market=US parameter...\n';
+                    const url2 = `https://api.spotify.com/v1/recommendations?seed_tracks=${testTrackId}&limit=5&market=US`;
+                    output.textContent += `URL: ${url2}\n\n`;
+
+                    const response2 = await fetch(url2, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+
+                    output.textContent += `Response status: ${response2.status}\n`;
+
+                    if (response2.ok) {
+                        const data = await response2.json();
+                        output.textContent += `SUCCESS with market! Got ${data.tracks?.length || 0} recommendations\n`;
+                    } else {
+                        const errorText2 = await response2.text();
+                        output.textContent += `ALSO FAILED: ${errorText2}\n`;
+                    }
+                }
+
+            } catch (error) {
+                output.textContent += `Error: ${error.message}\n${error.stack}`;
+            }
+        }
+    </script>
+</body>
+</html>

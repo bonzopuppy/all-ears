@@ -36,11 +36,10 @@ function Radio({ accessToken, spotifyAPI }) {
           console.log('[Radio Page] Seed track:', trackData.name, 'by', trackData.artists[0].name);
         }
 
-        // Fetch recommendations based on this track
-        // Add market parameter and other optional parameters for better results
+        // Fetch recommendations based on this track (no market parameter like Python example)
         console.log('[Radio Page] Fetching recommendations for track:', trackId);
         const recommendationsResponse = await fetch(
-          `${spotifyAPI}/recommendations?seed_tracks=${trackId}&limit=50&market=US`,
+          `${spotifyAPI}/recommendations?seed_tracks=${trackId}&limit=50`,
           {
             method: 'GET',
             headers: {
@@ -59,7 +58,7 @@ function Radio({ accessToken, spotifyAPI }) {
             console.log('[Radio Page] Trying fallback with artist seed...');
             const artistId = trackData.artists[0].id;
             const fallbackResponse = await fetch(
-              `${spotifyAPI}/recommendations?seed_artists=${artistId}&limit=50&market=US`,
+              `${spotifyAPI}/recommendations?seed_artists=${artistId}&limit=50`,
               {
                 method: 'GET',
                 headers: {

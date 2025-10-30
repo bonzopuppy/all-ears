@@ -4,20 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## IMPORTANT: Working with the Project Owner
 
+**CRITICAL RULE: Under NO circumstances can you change a feature without asking first.**
+
 **ALWAYS ask before making changes to:**
 - Any functionality or feature behavior
 - UI elements, labels, or component names
 - API endpoints or data sources
 - Route names or navigation structure
 - Section names or titles (e.g., "What's Hot" → "Top 50")
+- Implementation approaches or technical solutions
 
 **DO NOT make assumptions about desired changes.** Even if something seems incorrect or could be improved, propose the change and get approval first. The owner may have specific reasons for current implementation choices.
+
+**DO NOT change implementation approaches without permission.** If an endpoint or approach fails, you MUST ask before switching to a different solution.
 
 When suggesting fixes:
 1. Explain the problem clearly
 2. Propose solution(s) with pros/cons
 3. Wait for approval before implementing
 4. Never replace content or functionality without explicit permission
+5. Never change technical approaches (e.g., switching from one API endpoint to another) without asking
 
 ## Project Overview
 
