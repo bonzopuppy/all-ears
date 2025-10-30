@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Spotify Categories</title>
+</head>
+<body>
+    <h1>Testing Spotify Categories API</h1>
+    <button onclick="testCategories()">Fetch Categories</button>
+    <pre id="output"></pre>
+
+    <script>
+        async function testCategories() {
+            const output = document.getElementById('output');
+            output.textContent = 'Fetching...';
+
+            try {
+                // Get access token from refresh endpoint
+                const tokenResponse = await fetch('http://localhost:3000/api/refresh', {
+                    credentials: 'include'
+                });
+
+                if (!tokenResponse.ok) {
+                    output.textContent = `Failed to get token: ${tokenResponse.status}`;
+                    return;
+                }
+
+                const tokenData = await tokenResponse.json();
+                const token = tokenData.accessToken;
+
+                output.textContent = 'Got token, fetching categories...\n\n';
+
+                // Fetch categories
+                const categoriesResponse = await fetch('https://api.spotify.com/v1/browse/categories?limit=50', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!categoriesResponse.ok) {
+                    output.textContent += `Failed to fetch categories: ${categoriesResponse.status}\n`;
+                    const errorText = await categoriesResponse.text();
+                    output.textContent += errorText;
+                    return;
+                }
+
+                const data = await categoriesResponse.json();
+
+                output.textContent = 'Available Spotify Categories:\n\n';
+                output.textContent += 'ID'.padEnd(25, ' ') + 'Name\n';
+                output.textContent += '='.repeat(60) + '\n\n';
+
+                data.categories.items.forEach(cat => {
+                    output.textContent += cat.id.padEnd(25, ' ') + cat.name + '\n';
+                });
+
+            } catch (error) {
+                output.textContent = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

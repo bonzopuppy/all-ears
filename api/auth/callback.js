@@ -1,5 +1,9 @@
-// Vercel Serverless Function: Handle OAuth Callback and Exchange Code for Tokens
+// Vercel Serverless Function: Handle OAuth callback and exchange code for tokens
 export default async function handler(req, res) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   const { code, state, error } = req.query;
 
   // Handle authorization errors
@@ -8,12 +12,17 @@ export default async function handler(req, res) {
   }
 
   if (!code) {
-    return res.status(400).json({ error: 'No authorization code provided' });
+    return res.redirect('/?error=no_code');
   }
 
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
   const redirectUri = process.env.REDIRECT_URI;
+
+  if (!clientId || !clientSecret || !redirectUri) {
+    console.error('[Callback] Missing environment variables');
+    return res.redirect('/?error=server_configuration');
+  }
 
   try {
     // Exchange authorization code for access token
@@ -32,20 +41,19 @@ export default async function handler(req, res) {
 
     if (!tokenResponse.ok) {
       const errorData = await tokenResponse.json();
-      console.error('Token exchange failed:', errorData);
-      return res.redirect(`/?error=token_exchange_failed`);
+      console.error('[Callback] Token exchange failed:', errorData);
+      return res.redirect('/?error=token_exchange_failed');
     }
 
     const tokenData = await tokenResponse.json();
 
-    // Redirect to frontend with tokens in URL hash (will be stored in localStorage)
-    // Using hash instead of query params for better security
-    const frontendUrl = new URL('/', process.env.FRONTEND_URL || req.headers.origin);
-    frontendUrl.hash = `access_token=${tokenData.access_token}&refresh_token=${tokenData.refresh_token}&expires_in=${tokenData.expires_in}`;
+    // Redirect to frontend with tokens in URL hash
+    const frontendUrl = process.env.FRONTEND_URL || req.headers.origin || 'http://localhost:3000';
+    const redirectUrl = `${frontendUrl}/#access_token=${tokenData.access_token}&refresh_token=${tokenData.refresh_token}&expires_in=${tokenData.expires_in}`;
 
-    res.redirect(frontendUrl.toString());
+    res.redirect(302, redirectUrl);
   } catch (error) {
-    console.error('Callback error:', error);
-    res.redirect(`/?error=server_error`);
+    console.error('[Callback] Error:', error);
+    res.redirect('/?error=server_error');
   }
 }
