@@ -27,7 +27,7 @@ When suggesting fixes:
 
 ## Project Overview
 
-**All Ears** is a Spotify-powered music discovery web application built with React 18. It's a client-side only app that uses Spotify's Web API (Client Credentials flow) to provide music search, browsing, and preview playback functionality. Deployed to GitHub Pages.
+**All Ears** is a Spotify-powered music discovery web application built with React 18. It uses Spotify's Web API with OAuth 2.0 authentication to provide music search, browsing, and playback functionality. Deployed to Vercel.
 
 ## Development Commands
 
@@ -35,8 +35,8 @@ When suggesting fixes:
 npm run dev    # Local development with OAuth support (Express server on port 3000, React on port 3001)
 npm start      # React dev server only (no OAuth endpoints available)
 npm run build  # Production build for deployment
-npm run deploy # Deploy to GitHub Pages (runs predeploy build automatically)
 npm test       # Run tests (minimal coverage currently)
+vercel         # Deploy to Vercel (requires Vercel CLI)
 ```
 
 **IMPORTANT:** For full local development with OAuth authentication, you MUST use `npm run dev`, which runs:
@@ -210,19 +210,30 @@ This persists across renders but requires manual synchronization with React stat
 
 ## Deployment
 
-- Target: `https://AnneMiriam.github.io/all-ears`
-- Uses `gh-pages` npm package
-- GitHub Pages configuration in package.json (`homepage` field)
-- Deploy command runs build automatically via `predeploy` script
+- **Platform:** Vercel
+- **Production URL:** Deployed via Vercel CLI or GitHub integration
+- **Build Configuration:** Defined in `vercel.json`
+  - Build command: `npm run build`
+  - Output directory: `build`
+  - Framework: `create-react-app`
+- **Serverless Functions:** API routes in `/api/auth/` directory deployed as Vercel serverless functions
 
 ## Environment Setup
 
-Required environment variables in `.env`:
+Required environment variables (set in Vercel dashboard for production, `.env` for local):
 ```
-REACT_APP_SPOTIFY_CLIENT_ID=your_client_id
-REACT_APP_SPOTIFY_CLIENT_SECRET=your_client_secret
+SPOTIFY_CLIENT_ID=your_client_id
+SPOTIFY_CLIENT_SECRET=your_client_secret
+REDIRECT_URI=http://127.0.0.1:3000/api/auth/callback  # Local dev
+FRONTEND_URL=http://127.0.0.1:3000  # Local dev
 ```
+
+**Production environment variables** (set in Vercel):
+- `SPOTIFY_CLIENT_ID` - Your Spotify app client ID
+- `SPOTIFY_CLIENT_SECRET` - Your Spotify app client secret
+- `REDIRECT_URI` - Production callback URL (e.g., `https://your-app.vercel.app/api/auth/callback`)
+- `FRONTEND_URL` - Production frontend URL (e.g., `https://your-app.vercel.app`)
 
 Get credentials from: https://developer.spotify.com/dashboard
 
-**Security note:** `.env` is gitignored. Use `.env.example` as template for new developers.
+**Security note:** `.env` is gitignored. Configure Spotify redirect URIs in the Spotify Dashboard for both local and production URLs.
