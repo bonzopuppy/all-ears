@@ -9,6 +9,7 @@ import Explore from './Explore';
 import ForYou from './ForYou';
 import NewReleases from './NewReleases';
 import Album from './Album';
+import Genre from './Genre';
 import Login from './Login';
 import { MusicProvider } from './MusicContext';
 import { useSpotifyAuth } from '../hooks/useSpotifyAuth';
@@ -265,6 +266,13 @@ function App() {
               <Album
                 accessToken={accessToken}
                 spotifyAPI={spotifyAPI}
+              />
+            }/>
+            <Route path="/genre/:genreId" element={
+              <Genre
+                accessToken={accessToken}
+                spotifyAPI={spotifyAPI}
+                genres={genres}
               />
             }/>
           </Routes>

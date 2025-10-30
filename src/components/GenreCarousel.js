@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Slider from 'react-slick';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -10,7 +11,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import GenreComponent from './GenreComponent';
 
 function GenreCarousel({genres}) {
-   
+    const navigate = useNavigate();
     const sliderRef = React.useRef(null);
 
     function CustomPrevArrow() {
@@ -78,7 +79,7 @@ function GenreCarousel({genres}) {
     function openGenreUrl(e, genre) {
         e.preventDefault()
         if (genre.id === e.currentTarget.id) {
-           window.open(genre.url, '_blank');
+           navigate(`/genre/${genre.id}`);
         }
     }
 
