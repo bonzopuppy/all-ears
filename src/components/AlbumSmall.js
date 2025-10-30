@@ -15,6 +15,9 @@ function AlbumSmall({release, accessToken, spotifyAPI}) {
             // Extract album ID from URI (spotify:album:xxx)
             const albumId = release.id || release.uri.split(':')[2];
 
+            console.log('🎵 Clicking album:', release.name, 'by', release.artists[0].name);
+            console.log('🆔 Album ID:', albumId);
+
             // Fetch album tracks from Spotify API
             const response = await fetch(`${spotifyAPI}/albums/${albumId}/tracks?limit=1`, {
                 method: 'GET',
@@ -30,8 +33,12 @@ function AlbumSmall({release, accessToken, spotifyAPI}) {
             }
 
             const data = await response.json();
+            console.log('📀 Fetched tracks:', data);
+
             if (data.items && data.items.length > 0) {
                 const firstTrack = data.items[0];
+                console.log('▶️ Playing first track:', firstTrack.name);
+
                 // Create a proper track object with album info
                 const trackToPlay = {
                     ...firstTrack,
@@ -50,7 +57,11 @@ function AlbumSmall({release, accessToken, spotifyAPI}) {
 
     if (!release) {
         return null; // or return a loading spinner
-    } else return (
+    }
+
+    console.log('🖼️ Displaying album in New Releases:', release.name, 'by', release.artists[0].name);
+
+    return (
 
         <li style={{ listStyleType: 'none' }}>
 
