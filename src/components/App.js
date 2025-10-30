@@ -10,6 +10,7 @@ import ForYou from './ForYou';
 import Login from './Login';
 import { MusicProvider } from './MusicContext';
 import { useSpotifyAuth } from '../hooks/useSpotifyAuth';
+import { useSpotifyPlayer } from '../hooks/useSpotifyPlayer';
 import blueOvals from '../images/blueOvals.svg';
 import orangeOvals from '../images/orangeOvals.svg';
 import purpleOvals from '../images/purpleOvals.svg';
@@ -82,6 +83,7 @@ const theme = createTheme({
 
 function App() {
   const { isAuthenticated, accessToken, user, logout } = useSpotifyAuth();
+  const spotifyPlayer = useSpotifyPlayer(accessToken);
 
   const allEarsClientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID
   const allEarsClientSecret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET
@@ -216,7 +218,7 @@ function App() {
       <Router>
         <div className="App">
           <NavBar user={user} onLogout={logout} />
-          <MusicProvider>
+          <MusicProvider spotifyPlayer={spotifyPlayer}>
         <div style ={{ paddingTop: '64px', paddingBottom: '108px'}}>
           <Routes>
             <Route path="/" element={<Navigate to="/all-ears" replace />} />

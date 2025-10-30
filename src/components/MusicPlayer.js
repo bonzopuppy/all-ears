@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, IconButton, Slider, Typography } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
@@ -9,83 +9,49 @@ import QueueMusicIcon from "@mui/icons-material/QueueMusic";
 import GraphicEqIcon from "@mui/icons-material/GraphicEq";
 import { useMusicContext } from './MusicContext';
 
-function formatTime(seconds) {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
+function formatTime(milliseconds) {
+  const totalSeconds = Math.floor(milliseconds / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const remainingSeconds = totalSeconds % 60;
   return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
 }
 
 function MusicPlayer() {
-  const { playlist, currentSongIndex, isPlaying, nextSongHandler, prevSongHandler, setIsPlaying } = useMusicContext();
+  const {
+    currentTrack,
+    isPlaying,
+    playPauseHandler,
+    nextSongHandler,
+    prevSongHandler,
+    spotifyPlayer
+  } = useMusicContext();
 
-  const song = playlist[currentSongIndex];
-  const audioRef = useRef(null);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [pausedTime, setPausedTime] = useState(null);
+  const [localPosition, setLocalPosition] = useState(0);
 
-  // Initialize audio ref on first render
-  if (!audioRef.current) {
-    audioRef.current = new Audio();
-  }
-
+  // Update local position from Spotify player
   useEffect(() => {
-    const audio = audioRef.current;
-    const updateTime = () => {
-      if (audio) {
-        setCurrentTime(audio.currentTime);
-      }
-    };
-
-    if (audio) {
-      audio.addEventListener("timeupdate", updateTime);
+    if (spotifyPlayer?.position !== undefined) {
+      setLocalPosition(spotifyPlayer.position);
     }
-
-    return () => {
-      if (audio) {
-        audio.removeEventListener("timeupdate", updateTime);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (audio && song.song) {
-      // Only update src if it's different from current
-      if (audio.src !== song.song) {
-        audio.src = song.song;
-        audio.load(); // Explicitly load the new source
-        setCurrentTime(0);
-        setPausedTime(0);
-      }
-
-      if (isPlaying) {
-        audio.play().catch(err => console.error('Error playing audio:', err));
-      } else {
-        audio.pause();
-      }
-    }
-  }, [currentSongIndex, isPlaying, song.song]);
+  }, [spotifyPlayer?.position]);
 
   const handlePlayPause = () => {
-    if (audioRef.current.paused) {
-      audioRef.current.play();
-      setIsPlaying(true);
-      if (pausedTime > 0) {
-        audioRef.current.currentTime = pausedTime;
-        setPausedTime(0)
-      }
-    } else {
-      audioRef.current.pause();
-      setIsPlaying(false);
-      setPausedTime(audioRef.current.currentTime)
+    playPauseHandler();
+  };
+
+  const handleSliderChange = (event, newValue) => {
+    if (spotifyPlayer?.seek) {
+      spotifyPlayer.seek(newValue);
+      setLocalPosition(newValue);
     }
   };
 
-  
-  const totalDurationSeconds = (song.minutes * 60) + song.seconds;
-  const handleSliderChange = (event, newValue) => {
-    audioRef.current.currentTime = newValue;
-    setCurrentTime(newValue);
+  // Default values if no track is loaded
+  const trackData = currentTrack || {
+    name: 'No track playing',
+    artists: [{ name: '' }],
+    album: { images: [{ url: '' }] },
+    duration_ms: 0
   };
 
   return (
@@ -101,13 +67,6 @@ function MusicPlayer() {
         justifyContent: "space-between",
       }}
     >
-      {/* Audio Element */}
-      <audio
-        id="audio-element"
-        ref={audioRef}
-        src={song.song}
-        preload="auto"
-      ></audio>
       <ul style={{ listStyleType: "none", padding: 0, margin: 0 }}>
         <li style={{ listStyleType: "none" }}>
           <Box
@@ -128,7 +87,7 @@ function MusicPlayer() {
               }}
             >
               <img
-                src={song.image}
+                src={trackData.album.images[0]?.url || ''}
                 alt="Album"
                 style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 4 }}
               />
@@ -136,15 +95,14 @@ function MusicPlayer() {
             {/* Song Info */}
             <Box>
               <Typography variant="subtitle1" sx={{ fontWeight: "500" }}>
-                {song.title}
+                {trackData.name}
               </Typography>
               <Typography variant="subtitle2" sx={{ color: "text.secondary" }}>
-                {song.artist}
+                {trackData.artists[0]?.name}
               </Typography>
             </Box>
           </Box>
         </li>
-        {/* <SongSmallNoHover song={song[currentSongIndex]} isPlaying={isPlaying} /> */}
       </ul>
 
       {/* Controls and Scrubber */}
@@ -183,13 +141,13 @@ function MusicPlayer() {
         <Box sx={{ display: "flex", alignItems: "center", flexGrow: 1 }}>
           {/* Current Time */}
           <Typography sx={{ marginRight: 1, fontSize: 12, marginBottom: 1.5 }}>
-            {formatTime(currentTime)}
+            {formatTime(localPosition)}
           </Typography>
           {/* Scrubber */}
           <Slider
             sx={{
               width: 500,
-              marginTop: -1.5, // Adjust as needed
+              marginTop: -1.5,
               "& .MuiSlider-thumb": {
                 width: 0,
                 height: 0,
@@ -203,16 +161,15 @@ function MusicPlayer() {
                 height: 4,
               },
             }}
-            //   defaultValue={30}
-            value={currentTime}
+            value={localPosition}
             min={0}
-            max={totalDurationSeconds}
+            max={spotifyPlayer?.duration || trackData.duration_ms || 0}
             onChange={handleSliderChange}
             aria-label="Song scrubber"
           />
           {/* Total Duration */}
           <Typography sx={{ marginLeft: 1, fontSize: 12, marginBottom: 1.5 }}>
-            {formatTime(totalDurationSeconds)}
+            {formatTime(spotifyPlayer?.duration || trackData.duration_ms || 0)}
           </Typography>
         </Box>
       </Box>
