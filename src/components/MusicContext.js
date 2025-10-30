@@ -76,6 +76,12 @@ const MusicProvider = ({ children, spotifyPlayer }) => {
     spotifyPlayer,
   };
 
+  console.log('🎯 MusicContext value:', {
+    hasSpotifyPlayer: !!spotifyPlayer,
+    currentTrack: spotifyPlayer?.currentTrack,
+    isPlaying: value.isPlaying
+  });
+
   return (
     <MusicContext.Provider value={value}>
       {children}

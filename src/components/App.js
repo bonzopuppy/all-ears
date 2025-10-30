@@ -254,8 +254,8 @@ function App() {
             }/>
           </Routes>
           </div>
-          </MusicProvider>
           <MusicPlayer />
+          </MusicProvider>
         </div>
       </Router>
     </ThemeProvider>
