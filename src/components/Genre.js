@@ -23,20 +23,40 @@ function Genre({ accessToken, spotifyAPI, genres }) {
           return;
         }
 
-        // Extract category ID from the genre URL
-        // URLs look like: https://open.spotify.com/genre/0JQ5DAqbMKFDXXwE9BDJAr
-        let categoryId = null;
+        // Map genre titles to Spotify's actual browse category IDs
+        // These IDs are from Spotify's /browse/categories endpoint
+        const categoryMapping = {
+          'Rock': 'rock',
+          'Pop': 'pop',
+          'Hip Hop': 'hiphop',
+          'Jazz': 'jazz',
+          'Country': 'country',
+          'Classical': 'classical',
+          'Electronic': 'edm_dance',
+          'Folk': 'folk_acoustic',
+          'R&B': 'rnb',
+          'Caribbean': 'reggae',
+          'Blues': 'blues',
+          'Metal': 'metal',
+          'Funk & Disco': 'funk',
+          'Latin': 'latin',
+          'Afrobeats': 'afro',
+          'Soul': 'soul',
+          'Punk': 'punk',
+          'Gospel': 'christian',
+          'Indie': 'indie_alt',
+          'Alternative': 'indie_alt'
+        };
 
-        if (genre.url && genre.url.includes('/genre/')) {
-          categoryId = genre.url.split('/genre/')[1];
-          console.log('[Genre Page] Extracted category ID from URL:', categoryId, 'for genre:', genre.title);
-        }
+        const categoryId = categoryMapping[genre.title];
 
         if (!categoryId) {
-          console.error('[Genre Page] Could not extract category ID from URL:', genre.url);
+          console.error('[Genre Page] No category mapping for:', genre.title);
           setLoading(false);
           return;
         }
+
+        console.log('[Genre Page] Using category ID:', categoryId, 'for genre:', genre.title);
 
         // Fetch playlists for this category
         const playlistsResponse = await fetch(`${spotifyAPI}/browse/categories/${categoryId}/playlists?limit=1`, {
