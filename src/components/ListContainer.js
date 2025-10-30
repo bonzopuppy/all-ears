@@ -4,7 +4,7 @@ import { Link as RouterLink } from 'react-router-dom';
 // import musicPlayerAlbum from './musicPlayerAlbum.png';
 import AlbumSmall from './AlbumSmall';
 
-function ListContainer({ title, newReleases }) {
+function ListContainer({ title, newReleases, accessToken, spotifyAPI }) {
 
     return (
         <Box sx={{
@@ -27,15 +27,15 @@ function ListContainer({ title, newReleases }) {
             </Box>
 
             {/* List Items */}
-            <Box component="ul" sx={{ 
-                padding: 0, 
-                margin: 0, 
-                listStyleType: 'none', 
-                '& > li': { 
+            <Box component="ul" sx={{
+                padding: 0,
+                margin: 0,
+                listStyleType: 'none',
+                '& > li': {
                     marginBottom: '10px' // Spacing between items
                 }
             }}>
-                {newReleases && newReleases.map(release => <AlbumSmall release={release} /> )}
+                {newReleases && newReleases.map(release => <AlbumSmall key={release.id} release={release} accessToken={accessToken} spotifyAPI={spotifyAPI} /> )}
             </Box>
         </Box>
     );

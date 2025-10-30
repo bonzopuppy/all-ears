@@ -233,6 +233,7 @@ function App() {
                 genres={genres}
                 searchResults={searchResults}
                 setSearchResults={setSearchResults}
+                accessToken={accessToken}
               />
             }/>
             <Route path="/library" element={

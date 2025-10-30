@@ -5,26 +5,46 @@ import musicPlayerAlbum from '../images/musicPlayerAlbum.png';
 import PlayHover from './PlayHover';
 import { useMusicContext } from './MusicContext';
 
-function AlbumSmall({release}) {
+function AlbumSmall({release, accessToken, spotifyAPI}) {
     const { playTrack } = useMusicContext();
 
     const handleClick = async () => {
-        if (release) {
-            // For albums, we need to fetch tracks and play the first one
-            // Create a track object from the album info for the first track
-            // Note: We'll need to fetch album tracks from Spotify API
-            // For now, create a pseudo-track from album data
-            const albumTrack = {
-                name: release.name,
-                artists: release.artists,
-                album: {
-                    images: release.images,
-                    name: release.name
-                },
-                uri: release.uri,
-                duration_ms: 0 // We don't have this for albums
-            };
-            playTrack(albumTrack);
+        if (!release || !accessToken) return;
+
+        try {
+            // Extract album ID from URI (spotify:album:xxx)
+            const albumId = release.id || release.uri.split(':')[2];
+
+            // Fetch album tracks from Spotify API
+            const response = await fetch(`${spotifyAPI}/albums/${albumId}/tracks?limit=1`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+
+            if (!response.ok) {
+                console.error('Failed to fetch album tracks:', response.status);
+                alert('Unable to play this album. Please try another.');
+                return;
+            }
+
+            const data = await response.json();
+            if (data.items && data.items.length > 0) {
+                const firstTrack = data.items[0];
+                // Create a proper track object with album info
+                const trackToPlay = {
+                    ...firstTrack,
+                    album: {
+                        images: release.images,
+                        name: release.name
+                    }
+                };
+                playTrack(trackToPlay);
+            }
+        } catch (error) {
+            console.error('Error playing album:', error);
+            alert('Unable to play this album. Please try another.');
         }
     };
 

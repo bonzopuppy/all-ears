@@ -4,23 +4,46 @@ import { Typography } from '@mui/material';
 import PlayHover from './PlayHover';
 import { useMusicContext } from './MusicContext';
 
-function AlbumMedium({album}) {
+function AlbumMedium({album, accessToken, spotifyAPI}) {
     const { playTrack } = useMusicContext();
 
-    const handleClick = () => {
-        if (album) {
-            // Create a track object from album data
-            const albumTrack = {
-                name: album.name,
-                artists: album.artists,
-                album: {
-                    images: album.images,
-                    name: album.name
-                },
-                uri: album.uri,
-                duration_ms: 0
-            };
-            playTrack(albumTrack);
+    const handleClick = async () => {
+        if (!album || !accessToken) return;
+
+        try {
+            // Extract album ID from URI (spotify:album:xxx)
+            const albumId = album.id || album.uri.split(':')[2];
+
+            // Fetch album tracks from Spotify API
+            const response = await fetch(`${spotifyAPI}/albums/${albumId}/tracks?limit=1`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+
+            if (!response.ok) {
+                console.error('Failed to fetch album tracks:', response.status);
+                alert('Unable to play this album. Please try another.');
+                return;
+            }
+
+            const data = await response.json();
+            if (data.items && data.items.length > 0) {
+                const firstTrack = data.items[0];
+                // Create a proper track object with album info
+                const trackToPlay = {
+                    ...firstTrack,
+                    album: {
+                        images: album.images,
+                        name: album.name
+                    }
+                };
+                playTrack(trackToPlay);
+            }
+        } catch (error) {
+            console.error('Error playing album:', error);
+            alert('Unable to play this album. Please try another.');
         }
     };
 

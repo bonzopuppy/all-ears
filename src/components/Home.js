@@ -7,7 +7,7 @@ import GenreCarousel from "./GenreCarousel";
 import { useMusicContext } from "./MusicContext";
 import SearchResults from "./SearchResults";
 
-function Home({setSearchResults, searchResults, getAccessToken, spotifyAPI, newReleases, whatsHot, handleRefresh, genres}) {
+function Home({setSearchResults, searchResults, getAccessToken, spotifyAPI, newReleases, whatsHot, handleRefresh, genres, accessToken}) {
     const {
         currentSongIndex,
         isPlaying,
@@ -15,7 +15,7 @@ function Home({setSearchResults, searchResults, getAccessToken, spotifyAPI, newR
         nextSongHandler,
         prevSongHandler,
       } = useMusicContext();
-   
+
     return (
         <>
             <SearchBar
@@ -31,6 +31,8 @@ function Home({setSearchResults, searchResults, getAccessToken, spotifyAPI, newR
                         newReleases={newReleases}
                         whatsHot={whatsHot}
                         handleRefresh={handleRefresh}
+                        accessToken={accessToken}
+                        spotifyAPI={spotifyAPI}
                     />
                     <GenreCarousel genres={genres} />
                 </>

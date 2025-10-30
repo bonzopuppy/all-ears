@@ -93,6 +93,8 @@ function NewReleases({ accessToken, spotifyAPI }) {
             <AlbumMedium
               key={album.id}
               album={album}
+              accessToken={accessToken}
+              spotifyAPI={spotifyAPI}
             />
           ))}
         </Box>

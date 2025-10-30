@@ -4,7 +4,7 @@ import ListContainer from './ListContainer'; // Import your ListContainer compon
 import ListContainer2 from './ListContainer2'
 import ListContainer3 from './ListContainer3'; // Import your ListContainer component
 
-function ListContainerWrapper({newReleases, whatsHot, handleRefresh}) {
+function ListContainerWrapper({newReleases, whatsHot, handleRefresh, accessToken, spotifyAPI}) {
     return (
         <Box sx={{
             display: 'flex',
@@ -15,10 +15,10 @@ function ListContainerWrapper({newReleases, whatsHot, handleRefresh}) {
             padding: '0 30px', // Similar to the search bar
             gap: '20px' // Space between ListContainer components
         }}>
-            <ListContainer title={"New Releases"} newReleases={newReleases} />
+            <ListContainer title={"New Releases"} newReleases={newReleases} accessToken={accessToken} spotifyAPI={spotifyAPI} />
             <ListContainer2 title={"For You"} whatsHot={whatsHot} handleRefresh={handleRefresh}/>
             <ListContainer3 title={"Recent Selections"}/>
-            
+
         </Box>
     );
 }
