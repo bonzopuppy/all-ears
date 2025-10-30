@@ -28,12 +28,23 @@ function MusicPlayer() {
 
   const [localPosition, setLocalPosition] = useState(0);
 
-  // Update local position from Spotify player
+  // Update local position from Spotify player with polling
   useEffect(() => {
-    if (spotifyPlayer?.position !== undefined) {
-      setLocalPosition(spotifyPlayer.position);
-    }
-  }, [spotifyPlayer?.position]);
+    if (!spotifyPlayer?.player || !isPlaying) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const state = await spotifyPlayer.player.getCurrentState();
+        if (state) {
+          setLocalPosition(state.position);
+        }
+      } catch (error) {
+        console.error('Error getting player state:', error);
+      }
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, [spotifyPlayer?.player, isPlaying]);
 
   const handlePlayPause = () => {
     playPauseHandler();
@@ -46,13 +57,22 @@ function MusicPlayer() {
     }
   };
 
-  // Default values if no track is loaded
-  const trackData = currentTrack || {
+  // Get track data with proper fallbacks
+  const trackData = currentTrack ? {
+    name: currentTrack.name,
+    artist: currentTrack.artists?.[0]?.name || '',
+    image: currentTrack.album?.images?.[0]?.url || currentTrack.album?.images?.[1]?.url || currentTrack.album?.images?.[2]?.url || '',
+    duration_ms: currentTrack.duration_ms
+  } : {
     name: 'No track playing',
-    artists: [{ name: '' }],
-    album: { images: [{ url: '' }] },
+    artist: '',
+    image: '',
     duration_ms: 0
   };
+
+  console.log('MusicPlayer - currentTrack:', currentTrack);
+  console.log('MusicPlayer - trackData:', trackData);
+  console.log('MusicPlayer - spotifyPlayer:', spotifyPlayer);
 
   return (
     <Box
@@ -87,7 +107,7 @@ function MusicPlayer() {
               }}
             >
               <img
-                src={trackData.album.images[0]?.url || ''}
+                src={trackData.image}
                 alt="Album"
                 style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 4 }}
               />
@@ -98,7 +118,7 @@ function MusicPlayer() {
                 {trackData.name}
               </Typography>
               <Typography variant="subtitle2" sx={{ color: "text.secondary" }}>
-                {trackData.artists[0]?.name}
+                {trackData.artist}
               </Typography>
             </Box>
           </Box>
