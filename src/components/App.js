@@ -8,6 +8,7 @@ import YourLibrary from './YourLibrary';
 import Explore from './Explore';
 import ForYou from './ForYou';
 import NewReleases from './NewReleases';
+import Album from './Album';
 import Login from './Login';
 import { MusicProvider } from './MusicContext';
 import { useSpotifyAuth } from '../hooks/useSpotifyAuth';
@@ -256,6 +257,12 @@ function App() {
             }/>
             <Route path="/new-releases" element={
               <NewReleases
+                accessToken={accessToken}
+                spotifyAPI={spotifyAPI}
+              />
+            }/>
+            <Route path="/album/:albumId" element={
+              <Album
                 accessToken={accessToken}
                 spotifyAPI={spotifyAPI}
               />

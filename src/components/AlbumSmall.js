@@ -1,34 +1,19 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 import musicPlayerAlbum from '../images/musicPlayerAlbum.png';
 import PlayHover from './PlayHover';
-import { useMusicContext } from './MusicContext';
 
 function AlbumSmall({release, accessToken, spotifyAPI}) {
-    const { playTrack } = useMusicContext();
+    const navigate = useNavigate();
 
-    const handleClick = async () => {
+    const handleClick = () => {
         if (!release) return;
 
-        console.log('🎵 Clicking album:', release.name, 'by', release.artists[0].name);
-        console.log('🆔 Album URI:', release.uri);
-
-        // Create a pseudo-track object for display purposes
-        const pseudoTrack = {
-            name: release.name,
-            artists: release.artists,
-            album: {
-                images: release.images,
-                name: release.name
-            },
-            uri: release.uri, // This will be ignored when context_uri is provided
-            duration_ms: 0
-        };
-
-        // Play the entire album using context_uri
-        // This tells Spotify to play the album, not just a single track
-        playTrack(pseudoTrack, release.uri);
+        // Navigate to album detail page
+        const albumId = release.id || release.uri.split(':')[2];
+        navigate(`/album/${albumId}`);
     };
 
     if (!release) {

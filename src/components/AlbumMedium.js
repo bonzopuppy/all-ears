@@ -1,32 +1,18 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 import PlayHover from './PlayHover';
-import { useMusicContext } from './MusicContext';
 
 function AlbumMedium({album, accessToken, spotifyAPI}) {
-    const { playTrack } = useMusicContext();
+    const navigate = useNavigate();
 
     const handleClick = () => {
         if (!album) return;
 
-        console.log('🎵 Clicking album:', album.name, 'by', album.artists[0].name);
-        console.log('🆔 Album URI:', album.uri);
-
-        // Create a pseudo-track object for display purposes
-        const pseudoTrack = {
-            name: album.name,
-            artists: album.artists,
-            album: {
-                images: album.images,
-                name: album.name
-            },
-            uri: album.uri, // This will be ignored when context_uri is provided
-            duration_ms: 0
-        };
-
-        // Play the entire album using context_uri
-        playTrack(pseudoTrack, album.uri);
+        // Navigate to album detail page
+        const albumId = album.id || album.uri.split(':')[2];
+        navigate(`/album/${albumId}`);
     };
 
     if (album) {
