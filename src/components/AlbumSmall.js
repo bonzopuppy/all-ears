@@ -3,16 +3,40 @@ import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 import musicPlayerAlbum from '../images/musicPlayerAlbum.png';
 import PlayHover from './PlayHover';
+import { useMusicContext } from './MusicContext';
 
 function AlbumSmall({release}) {
+    const { playTrack } = useMusicContext();
+
+    const handleClick = async () => {
+        if (release) {
+            // For albums, we need to fetch tracks and play the first one
+            // Create a track object from the album info for the first track
+            // Note: We'll need to fetch album tracks from Spotify API
+            // For now, create a pseudo-track from album data
+            const albumTrack = {
+                name: release.name,
+                artists: release.artists,
+                album: {
+                    images: release.images,
+                    name: release.name
+                },
+                uri: release.uri,
+                duration_ms: 0 // We don't have this for albums
+            };
+            playTrack(albumTrack);
+        }
+    };
 
     if (!release) {
         return null; // or return a loading spinner
     } else return (
-        
+
         <li style={{ listStyleType: 'none' }}>
 
-            <Box sx={{
+            <Box
+                onClick={handleClick}
+                sx={{
                 display: 'flex',
                 alignItems: 'center',
                 position: 'relative',
@@ -21,7 +45,7 @@ function AlbumSmall({release}) {
                     backgroundColor: 'rgba(24, 28, 30, 0.08)', // Background color on hover
                     cursor: 'pointer',
                     borderRadius: '8px',
-                    // Show the play button on hover    
+                    // Show the play button on hover
                     '.playHover': {
                         visibility: 'visible',
                         opacity: 1,
