@@ -20,7 +20,7 @@ const MusicProvider = ({ children, spotifyPlayer }) => {
     }
   }, [spotifyPlayer?.currentTrack, spotifyPlayer?.isPaused, spotifyPlayer?.position]);
 
-  const playTrack = (spotifyTrack) => {
+  const playTrack = (spotifyTrack, context_uri = null) => {
     if (!spotifyPlayer || !spotifyPlayer.isReady) {
       alert("Spotify player is not ready yet. Please wait a moment and try again.");
       return;
@@ -36,8 +36,8 @@ const MusicProvider = ({ children, spotifyPlayer }) => {
       image: spotifyTrack.album?.images?.[0]?.url || spotifyTrack.image,
     };
 
-    // Play using Spotify SDK
-    spotifyPlayer.play(newTrack.uri);
+    // Play using Spotify SDK with optional context (for albums/playlists)
+    spotifyPlayer.play(newTrack.uri, context_uri);
 
     // Add to playlist
     setPlaylist([newTrack, ...playlist]);

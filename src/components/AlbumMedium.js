@@ -7,44 +7,26 @@ import { useMusicContext } from './MusicContext';
 function AlbumMedium({album, accessToken, spotifyAPI}) {
     const { playTrack } = useMusicContext();
 
-    const handleClick = async () => {
-        if (!album || !accessToken) return;
+    const handleClick = () => {
+        if (!album) return;
 
-        try {
-            // Extract album ID from URI (spotify:album:xxx)
-            const albumId = album.id || album.uri.split(':')[2];
+        console.log('🎵 Clicking album:', album.name, 'by', album.artists[0].name);
+        console.log('🆔 Album URI:', album.uri);
 
-            // Fetch album tracks from Spotify API
-            const response = await fetch(`${spotifyAPI}/albums/${albumId}/tracks?limit=1`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            });
+        // Create a pseudo-track object for display purposes
+        const pseudoTrack = {
+            name: album.name,
+            artists: album.artists,
+            album: {
+                images: album.images,
+                name: album.name
+            },
+            uri: album.uri, // This will be ignored when context_uri is provided
+            duration_ms: 0
+        };
 
-            if (!response.ok) {
-                console.error('Failed to fetch album tracks:', response.status);
-                alert('Unable to play this album. Please try another.');
-                return;
-            }
-
-            const data = await response.json();
-            if (data.items && data.items.length > 0) {
-                const firstTrack = data.items[0];
-                // Create a proper track object with album info
-                const trackToPlay = {
-                    ...firstTrack,
-                    album: {
-                        images: album.images,
-                        name: album.name
-                    }
-                };
-                playTrack(trackToPlay);
-            }
-        } catch (error) {
-            console.error('Error playing album:', error);
-            alert('Unable to play this album. Please try another.');
-        }
+        // Play the entire album using context_uri
+        playTrack(pseudoTrack, album.uri);
     };
 
     if (album) {

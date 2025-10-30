@@ -9,50 +9,26 @@ function AlbumSmall({release, accessToken, spotifyAPI}) {
     const { playTrack } = useMusicContext();
 
     const handleClick = async () => {
-        if (!release || !accessToken) return;
+        if (!release) return;
 
-        try {
-            // Extract album ID from URI (spotify:album:xxx)
-            const albumId = release.id || release.uri.split(':')[2];
+        console.log('🎵 Clicking album:', release.name, 'by', release.artists[0].name);
+        console.log('🆔 Album URI:', release.uri);
 
-            console.log('🎵 Clicking album:', release.name, 'by', release.artists[0].name);
-            console.log('🆔 Album ID:', albumId);
+        // Create a pseudo-track object for display purposes
+        const pseudoTrack = {
+            name: release.name,
+            artists: release.artists,
+            album: {
+                images: release.images,
+                name: release.name
+            },
+            uri: release.uri, // This will be ignored when context_uri is provided
+            duration_ms: 0
+        };
 
-            // Fetch album tracks from Spotify API
-            const response = await fetch(`${spotifyAPI}/albums/${albumId}/tracks?limit=1`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            });
-
-            if (!response.ok) {
-                console.error('Failed to fetch album tracks:', response.status);
-                alert('Unable to play this album. Please try another.');
-                return;
-            }
-
-            const data = await response.json();
-            console.log('📀 Fetched tracks:', data);
-
-            if (data.items && data.items.length > 0) {
-                const firstTrack = data.items[0];
-                console.log('▶️ Playing first track:', firstTrack.name);
-
-                // Create a proper track object with album info
-                const trackToPlay = {
-                    ...firstTrack,
-                    album: {
-                        images: release.images,
-                        name: release.name
-                    }
-                };
-                playTrack(trackToPlay);
-            }
-        } catch (error) {
-            console.error('Error playing album:', error);
-            alert('Unable to play this album. Please try another.');
-        }
+        // Play the entire album using context_uri
+        // This tells Spotify to play the album, not just a single track
+        playTrack(pseudoTrack, release.uri);
     };
 
     if (!release) {

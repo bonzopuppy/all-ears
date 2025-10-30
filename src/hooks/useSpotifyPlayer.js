@@ -83,13 +83,17 @@ export const useSpotifyPlayer = (accessToken) => {
     };
   }, [accessToken]);
 
-  const play = async (spotify_uri) => {
+  const play = async (spotify_uri, context_uri = null) => {
     if (!deviceId || !accessToken) return;
 
     try {
+      const body = context_uri
+        ? JSON.stringify({ context_uri }) // Play album/playlist context
+        : JSON.stringify({ uris: [spotify_uri] }); // Play single track
+
       await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
         method: 'PUT',
-        body: JSON.stringify({ uris: [spotify_uri] }),
+        body: body,
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${accessToken}`
