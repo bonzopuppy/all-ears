@@ -44,30 +44,31 @@ function Genre({ accessToken, spotifyAPI, genres }) {
 
           if (matchingCategory) {
             console.log('[Genre Page] Found matching category:', matchingCategory.id, matchingCategory.name);
-            const categoryId = matchingCategory.id;
 
-            // Fetch playlists for this category
-            const playlistsResponse = await fetch(`${spotifyAPI}/browse/categories/${categoryId}/playlists?limit=1`, {
+            // Since /browse/categories/{id}/playlists returns 404, let's search for playlists instead
+            const searchQuery = encodeURIComponent(matchingCategory.name);
+            console.log('[Genre Page] Searching for playlists with query:', matchingCategory.name);
+
+            const searchResponse = await fetch(`${spotifyAPI}/search?q=${searchQuery}&type=playlist&limit=1`, {
               method: 'GET',
               headers: {
                 'Authorization': `Bearer ${accessToken}`
               }
             });
 
-            if (!playlistsResponse.ok) {
-              console.error('[Genre Page] Failed to fetch playlists for category:', categoryId, 'Status:', playlistsResponse.status);
-              const errorText = await playlistsResponse.text();
-              console.error('[Genre Page] Error response:', errorText);
+            if (!searchResponse.ok) {
+              console.error('[Genre Page] Failed to search playlists:', searchResponse.status);
               setLoading(false);
               return;
             }
 
-            const playlistsData = await playlistsResponse.json();
-            console.log('[Genre Page] Playlists response:', playlistsData);
+            const searchData = await searchResponse.json();
+            console.log('[Genre Page] Search response:', searchData);
 
-            if (playlistsData.playlists && playlistsData.playlists.items && playlistsData.playlists.items.length > 0) {
+            if (searchData.playlists && searchData.playlists.items && searchData.playlists.items.length > 0) {
               // Get the first playlist
-              const playlistId = playlistsData.playlists.items[0].id;
+              const playlistId = searchData.playlists.items[0].id;
+              console.log('[Genre Page] Using playlist:', searchData.playlists.items[0].name);
 
               // Fetch tracks from that playlist
               const tracksResponse = await fetch(`${spotifyAPI}/playlists/${playlistId}/tracks?limit=50`, {
@@ -89,7 +90,7 @@ function Genre({ accessToken, spotifyAPI, genres }) {
                 setTracks(trackObjects);
               }
             } else {
-              console.warn('[Genre Page] No playlists found for category:', categoryId);
+              console.warn('[Genre Page] No playlists found for:', matchingCategory.name);
             }
           } else {
             console.warn('[Genre Page] No matching category found for:', genre.title);
