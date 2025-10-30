@@ -23,83 +23,79 @@ function Genre({ accessToken, spotifyAPI, genres }) {
           return;
         }
 
-        // Map genre titles to Spotify's actual browse category IDs
-        // These IDs are from Spotify's /browse/categories endpoint
-        const categoryMapping = {
-          'Rock': 'rock',
-          'Pop': 'pop',
-          'Hip Hop': 'hiphop',
-          'Jazz': 'jazz',
-          'Country': 'country',
-          'Classical': 'classical',
-          'Electronic': 'edm_dance',
-          'Folk': 'folk_acoustic',
-          'R&B': 'rnb',
-          'Caribbean': 'reggae',
-          'Blues': 'blues',
-          'Metal': 'metal',
-          'Funk & Disco': 'funk',
-          'Latin': 'latin',
-          'Afrobeats': 'afro',
-          'Soul': 'soul',
-          'Punk': 'punk',
-          'Gospel': 'christian',
-          'Indie': 'indie_alt',
-          'Alternative': 'indie_alt'
-        };
-
-        const categoryId = categoryMapping[genre.title];
-
-        if (!categoryId) {
-          console.error('[Genre Page] No category mapping for:', genre.title);
-          setLoading(false);
-          return;
-        }
-
-        console.log('[Genre Page] Using category ID:', categoryId, 'for genre:', genre.title);
-
-        // Fetch playlists for this category
-        const playlistsResponse = await fetch(`${spotifyAPI}/browse/categories/${categoryId}/playlists?limit=1`, {
+        // First, fetch all available categories to see what's actually available
+        console.log('[Genre Page] Fetching all available Spotify categories...');
+        const categoriesResponse = await fetch(`${spotifyAPI}/browse/categories?limit=50&locale=en_US`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${accessToken}`
           }
         });
 
-        if (!playlistsResponse.ok) {
-          console.error('[Genre Page] Failed to fetch playlists for category:', categoryId, 'Status:', playlistsResponse.status);
-          const errorText = await playlistsResponse.text();
-          console.error('[Genre Page] Error response:', errorText);
-          setLoading(false);
-          return;
-        }
+        if (categoriesResponse.ok) {
+          const categoriesData = await categoriesResponse.json();
+          console.log('[Genre Page] Available categories:', categoriesData.categories.items.map(c => ({ id: c.id, name: c.name })));
 
-        const playlistsData = await playlistsResponse.json();
-        console.log('[Genre Page] Playlists response:', playlistsData);
+          // Try to find a matching category
+          const matchingCategory = categoriesData.categories.items.find(cat =>
+            cat.name.toLowerCase().includes(genre.title.toLowerCase()) ||
+            genre.title.toLowerCase().includes(cat.name.toLowerCase())
+          );
 
-        if (playlistsData.playlists && playlistsData.playlists.items && playlistsData.playlists.items.length > 0) {
-          // Get the first playlist
-          const playlistId = playlistsData.playlists.items[0].id;
+          if (matchingCategory) {
+            console.log('[Genre Page] Found matching category:', matchingCategory.id, matchingCategory.name);
+            const categoryId = matchingCategory.id;
 
-          // Fetch tracks from that playlist
-          const tracksResponse = await fetch(`${spotifyAPI}/playlists/${playlistId}/tracks?limit=50`, {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${accessToken}`
+            // Fetch playlists for this category
+            const playlistsResponse = await fetch(`${spotifyAPI}/browse/categories/${categoryId}/playlists?limit=1`, {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${accessToken}`
+              }
+            });
+
+            if (!playlistsResponse.ok) {
+              console.error('[Genre Page] Failed to fetch playlists for category:', categoryId, 'Status:', playlistsResponse.status);
+              const errorText = await playlistsResponse.text();
+              console.error('[Genre Page] Error response:', errorText);
+              setLoading(false);
+              return;
             }
-          });
 
-          if (!tracksResponse.ok) {
-            console.error('[Genre Page] Failed to fetch tracks:', tracksResponse.status);
-            return;
-          }
+            const playlistsData = await playlistsResponse.json();
+            console.log('[Genre Page] Playlists response:', playlistsData);
 
-          const tracksData = await tracksResponse.json();
-          if (tracksData.items) {
-            // Extract track objects from the playlist items
-            const trackObjects = tracksData.items.map(item => item.track).filter(track => track !== null);
-            setTracks(trackObjects);
+            if (playlistsData.playlists && playlistsData.playlists.items && playlistsData.playlists.items.length > 0) {
+              // Get the first playlist
+              const playlistId = playlistsData.playlists.items[0].id;
+
+              // Fetch tracks from that playlist
+              const tracksResponse = await fetch(`${spotifyAPI}/playlists/${playlistId}/tracks?limit=50`, {
+                method: 'GET',
+                headers: {
+                  'Authorization': `Bearer ${accessToken}`
+                }
+              });
+
+              if (!tracksResponse.ok) {
+                console.error('[Genre Page] Failed to fetch tracks:', tracksResponse.status);
+                return;
+              }
+
+              const tracksData = await tracksResponse.json();
+              if (tracksData.items) {
+                // Extract track objects from the playlist items
+                const trackObjects = tracksData.items.map(item => item.track).filter(track => track !== null);
+                setTracks(trackObjects);
+              }
+            } else {
+              console.warn('[Genre Page] No playlists found for category:', categoryId);
+            }
+          } else {
+            console.warn('[Genre Page] No matching category found for:', genre.title);
           }
+        } else {
+          console.error('[Genre Page] Failed to fetch categories:', categoriesResponse.status);
         }
       } catch (error) {
         console.error('[Genre Page] Error:', error);
