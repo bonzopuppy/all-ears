@@ -7,6 +7,7 @@ import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import MicIcon from "@mui/icons-material/Mic";
 import QueueMusicIcon from "@mui/icons-material/QueueMusic";
 import RadioIcon from "@mui/icons-material/Radio";
+import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import { useMusicContext } from './MusicContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -140,7 +141,7 @@ function MusicPlayer() {
                     borderRadius: 1,
                   }}
                 >
-                  <GraphicEqIcon sx={{ fontSize: 32, color: "#9E9E9E" }} />
+                  <MusicNoteIcon sx={{ fontSize: 32, color: "#9E9E9E" }} />
                 </Box>
                 {/* Empty state text */}
                 <Box>
