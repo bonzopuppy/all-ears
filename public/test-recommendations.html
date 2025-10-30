@@ -9,22 +9,75 @@
     <pre id="output"></pre>
 
     <script>
+        async function refreshAccessToken() {
+            const refreshToken = localStorage.getItem('spotify_refresh_token');
+
+            if (!refreshToken) {
+                throw new Error('No refresh token available');
+            }
+
+            const response = await fetch('/api/refresh', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ refresh_token: refreshToken })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Token refresh failed: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            // Update localStorage
+            localStorage.setItem('spotify_access_token', data.access_token);
+            const expiresAt = Date.now() + (data.expires_in * 1000);
+            localStorage.setItem('spotify_token_expires_at', expiresAt.toString());
+
+            if (data.refresh_token) {
+                localStorage.setItem('spotify_refresh_token', data.refresh_token);
+            }
+
+            return data.access_token;
+        }
+
+        async function getValidToken(output) {
+            let token = localStorage.getItem('spotify_access_token');
+            const expiresAt = localStorage.getItem('spotify_token_expires_at');
+
+            if (!token) {
+                output.textContent += 'ERROR: No access token found in localStorage.\n';
+                output.textContent += 'Please log in to the app first at /\n';
+                return null;
+            }
+
+            // Check if token is expired or expires in the next 5 minutes
+            if (expiresAt && Date.now() >= (parseInt(expiresAt) - 5 * 60 * 1000)) {
+                output.textContent += 'Token expired or expiring soon, refreshing...\n';
+                try {
+                    token = await refreshAccessToken();
+                    output.textContent += 'Token refreshed successfully!\n\n';
+                } catch (error) {
+                    output.textContent += `ERROR: Failed to refresh token: ${error.message}\n`;
+                    output.textContent += 'Please log in again at /\n';
+                    return null;
+                }
+            } else {
+                output.textContent += `Got token: ${token.substring(0, 20)}...\n\n`;
+            }
+
+            return token;
+        }
+
         async function testRecommendations() {
             const output = document.getElementById('output');
             output.textContent = 'Testing...\n\n';
 
             try {
-                // Get access token from localStorage
+                // Get valid token (refreshes if expired)
                 output.textContent += '1. Getting access token from localStorage...\n';
-                const token = localStorage.getItem('spotify_access_token');
+                const token = await getValidToken(output);
 
-                if (!token) {
-                    output.textContent += 'ERROR: No access token found in localStorage.\n';
-                    output.textContent += 'Please log in to the app first at /all-ears\n';
-                    return;
-                }
-
-                output.textContent += `Got token: ${token.substring(0, 20)}...\n\n`;
+                if (!token) return;
 
                 // Test a known track ID (Taylor Swift - Anti-Hero)
                 const testTrackId = '0V3wPSX9ygBnCm8psDIegu';
