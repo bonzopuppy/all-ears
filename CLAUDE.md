@@ -32,24 +32,35 @@ When suggesting fixes:
 ## Development Commands
 
 ```bash
-npm start      # Development server on http://localhost:3000
+npm run dev    # Local development with OAuth support (Express server on port 3000, React on port 3001)
+npm start      # React dev server only (no OAuth endpoints available)
 npm run build  # Production build for deployment
 npm run deploy # Deploy to GitHub Pages (runs predeploy build automatically)
 npm test       # Run tests (minimal coverage currently)
 ```
 
-**Base URL in development:** `http://localhost:3000/all-ears` (note the `/all-ears` path configured for GitHub Pages)
+**IMPORTANT:** For full local development with OAuth authentication, you MUST use `npm run dev`, which runs:
+- Express server on http://127.0.0.1:3000 (OAuth endpoints at `/api/auth/*`)
+- React dev server on http://localhost:3001 (proxied through Express server)
+
+Using just `npm start` will compile the React app but OAuth endpoints won't work.
+
+**OAuth Redirect URI:** `http://127.0.0.1:3000/api/auth/callback` (configured in Spotify Dashboard)
 
 ## Architecture & Key Patterns
 
 ### Spotify API Integration
 
-**Authentication:** Client Credentials flow only (no user OAuth)
-- API credentials stored in `.env` file as `REACT_APP_SPOTIFY_CLIENT_ID` and `REACT_APP_SPOTIFY_CLIENT_SECRET`
-- Access token fetched on-demand via `getAccessToken()` in App.js (no caching)
-- **Limitation:** Only public Spotify data accessible; track previews limited to 30 seconds
+**Authentication:** User OAuth 2.0 flow (Authorization Code with PKCE)
+- OAuth credentials stored in `.env` file as `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`
+- OAuth flow handled by serverless functions in `/api/auth/` directory:
+  - `/api/auth/login` - Initiates OAuth flow
+  - `/api/auth/callback` - Handles OAuth callback and token exchange
+  - `/api/auth/refresh` - Refreshes expired access tokens
+- Tokens stored in localStorage via `useSpotifyAuth` hook (`src/hooks/useSpotifyAuth.js`)
+- Full access to user's Spotify account (playback, playlists, top tracks, etc.)
 
-**Authentication function location:** `src/components/App.js` lines 90-101
+**Scopes requested:** streaming, user-read-playback-state, user-modify-playback-state, user-read-email, user-read-private, playlist-read-private, playlist-read-collaborative, user-top-read
 
 **API base URL:** `https://api.spotify.com/v1` (stored as `spotifyAPI` constant in App.js)
 
