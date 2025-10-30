@@ -22,6 +22,7 @@ function Radio({ accessToken, spotifyAPI }) {
         }
 
         // First, fetch the seed track info
+        let trackData = null;
         const trackResponse = await fetch(`${spotifyAPI}/tracks/${trackId}`, {
           method: 'GET',
           headers: {
@@ -30,15 +31,16 @@ function Radio({ accessToken, spotifyAPI }) {
         });
 
         if (trackResponse.ok) {
-          const trackData = await trackResponse.json();
+          trackData = await trackResponse.json();
           setSeedTrack(trackData);
           console.log('[Radio Page] Seed track:', trackData.name, 'by', trackData.artists[0].name);
         }
 
         // Fetch recommendations based on this track
+        // Add market parameter and other optional parameters for better results
         console.log('[Radio Page] Fetching recommendations for track:', trackId);
         const recommendationsResponse = await fetch(
-          `${spotifyAPI}/recommendations?seed_tracks=${trackId}&limit=50`,
+          `${spotifyAPI}/recommendations?seed_tracks=${trackId}&limit=50&market=US`,
           {
             method: 'GET',
             headers: {
@@ -51,6 +53,32 @@ function Radio({ accessToken, spotifyAPI }) {
           console.error('[Radio Page] Failed to fetch recommendations:', recommendationsResponse.status);
           const errorText = await recommendationsResponse.text();
           console.error('[Radio Page] Error response:', errorText);
+
+          // Try fallback: use artist seed instead
+          if (trackData && trackData.artists && trackData.artists.length > 0) {
+            console.log('[Radio Page] Trying fallback with artist seed...');
+            const artistId = trackData.artists[0].id;
+            const fallbackResponse = await fetch(
+              `${spotifyAPI}/recommendations?seed_artists=${artistId}&limit=50&market=US`,
+              {
+                method: 'GET',
+                headers: {
+                  'Authorization': `Bearer ${accessToken}`
+                }
+              }
+            );
+
+            if (fallbackResponse.ok) {
+              const fallbackData = await fallbackResponse.json();
+              console.log('[Radio Page] Fallback recommendations response:', fallbackData);
+              if (fallbackData.tracks && fallbackData.tracks.length > 0) {
+                setTracks(fallbackData.tracks);
+                setLoading(false);
+                return;
+              }
+            }
+          }
+
           setLoading(false);
           return;
         }
