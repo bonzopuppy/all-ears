@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import NavBar from './NavBar';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import MusicPlayer from './MusicPlayer';
 import Home from './Home';
@@ -231,10 +231,11 @@ function App() {
           <MusicProvider>
         <div style ={{ paddingTop: '64px', paddingBottom: '108px'}}>
           <Routes>
+            <Route path="/" element={<Navigate to="/all-ears" replace />} />
             <Route path="/all-ears" element={
-              <Home 
+              <Home
                 getAccessToken={getAccessToken}
-                spotifyAPI={spotifyAPI} 
+                spotifyAPI={spotifyAPI}
                 newReleases={newReleases}
                 whatsHot={whatsHot}
                 handleRefresh={handleRefresh}
@@ -246,13 +247,13 @@ function App() {
             <Route path="/library" element={
               <YourLibrary
                 getAccessToken={getAccessToken}
-                spotifyAPI={spotifyAPI} 
+                spotifyAPI={spotifyAPI}
               />
             }/>
             <Route path="/explore" element={
               <Explore
                 getAccessToken={getAccessToken}
-                spotifyAPI={spotifyAPI} 
+                spotifyAPI={spotifyAPI}
               />
             }/>
           </Routes>
