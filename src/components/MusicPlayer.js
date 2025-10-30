@@ -63,16 +63,7 @@ function MusicPlayer() {
     artist: currentTrack.artists?.[0]?.name || '',
     image: currentTrack.album?.images?.[0]?.url || currentTrack.album?.images?.[1]?.url || currentTrack.album?.images?.[2]?.url || '',
     duration_ms: currentTrack.duration_ms
-  } : {
-    name: 'No track playing',
-    artist: '',
-    image: '',
-    duration_ms: 0
-  };
-
-  console.log('MusicPlayer - currentTrack:', currentTrack);
-  console.log('MusicPlayer - trackData:', trackData);
-  console.log('MusicPlayer - spotifyPlayer:', spotifyPlayer);
+  } : null;
 
   return (
     <Box
@@ -96,31 +87,61 @@ function MusicPlayer() {
               position: "relative",
             }}
           >
-            {/* Album Image */}
-            <Box
-              sx={{
-                width: "64px",
-                height: "64px",
-                marginRight: "10px",
-                marginLeft: "10px",
-                position: "relative",
-              }}
-            >
-              <img
-                src={trackData.image}
-                alt="Album"
-                style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 4 }}
-              />
-            </Box>
-            {/* Song Info */}
-            <Box>
-              <Typography variant="subtitle1" sx={{ fontWeight: "500" }}>
-                {trackData.name}
-              </Typography>
-              <Typography variant="subtitle2" sx={{ color: "text.secondary" }}>
-                {trackData.artist}
-              </Typography>
-            </Box>
+            {trackData ? (
+              <>
+                {/* Album Image */}
+                <Box
+                  sx={{
+                    width: "64px",
+                    height: "64px",
+                    marginRight: "10px",
+                    marginLeft: "10px",
+                    position: "relative",
+                  }}
+                >
+                  <img
+                    src={trackData.image}
+                    alt="Album"
+                    style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 4 }}
+                  />
+                </Box>
+                {/* Song Info */}
+                <Box>
+                  <Typography variant="subtitle1" sx={{ fontWeight: "500" }}>
+                    {trackData.name}
+                  </Typography>
+                  <Typography variant="subtitle2" sx={{ color: "text.secondary" }}>
+                    {trackData.artist}
+                  </Typography>
+                </Box>
+              </>
+            ) : (
+              <>
+                {/* Empty state - Music Icon */}
+                <Box
+                  sx={{
+                    width: "64px",
+                    height: "64px",
+                    marginRight: "10px",
+                    marginLeft: "10px",
+                    position: "relative",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "#E0E0E0",
+                    borderRadius: 1,
+                  }}
+                >
+                  <GraphicEqIcon sx={{ fontSize: 32, color: "#9E9E9E" }} />
+                </Box>
+                {/* Empty state text */}
+                <Box>
+                  <Typography variant="subtitle1" sx={{ fontWeight: "500", color: "#9E9E9E" }}>
+                    Click a song to start playing
+                  </Typography>
+                </Box>
+              </>
+            )}
           </Box>
         </li>
       </ul>
@@ -183,13 +204,14 @@ function MusicPlayer() {
             }}
             value={localPosition}
             min={0}
-            max={spotifyPlayer?.duration || trackData.duration_ms || 0}
+            max={spotifyPlayer?.duration || trackData?.duration_ms || 0}
             onChange={handleSliderChange}
             aria-label="Song scrubber"
+            disabled={!trackData}
           />
           {/* Total Duration */}
           <Typography sx={{ marginLeft: 1, fontSize: 12, marginBottom: 1.5 }}>
-            {formatTime(spotifyPlayer?.duration || trackData.duration_ms || 0)}
+            {formatTime(spotifyPlayer?.duration || trackData?.duration_ms || 0)}
           </Typography>
         </Box>
       </Box>
