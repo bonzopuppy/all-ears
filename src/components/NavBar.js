@@ -8,12 +8,10 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import logo from '../images/AELogo.svg';
 import { NavLink } from 'react-router-dom';
-import { useSpotifyAuth } from '../hooks/useSpotifyAuth';
 
-function NavBar({ user }) {
+function NavBar({ user, onLogout }) {
     const [activeLink, setActiveLink] = useState('home');
     const [anchorEl, setAnchorEl] = useState(null);
-    const { logout } = useSpotifyAuth();
 
     const handleLinkClick = (link) => {
         setActiveLink(link);
@@ -29,7 +27,9 @@ function NavBar({ user }) {
 
     const handleLogout = () => {
         handleMenuClose();
-        logout();
+        if (onLogout) {
+            onLogout();
+        }
     };
 
     // Get user initials for avatar

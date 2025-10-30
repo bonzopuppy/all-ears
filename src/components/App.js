@@ -80,7 +80,7 @@ const theme = createTheme({
 });
 
 function App() {
-  const { isAuthenticated, accessToken, user } = useSpotifyAuth();
+  const { isAuthenticated, accessToken, user, logout } = useSpotifyAuth();
 
   const allEarsClientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID
   const allEarsClientSecret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET
@@ -227,7 +227,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <Router>
         <div className="App">
-          <NavBar user={user} />
+          <NavBar user={user} onLogout={logout} />
           <MusicProvider>
         <div style ={{ paddingTop: '64px', paddingBottom: '108px'}}>
           <Routes>
