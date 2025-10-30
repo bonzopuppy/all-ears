@@ -10,7 +10,7 @@ export default function handler(req, res) {
     'user-modify-playback-state',    // Control playback
     'user-read-email',               // User email
     'user-read-private',             // User profile
-    'playlist-read-private',         // Access playlists
+    'playlist-read-private',         // Access private playlists
     'playlist-read-collaborative',   // Access collaborative playlists
     'user-top-read',                 // User's top tracks
   ].join(' ');
