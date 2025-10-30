@@ -16,7 +16,7 @@ function ListContainerWrapper({newReleases, whatsHot, handleRefresh}) {
             gap: '20px' // Space between ListContainer components
         }}>
             <ListContainer title={"New Releases"} newReleases={newReleases} />
-            <ListContainer2 title={"Top 50"} whatsHot={whatsHot} handleRefresh={handleRefresh}/>
+            <ListContainer2 title={"For You"} whatsHot={whatsHot} handleRefresh={handleRefresh}/>
             <ListContainer3 title={"Recent Selections"}/>
             
         </Box>

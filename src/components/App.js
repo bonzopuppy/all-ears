@@ -6,6 +6,7 @@ import MusicPlayer from './MusicPlayer';
 import Home from './Home';
 import YourLibrary from './YourLibrary';
 import Explore from './Explore';
+import ForYou from './ForYou';
 import Login from './Login';
 import { MusicProvider } from './MusicContext';
 import { useSpotifyAuth } from '../hooks/useSpotifyAuth';
@@ -106,49 +107,35 @@ function App() {
   const [newReleases, setNewReleases] = useState([])
   const [whatsHot, setWhatsHot] = useState([])
 
-  async function fetchWhatsHot() {
+  async function fetchWhatsHot(userToken) {
     try {
-      const token = await getAccessToken();
+      if (!userToken) {
+        console.warn('[For You] No user token available');
+        return;
+      }
 
-      // Use browse/featured-playlists to get currently popular tracks
-      const url = `${spotifyAPI}/browse/featured-playlists?limit=1`;
+      // Fetch user's top tracks from the last 4 weeks
+      const url = `${spotifyAPI}/me/top/tracks?time_range=short_term&limit=3`;
 
       const response = await fetch(url, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${userToken}`
         }
       })
 
       if (!response.ok) {
-        console.error('[Top 50] Failed to fetch featured playlists:', response.status);
+        console.error('[For You] Failed to fetch top tracks:', response.status);
         return;
       }
 
       const data = await response.json();
 
-      // Get the first featured playlist
-      if (data.playlists && data.playlists.items && data.playlists.items.length > 0) {
-        const playlistId = data.playlists.items[0].id;
-
-        // Now fetch tracks from that playlist
-        const tracksResponse = await fetch(`${spotifyAPI}/playlists/${playlistId}/tracks?limit=3`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (tracksResponse.ok) {
-          const tracksData = await tracksResponse.json();
-          if (tracksData.items && tracksData.items.length > 0) {
-            const tracks = tracksData.items.map(item => item.track).filter(track => track);
-            setWhatsHot(tracks);
-          }
-        }
+      if (data.items && data.items.length > 0) {
+        setWhatsHot(data.items);
       }
     } catch (error) {
-      console.error('[Top 50] Error:', error);
+      console.error('[For You] Error:', error);
     }
   }
 
@@ -179,13 +166,17 @@ function App() {
       }
 
       fetchNewReleases()
-      fetchWhatsHot()
+      if (accessToken) {
+        fetchWhatsHot(accessToken)
+      }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [accessToken])
 
   function handleRefresh(e) {
     e.preventDefault()
-    fetchWhatsHot()
+    if (accessToken) {
+      fetchWhatsHot(accessToken)
+    }
   }
 
   const genres = [
@@ -250,6 +241,12 @@ function App() {
             <Route path="/explore" element={
               <Explore
                 getAccessToken={getAccessToken}
+                spotifyAPI={spotifyAPI}
+              />
+            }/>
+            <Route path="/for-you" element={
+              <ForYou
+                accessToken={accessToken}
                 spotifyAPI={spotifyAPI}
               />
             }/>

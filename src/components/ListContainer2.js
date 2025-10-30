@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Typography, Link } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 // import musicPlayerAlbum from './musicPlayerAlbum.png';
 import SongSmall from './SongSmall';
 
@@ -17,9 +18,9 @@ function ListContainer2({ title, whatsHot, handleRefresh }) {
             {/* Title */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', margin: '4px 0 20px 8px' }}>
                 <Typography variant="h6">{title}</Typography>
-                <Link href="https://open.spotify.com/playlist/37i9dQZEVXbMDoHDwVN2tF"
-                target="_blank"
-                rel="noopener noreferrer"
+                <Link
+                component={RouterLink}
+                to="/for-you"
                 sx={{ textDecoration: 'none', fontWeight: '500', color: 'primary.main', fontFamily: "'Prompt', sans serif", margin: '3px 12px 0 0', '&:hover': { color: 'secondary.main' }, fontSize: '14px'}}
                 >View All</Link>
             </Box>
