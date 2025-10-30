@@ -81,8 +81,18 @@ function Genre({ accessToken, spotifyAPI, genres }) {
               console.log('[Genre Page] Search response:', searchData);
 
               if (searchData.playlists && searchData.playlists.items && searchData.playlists.items.length > 0) {
-                const playlistId = searchData.playlists.items[0].id;
-                console.log('[Genre Page] Using playlist from search:', searchData.playlists.items[0].name, 'Playlist ID:', playlistId);
+                // Filter out null playlists
+                const validPlaylists = searchData.playlists.items.filter(p => p !== null);
+
+                if (validPlaylists.length === 0) {
+                  console.warn('[Genre Page] No valid playlists found in search results');
+                  setLoading(false);
+                  return;
+                }
+
+                const playlist = validPlaylists[0];
+                const playlistId = playlist.id;
+                console.log('[Genre Page] Using playlist from search:', playlist.name, 'Playlist ID:', playlistId);
 
                 // Fetch tracks from that playlist
                 const tracksResponse = await fetch(`${spotifyAPI}/playlists/${playlistId}/tracks?limit=50`, {
