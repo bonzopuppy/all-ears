@@ -6,8 +6,9 @@ import SkipNextIcon from "@mui/icons-material/SkipNext";
 import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import MicIcon from "@mui/icons-material/Mic";
 import QueueMusicIcon from "@mui/icons-material/QueueMusic";
-import GraphicEqIcon from "@mui/icons-material/GraphicEq";
+import RadioIcon from "@mui/icons-material/Radio";
 import { useMusicContext } from './MusicContext';
+import { useNavigate } from 'react-router-dom';
 
 function formatTime(milliseconds) {
   const totalSeconds = Math.floor(milliseconds / 1000);
@@ -26,7 +27,14 @@ function MusicPlayer() {
     spotifyPlayer
   } = useMusicContext();
 
+  const navigate = useNavigate();
   const [localPosition, setLocalPosition] = useState(0);
+
+  const handleRadioClick = () => {
+    if (currentTrack && currentTrack.id) {
+      navigate(`/radio/${currentTrack.id}`);
+    }
+  };
 
   // Update local position from Spotify player with polling
   useEffect(() => {
@@ -238,8 +246,10 @@ function MusicPlayer() {
         </IconButton>
         <IconButton
           sx={{ color: "primary.main", "&:hover": { color: "secondary.main" } }}
+          onClick={handleRadioClick}
+          disabled={!currentTrack}
         >
-          <GraphicEqIcon sx={{ fontSize: 28 }} />
+          <RadioIcon sx={{ fontSize: 28 }} />
         </IconButton>
       </Box>
     </Box>
