@@ -14,21 +14,16 @@
             output.textContent = 'Testing...\n\n';
 
             try {
-                // Get access token
-                output.textContent += '1. Getting access token from /api/refresh...\n';
-                const tokenResponse = await fetch('/api/refresh', {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' }
-                });
+                // Get access token from localStorage
+                output.textContent += '1. Getting access token from localStorage...\n';
+                const token = localStorage.getItem('spotify_access_token');
 
-                if (!tokenResponse.ok) {
-                    output.textContent += `Failed to get token: ${tokenResponse.status}\n`;
+                if (!token) {
+                    output.textContent += 'ERROR: No access token found in localStorage.\n';
+                    output.textContent += 'Please log in to the app first at /all-ears\n';
                     return;
                 }
 
-                const tokenData = await tokenResponse.json();
-                const token = tokenData.access_token;
                 output.textContent += `Got token: ${token.substring(0, 20)}...\n\n`;
 
                 // Test a known track ID (Taylor Swift - Anti-Hero)
