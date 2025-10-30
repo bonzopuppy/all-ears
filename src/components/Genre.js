@@ -61,10 +61,17 @@ function Genre({ accessToken, spotifyAPI, genres }) {
               const errorText = await playlistsResponse.text();
               console.warn('[Genre Page] Browse endpoint failed with status:', playlistsResponse.status, 'Error:', errorText);
               console.warn('[Genre Page] Falling back to search');
-              const searchQuery = encodeURIComponent(matchingCategory.name);
-              console.log('[Genre Page] Searching for playlists with query:', matchingCategory.name);
 
-              const searchResponse = await fetch(`${spotifyAPI}/search?q=${searchQuery}&type=playlist&limit=10`, {
+              // Try multiple search variations for better results
+              let searchQuery = matchingCategory.name;
+              // For "Hip-Hop", also try "Hip Hop" and "hiphop"
+              if (searchQuery.includes('-')) {
+                searchQuery = searchQuery.replace('-', ' ');
+              }
+
+              console.log('[Genre Page] Searching for playlists with query:', searchQuery);
+
+              const searchResponse = await fetch(`${spotifyAPI}/search?q=${encodeURIComponent(searchQuery)}&type=playlist&limit=20`, {
                 method: 'GET',
                 headers: {
                   'Authorization': `Bearer ${accessToken}`
@@ -82,7 +89,7 @@ function Genre({ accessToken, spotifyAPI, genres }) {
 
               if (searchData.playlists && searchData.playlists.items && searchData.playlists.items.length > 0) {
                 // Filter out null playlists
-                const validPlaylists = searchData.playlists.items.filter(p => p !== null);
+                const validPlaylists = searchData.playlists.items.filter(p => p !== null && p.id);
 
                 if (validPlaylists.length === 0) {
                   console.warn('[Genre Page] No valid playlists found in search results');
