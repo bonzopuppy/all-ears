@@ -19,9 +19,14 @@ function MusicPlayer() {
   const { playlist, currentSongIndex, isPlaying, nextSongHandler, prevSongHandler, setIsPlaying } = useMusicContext();
 
   const song = playlist[currentSongIndex];
-  const audioRef = useRef(new Audio(song.song));
+  const audioRef = useRef(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [pausedTime, setPausedTime] = useState(null);
+
+  // Initialize audio ref on first render
+  if (!audioRef.current) {
+    audioRef.current = new Audio();
+  }
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -45,16 +50,21 @@ function MusicPlayer() {
   useEffect(() => {
     const audio = audioRef.current;
     if (audio && song.song) {
-      audio.src = song.song;
+      // Only update src if it's different from current
+      if (audio.src !== song.song) {
+        audio.src = song.song;
+        audio.load(); // Explicitly load the new source
+        setCurrentTime(0);
+        setPausedTime(0);
+      }
+
       if (isPlaying) {
         audio.play().catch(err => console.error('Error playing audio:', err));
-        if (pausedTime > 0) {
-          audio.currentTime = pausedTime;
-          setPausedTime(0);
-        }
+      } else {
+        audio.pause();
       }
     }
-  }, [currentSongIndex, isPlaying, song.song, pausedTime]);
+  }, [currentSongIndex, isPlaying, song.song]);
 
   const handlePlayPause = () => {
     if (audioRef.current.paused) {
