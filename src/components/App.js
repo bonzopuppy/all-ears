@@ -116,8 +116,8 @@ function App() {
         return;
       }
 
-      // Fetch from Spotify's Global Top 50 playlist
-      const url = `${spotifyAPI}/playlists/37i9dQZEVXbMDoHDwVN2tF/tracks?limit=3`;
+      // Use recommendations endpoint with popular genres for highly popular tracks
+      const url = `${spotifyAPI}/recommendations?limit=3&seed_genres=pop,hip-hop,rock&min_popularity=80`;
       console.log('[Top 50] Fetching URL:', url);
 
       const response = await fetch(url, {
@@ -137,16 +137,13 @@ function App() {
 
       const data = await response.json()
       console.log('[Top 50] Full response data:', data);
-      console.log('[Top 50] Items:', data.items);
+      console.log('[Top 50] Tracks:', data.tracks);
 
-      if (data.items && data.items.length > 0) {
-        // Extract track objects from playlist items
-        const tracks = data.items.map(item => item.track).filter(track => track);
-        console.log('[Top 50] Extracted tracks:', tracks);
-        console.log('[Top 50] Setting whatsHot state with', tracks.length, 'tracks');
-        setWhatsHot(tracks);
+      if (data.tracks && data.tracks.length > 0) {
+        console.log('[Top 50] Setting whatsHot state with', data.tracks.length, 'tracks');
+        setWhatsHot(data.tracks);
       } else {
-        console.warn('[Top 50] No items in response');
+        console.warn('[Top 50] No tracks in response');
       }
     } catch (error) {
       console.error('[Top 50] Error:', error);
