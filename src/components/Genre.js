@@ -49,7 +49,7 @@ function Genre({ accessToken, spotifyAPI, genres }) {
             const categoryId = matchingCategory.id;
             console.log('[Genre Page] Fetching playlists for category:', categoryId);
 
-            const playlistsResponse = await fetch(`${spotifyAPI}/browse/categories/${categoryId}/playlists?country=US&limit=1`, {
+            const playlistsResponse = await fetch(`${spotifyAPI}/browse/categories/${categoryId}/playlists?country=US&limit=10`, {
               method: 'GET',
               headers: {
                 'Authorization': `Bearer ${accessToken}`
@@ -58,11 +58,13 @@ function Genre({ accessToken, spotifyAPI, genres }) {
 
             if (!playlistsResponse.ok) {
               // If browse fails, fall back to search
-              console.warn('[Genre Page] Browse endpoint failed, falling back to search');
+              const errorText = await playlistsResponse.text();
+              console.warn('[Genre Page] Browse endpoint failed with status:', playlistsResponse.status, 'Error:', errorText);
+              console.warn('[Genre Page] Falling back to search');
               const searchQuery = encodeURIComponent(matchingCategory.name);
               console.log('[Genre Page] Searching for playlists with query:', matchingCategory.name);
 
-              const searchResponse = await fetch(`${spotifyAPI}/search?q=${searchQuery}&type=playlist&limit=1`, {
+              const searchResponse = await fetch(`${spotifyAPI}/search?q=${searchQuery}&type=playlist&limit=10`, {
                 method: 'GET',
                 headers: {
                   'Authorization': `Bearer ${accessToken}`
@@ -80,7 +82,7 @@ function Genre({ accessToken, spotifyAPI, genres }) {
 
               if (searchData.playlists && searchData.playlists.items && searchData.playlists.items.length > 0) {
                 const playlistId = searchData.playlists.items[0].id;
-                console.log('[Genre Page] Using playlist from search:', searchData.playlists.items[0].name);
+                console.log('[Genre Page] Using playlist from search:', searchData.playlists.items[0].name, 'Playlist ID:', playlistId);
 
                 // Fetch tracks from that playlist
                 const tracksResponse = await fetch(`${spotifyAPI}/playlists/${playlistId}/tracks?limit=50`, {
