@@ -23,26 +23,43 @@ function Genre({ accessToken, spotifyAPI, genres }) {
           return;
         }
 
-        // Instead of recommendations API, let's search for playlists with the genre name
-        // This is more reliable than recommendations with genre seeds
-        const searchQuery = encodeURIComponent(genre.title);
-        const response = await fetch(`${spotifyAPI}/search?q=${searchQuery}&type=playlist&limit=1`, {
+        // Extract category ID from the genre URL
+        // URLs look like: https://open.spotify.com/genre/0JQ5DAqbMKFDXXwE9BDJAr
+        let categoryId = null;
+
+        if (genre.url && genre.url.includes('/genre/')) {
+          categoryId = genre.url.split('/genre/')[1];
+          console.log('[Genre Page] Extracted category ID from URL:', categoryId, 'for genre:', genre.title);
+        }
+
+        if (!categoryId) {
+          console.error('[Genre Page] Could not extract category ID from URL:', genre.url);
+          setLoading(false);
+          return;
+        }
+
+        // Fetch playlists for this category
+        const playlistsResponse = await fetch(`${spotifyAPI}/browse/categories/${categoryId}/playlists?limit=1`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${accessToken}`
           }
         });
 
-        if (!response.ok) {
-          console.error('[Genre Page] Failed to search playlists:', response.status);
+        if (!playlistsResponse.ok) {
+          console.error('[Genre Page] Failed to fetch playlists for category:', categoryId, 'Status:', playlistsResponse.status);
+          const errorText = await playlistsResponse.text();
+          console.error('[Genre Page] Error response:', errorText);
+          setLoading(false);
           return;
         }
 
-        const data = await response.json();
+        const playlistsData = await playlistsResponse.json();
+        console.log('[Genre Page] Playlists response:', playlistsData);
 
-        if (data.playlists && data.playlists.items && data.playlists.items.length > 0) {
+        if (playlistsData.playlists && playlistsData.playlists.items && playlistsData.playlists.items.length > 0) {
           // Get the first playlist
-          const playlistId = data.playlists.items[0].id;
+          const playlistId = playlistsData.playlists.items[0].id;
 
           // Fetch tracks from that playlist
           const tracksResponse = await fetch(`${spotifyAPI}/playlists/${playlistId}/tracks?limit=50`, {
