@@ -6,8 +6,9 @@ import Link from "@mui/material/Link";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link as RouterLink } from 'react-router-dom';
 import SongMedium from "./SongMedium";
+import { spotifyAPI } from '../api/spotify-client';
 
-function Radio({ accessToken, spotifyAPI }) {
+function Radio({ accessToken, market }) {
   const { trackId } = useParams();
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,73 +23,53 @@ function Radio({ accessToken, spotifyAPI }) {
         }
 
         // First, fetch the seed track info
-        let trackData = null;
-        const trackResponse = await fetch(`${spotifyAPI}/tracks/${trackId}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`
-          }
-        });
+        const trackData = await spotifyAPI.directRequest(`/tracks/${trackId}`);
 
-        if (trackResponse.ok) {
-          trackData = await trackResponse.json();
+        if (trackData) {
           setSeedTrack(trackData);
           console.log('[Radio Page] Seed track:', trackData.name, 'by', trackData.artists[0].name);
         }
 
-        // Fetch recommendations based on this track (no market parameter like Python example)
+        // Fetch recommendations based on this track (market parameter will be auto-added by proxy)
         console.log('[Radio Page] Fetching recommendations for track:', trackId);
-        const recommendationsResponse = await fetch(
-          `${spotifyAPI}/recommendations?seed_tracks=${trackId}&limit=50`,
-          {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${accessToken}`
-            }
-          }
-        );
 
-        if (!recommendationsResponse.ok) {
-          console.error('[Radio Page] Failed to fetch recommendations:', recommendationsResponse.status);
-          const errorText = await recommendationsResponse.text();
-          console.error('[Radio Page] Error response:', errorText);
+        try {
+          const recommendationsData = await spotifyAPI.getRecommendations({
+            seedTracks: trackId,
+            limit: 50,
+            market: market
+          });
+
+          console.log('[Radio Page] Recommendations response:', recommendationsData);
+
+          if (recommendationsData && recommendationsData.tracks && recommendationsData.tracks.length > 0) {
+            setTracks(recommendationsData.tracks);
+          } else {
+            console.warn('[Radio Page] No recommendations found');
+          }
+        } catch (recommendError) {
+          console.error('[Radio Page] Failed to fetch recommendations:', recommendError);
 
           // Try fallback: use artist seed instead
           if (trackData && trackData.artists && trackData.artists.length > 0) {
             console.log('[Radio Page] Trying fallback with artist seed...');
             const artistId = trackData.artists[0].id;
-            const fallbackResponse = await fetch(
-              `${spotifyAPI}/recommendations?seed_artists=${artistId}&limit=50`,
-              {
-                method: 'GET',
-                headers: {
-                  'Authorization': `Bearer ${accessToken}`
-                }
-              }
-            );
 
-            if (fallbackResponse.ok) {
-              const fallbackData = await fallbackResponse.json();
+            try {
+              const fallbackData = await spotifyAPI.getRecommendations({
+                seedArtists: artistId,
+                limit: 50,
+                market: market
+              });
+
               console.log('[Radio Page] Fallback recommendations response:', fallbackData);
-              if (fallbackData.tracks && fallbackData.tracks.length > 0) {
+              if (fallbackData && fallbackData.tracks && fallbackData.tracks.length > 0) {
                 setTracks(fallbackData.tracks);
-                setLoading(false);
-                return;
               }
+            } catch (fallbackError) {
+              console.error('[Radio Page] Fallback also failed:', fallbackError);
             }
           }
-
-          setLoading(false);
-          return;
-        }
-
-        const recommendationsData = await recommendationsResponse.json();
-        console.log('[Radio Page] Recommendations response:', recommendationsData);
-
-        if (recommendationsData.tracks && recommendationsData.tracks.length > 0) {
-          setTracks(recommendationsData.tracks);
-        } else {
-          console.warn('[Radio Page] No recommendations found');
         }
       } catch (error) {
         console.error('[Radio Page] Error:', error);
@@ -98,7 +79,7 @@ function Radio({ accessToken, spotifyAPI }) {
     }
 
     fetchRecommendations();
-  }, [accessToken, spotifyAPI, trackId]);
+  }, [accessToken, trackId, market]);
 
   if (loading) {
     return (
@@ -126,7 +107,7 @@ function Radio({ accessToken, spotifyAPI }) {
       {/* Back button */}
       <Link
         component={RouterLink}
-        to="/all-ears"
+        to="/"
         sx={{
           display: 'flex',
           alignItems: 'center',

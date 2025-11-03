@@ -10,7 +10,7 @@ import question from "../images/question.svg";
 import PromptExample from "./PromptExample";
 import Typography from "@mui/material/Typography";
 
-function Explore({getAccessToken, spotifyAPI}) {
+function Explore() {
   const {
     currentSongIndex,
     isPlaying,
