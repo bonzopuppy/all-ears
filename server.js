@@ -9,15 +9,22 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Import and use API routes
-const authRoutes = require('./api/auth/callback');
-const loginRoutes = require('./api/auth/login');
-const refreshRoutes = require('./api/auth/refresh');
+// Import Vercel functions and wrap them for Express
+const loginHandler = require('./api/auth/login');
+const callbackHandler = require('./api/auth/callback');
+const refreshHandler = require('./api/auth/refresh');
+
+// Wrap Vercel handlers for Express (Vercel functions export default, Express needs req/res)
+const wrapVercelHandler = (handler) => {
+  // Handle both default export and direct function export
+  const fn = handler.default || handler;
+  return (req, res) => fn(req, res);
+};
 
 // API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/auth', loginRoutes);
-app.use('/api/auth', refreshRoutes);
+app.get('/api/auth/login', wrapVercelHandler(loginHandler));
+app.get('/api/auth/callback', wrapVercelHandler(callbackHandler));
+app.post('/api/auth/refresh', wrapVercelHandler(refreshHandler));
 
 // In development, proxy React app requests to the dev server
 if (process.env.NODE_ENV !== 'production') {

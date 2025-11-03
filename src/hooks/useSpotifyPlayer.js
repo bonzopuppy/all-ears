@@ -13,8 +13,7 @@ export const useSpotifyPlayer = (accessToken) => {
   useEffect(() => {
     if (!accessToken) return;
 
-    // Wait for Spotify SDK to load
-    window.onSpotifyWebPlaybackSDKReady = () => {
+    const initializePlayer = () => {
       const spotifyPlayer = new window.Spotify.Player({
         name: 'All Ears Web Player',
         getOAuthToken: cb => { cb(accessToken); },
@@ -75,10 +74,22 @@ export const useSpotifyPlayer = (accessToken) => {
       setPlayer(spotifyPlayer);
     };
 
+    // Check if Spotify SDK is already loaded
+    if (window.Spotify) {
+      initializePlayer();
+    } else {
+      // Wait for Spotify SDK to load
+      window.onSpotifyWebPlaybackSDKReady = initializePlayer;
+    }
+
     // Cleanup
     return () => {
       if (playerRef.current) {
         playerRef.current.disconnect();
+      }
+      // Clean up the global callback
+      if (window.onSpotifyWebPlaybackSDKReady === initializePlayer) {
+        window.onSpotifyWebPlaybackSDKReady = null;
       }
     };
   }, [accessToken]);
