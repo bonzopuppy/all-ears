@@ -58,31 +58,7 @@ export const useSpotifyAuth = () => {
     }
   }, []);
 
-  // Fetch user profile when authenticated
-  useEffect(() => {
-    if (accessToken && !user) {
-      fetchUserProfile();
-    }
-  }, [accessToken, user]);
-
-  // Auto-refresh token before expiry
-  useEffect(() => {
-    if (isAuthenticated && expiresAt) {
-      const timeUntilRefresh = expiresAt - Date.now() - (5 * 60 * 1000);
-
-      if (timeUntilRefresh <= 0) {
-        refreshAccessToken();
-      } else {
-        const timer = setTimeout(() => {
-          refreshAccessToken();
-        }, timeUntilRefresh);
-
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [isAuthenticated, expiresAt]);
-
-  const fetchUserProfile = async () => {
+  const fetchUserProfile = useCallback(async () => {
     try {
       const response = await fetch('https://api.spotify.com/v1/me', {
         headers: { 'Authorization': `Bearer ${accessToken}` }
@@ -101,7 +77,17 @@ export const useSpotifyAuth = () => {
     } catch (error) {
       console.error('[useSpotifyAuth] Error fetching user profile:', error);
     }
-  };
+  }, [accessToken]);
+
+  const logout = useCallback(() => {
+    storage.clearAll();
+
+    setAccessToken(null);
+    setRefreshToken(null);
+    setExpiresAt(null);
+    setIsAuthenticated(false);
+    setUser(null);
+  }, []);
 
   const refreshAccessToken = useCallback(async () => {
     if (!refreshToken) return false;
@@ -138,20 +124,34 @@ export const useSpotifyAuth = () => {
       logout();
       return false;
     }
-  }, [refreshToken]);
+  }, [refreshToken, logout]);
+
+  // Fetch user profile when authenticated
+  useEffect(() => {
+    if (accessToken && !user) {
+      fetchUserProfile();
+    }
+  }, [accessToken, user, fetchUserProfile]);
+
+  // Auto-refresh token before expiry
+  useEffect(() => {
+    if (isAuthenticated && expiresAt) {
+      const timeUntilRefresh = expiresAt - Date.now() - (5 * 60 * 1000);
+
+      if (timeUntilRefresh <= 0) {
+        refreshAccessToken();
+      } else {
+        const timer = setTimeout(() => {
+          refreshAccessToken();
+        }, timeUntilRefresh);
+
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [isAuthenticated, expiresAt, refreshAccessToken]);
 
   const login = useCallback(() => {
     window.location.href = API_ENDPOINTS.AUTH.LOGIN;
-  }, []);
-
-  const logout = useCallback(() => {
-    storage.clearAll();
-
-    setAccessToken(null);
-    setRefreshToken(null);
-    setExpiresAt(null);
-    setIsAuthenticated(false);
-    setUser(null);
   }, []);
 
   return {
