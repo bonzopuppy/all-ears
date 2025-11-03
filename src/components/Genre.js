@@ -148,7 +148,7 @@ function Genre({ accessToken, genres }) {
       {/* Back button */}
       <Link
         component={RouterLink}
-        to="/all-ears"
+        to="/"
         sx={{
           display: 'flex',
           alignItems: 'center',
