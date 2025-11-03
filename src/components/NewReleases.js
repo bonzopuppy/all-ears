@@ -5,44 +5,30 @@ import Link from "@mui/material/Link";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link as RouterLink } from 'react-router-dom';
 import AlbumMedium from "./AlbumMedium";
+import { spotifyAPI } from '../api/spotify-client';
 
-function NewReleases({ accessToken, spotifyAPI }) {
+function NewReleases({ accessToken }) {
   const [newReleases, setNewReleases] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!accessToken) return;
+
     async function fetchNewReleases() {
       try {
-        if (!accessToken) {
-          console.warn('[New Releases Page] No access token available');
-          return;
-        }
-
-        const response = await fetch(`${spotifyAPI}/browse/new-releases?limit=50`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`
-          }
-        });
-
-        if (!response.ok) {
-          console.error('[New Releases Page] Failed to fetch new releases:', response.status);
-          return;
-        }
-
-        const data = await response.json();
-        if (data.albums && data.albums.items && data.albums.items.length > 0) {
+        const data = await spotifyAPI.directRequest('/browse/new-releases?limit=50');
+        if (data && data.albums && data.albums.items && data.albums.items.length > 0) {
           setNewReleases(data.albums.items);
         }
       } catch (error) {
-        console.error('[New Releases Page] Error:', error);
+        console.error('[NewReleases] Error fetching new releases:', error);
       } finally {
         setLoading(false);
       }
     }
 
     fetchNewReleases();
-  }, [accessToken, spotifyAPI]);
+  }, [accessToken]);
 
   return (
     <Box sx={{
@@ -53,10 +39,9 @@ function NewReleases({ accessToken, spotifyAPI }) {
       padding: '0 30px',
       gap: '30px'
     }}>
-      {/* Back to Home link */}
       <Link
         component={RouterLink}
-        to="/all-ears"
+        to="/"
         sx={{
           display: 'flex',
           alignItems: 'center',
@@ -74,15 +59,12 @@ function NewReleases({ accessToken, spotifyAPI }) {
         Back to Home
       </Link>
 
-      {/* Title */}
       <Typography variant="h4" sx={{ fontWeight: 600 }}>New Releases</Typography>
 
-      {/* Loading state */}
       {loading && (
         <Typography>Loading new releases...</Typography>
       )}
 
-      {/* Albums Grid */}
       {!loading && newReleases.length > 0 && (
         <Box sx={{
           display: 'flex',
@@ -94,13 +76,11 @@ function NewReleases({ accessToken, spotifyAPI }) {
               key={album.id}
               album={album}
               accessToken={accessToken}
-              spotifyAPI={spotifyAPI}
             />
           ))}
         </Box>
       )}
 
-      {/* Empty state */}
       {!loading && newReleases.length === 0 && (
         <Typography>No new releases found.</Typography>
       )}
