@@ -6,8 +6,9 @@ import Link from "@mui/material/Link";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link as RouterLink } from 'react-router-dom';
 import SongMedium from "./SongMedium";
+import { spotifyAPI } from '../api/spotify-client';
 
-function Genre({ accessToken, spotifyAPI, genres }) {
+function Genre({ accessToken, genres }) {
   const { genreId } = useParams();
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,15 +26,9 @@ function Genre({ accessToken, spotifyAPI, genres }) {
 
         // First, fetch all available categories to see what's actually available
         console.log('[Genre Page] Fetching all available Spotify categories...');
-        const categoriesResponse = await fetch(`${spotifyAPI}/browse/categories?limit=50&locale=en_US`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`
-          }
-        });
+        const categoriesData = await spotifyAPI.directRequest('/browse/categories?limit=50&locale=en_US');
 
-        if (categoriesResponse.ok) {
-          const categoriesData = await categoriesResponse.json();
+        if (categoriesData && categoriesData.categories && categoriesData.categories.items) {
           console.log('[Genre Page] Available categories:', categoriesData.categories.items.map(c => ({ id: c.id, name: c.name })));
 
           // Try to find a matching category
@@ -49,17 +44,27 @@ function Genre({ accessToken, spotifyAPI, genres }) {
             const categoryId = matchingCategory.id;
             console.log('[Genre Page] Fetching playlists for category:', categoryId);
 
-            const playlistsResponse = await fetch(`${spotifyAPI}/browse/categories/${categoryId}/playlists?country=US&limit=10`, {
-              method: 'GET',
-              headers: {
-                'Authorization': `Bearer ${accessToken}`
-              }
-            });
+            try {
+              const playlistsData = await spotifyAPI.directRequest(`/browse/categories/${categoryId}/playlists?country=US&limit=10`);
 
-            if (!playlistsResponse.ok) {
+              if (playlistsData && playlistsData.playlists && playlistsData.playlists.items && playlistsData.playlists.items.length > 0) {
+                // Get the first playlist
+                const playlistId = playlistsData.playlists.items[0].id;
+                console.log('[Genre Page] Using playlist from browse:', playlistsData.playlists.items[0].name);
+
+                // Fetch tracks from that playlist
+                const tracksData = await spotifyAPI.directRequest(`/playlists/${playlistId}/tracks?limit=50`);
+
+                if (tracksData && tracksData.items) {
+                  const trackObjects = tracksData.items.map(item => item.track).filter(track => track !== null);
+                  setTracks(trackObjects);
+                }
+              } else {
+                console.warn('[Genre Page] No playlists found for category:', categoryId);
+              }
+            } catch (error) {
               // If browse fails, fall back to search
-              const errorText = await playlistsResponse.text();
-              console.warn('[Genre Page] Browse endpoint failed with status:', playlistsResponse.status, 'Error:', errorText);
+              console.warn('[Genre Page] Browse endpoint failed:', error);
               console.warn('[Genre Page] Falling back to search');
 
               // Try multiple search variations for better results
@@ -71,86 +76,41 @@ function Genre({ accessToken, spotifyAPI, genres }) {
 
               console.log('[Genre Page] Searching for playlists with query:', searchQuery);
 
-              const searchResponse = await fetch(`${spotifyAPI}/search?q=${encodeURIComponent(searchQuery)}&type=playlist&limit=20`, {
-                method: 'GET',
-                headers: {
-                  'Authorization': `Bearer ${accessToken}`
-                }
-              });
+              try {
+                const searchData = await spotifyAPI.search(searchQuery, 'playlist', 20);
+                console.log('[Genre Page] Search response:', searchData);
 
-              if (!searchResponse.ok) {
-                console.error('[Genre Page] Search also failed:', searchResponse.status);
-                setLoading(false);
-                return;
-              }
+                if (searchData.playlists && searchData.playlists.items && searchData.playlists.items.length > 0) {
+                  // Filter out null playlists
+                  const validPlaylists = searchData.playlists.items.filter(p => p !== null && p.id);
 
-              const searchData = await searchResponse.json();
-              console.log('[Genre Page] Search response:', searchData);
-
-              if (searchData.playlists && searchData.playlists.items && searchData.playlists.items.length > 0) {
-                // Filter out null playlists
-                const validPlaylists = searchData.playlists.items.filter(p => p !== null && p.id);
-
-                if (validPlaylists.length === 0) {
-                  console.warn('[Genre Page] No valid playlists found in search results');
-                  setLoading(false);
-                  return;
-                }
-
-                const playlist = validPlaylists[0];
-                const playlistId = playlist.id;
-                console.log('[Genre Page] Using playlist from search:', playlist.name, 'Playlist ID:', playlistId);
-
-                // Fetch tracks from that playlist
-                const tracksResponse = await fetch(`${spotifyAPI}/playlists/${playlistId}/tracks?limit=50`, {
-                  method: 'GET',
-                  headers: {
-                    'Authorization': `Bearer ${accessToken}`
+                  if (validPlaylists.length === 0) {
+                    console.warn('[Genre Page] No valid playlists found in search results');
+                    setLoading(false);
+                    return;
                   }
-                });
 
-                if (tracksResponse.ok) {
-                  const tracksData = await tracksResponse.json();
-                  if (tracksData.items) {
+                  const playlist = validPlaylists[0];
+                  const playlistId = playlist.id;
+                  console.log('[Genre Page] Using playlist from search:', playlist.name, 'Playlist ID:', playlistId);
+
+                  // Fetch tracks from that playlist
+                  const tracksData = await spotifyAPI.directRequest(`/playlists/${playlistId}/tracks?limit=50`);
+
+                  if (tracksData && tracksData.items) {
                     const trackObjects = tracksData.items.map(item => item.track).filter(track => track !== null);
                     setTracks(trackObjects);
                   }
                 }
+              } catch (searchError) {
+                console.error('[Genre Page] Search also failed:', searchError);
               }
-              return;
-            }
-
-            const playlistsData = await playlistsResponse.json();
-            console.log('[Genre Page] Browse playlists response:', playlistsData);
-
-            if (playlistsData.playlists && playlistsData.playlists.items && playlistsData.playlists.items.length > 0) {
-              // Get the first playlist
-              const playlistId = playlistsData.playlists.items[0].id;
-              console.log('[Genre Page] Using playlist from browse:', playlistsData.playlists.items[0].name);
-
-              // Fetch tracks from that playlist
-              const tracksResponse = await fetch(`${spotifyAPI}/playlists/${playlistId}/tracks?limit=50`, {
-                method: 'GET',
-                headers: {
-                  'Authorization': `Bearer ${accessToken}`
-                }
-              });
-
-              if (tracksResponse.ok) {
-                const tracksData = await tracksResponse.json();
-                if (tracksData.items) {
-                  const trackObjects = tracksData.items.map(item => item.track).filter(track => track !== null);
-                  setTracks(trackObjects);
-                }
-              }
-            } else {
-              console.warn('[Genre Page] No playlists found for category:', categoryId);
             }
           } else {
             console.warn('[Genre Page] No matching category found for:', genre.title);
           }
         } else {
-          console.error('[Genre Page] Failed to fetch categories:', categoriesResponse.status);
+          console.error('[Genre Page] Failed to fetch categories or empty response');
         }
       } catch (error) {
         console.error('[Genre Page] Error:', error);
