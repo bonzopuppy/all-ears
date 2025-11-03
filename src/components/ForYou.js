@@ -5,44 +5,30 @@ import Link from "@mui/material/Link";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link as RouterLink } from 'react-router-dom';
 import SongMedium from "./SongMedium";
+import { spotifyAPI } from '../api/spotify-client';
 
-function ForYou({ accessToken, spotifyAPI }) {
+function ForYou({ accessToken }) {
   const [topTracks, setTopTracks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!accessToken) return;
+
     async function fetchTopTracks() {
       try {
-        if (!accessToken) {
-          console.warn('[For You Page] No access token available');
-          return;
-        }
-
-        const response = await fetch(`${spotifyAPI}/me/top/tracks?time_range=short_term&limit=50`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`
-          }
-        });
-
-        if (!response.ok) {
-          console.error('[For You Page] Failed to fetch top tracks:', response.status);
-          return;
-        }
-
-        const data = await response.json();
-        if (data.items && data.items.length > 0) {
+        const data = await spotifyAPI.directRequest('/me/top/tracks?time_range=short_term&limit=50');
+        if (data && data.items && data.items.length > 0) {
           setTopTracks(data.items);
         }
       } catch (error) {
-        console.error('[For You Page] Error:', error);
+        console.error('[ForYou] Error fetching top tracks:', error);
       } finally {
         setLoading(false);
       }
     }
 
     fetchTopTracks();
-  }, [accessToken, spotifyAPI]);
+  }, [accessToken]);
 
   return (
     <Box sx={{
@@ -53,10 +39,9 @@ function ForYou({ accessToken, spotifyAPI }) {
       padding: '0 30px',
       gap: '30px'
     }}>
-      {/* Back to Home link */}
       <Link
         component={RouterLink}
-        to="/all-ears"
+        to="/"
         sx={{
           display: 'flex',
           alignItems: 'center',
@@ -74,15 +59,12 @@ function ForYou({ accessToken, spotifyAPI }) {
         Back to Home
       </Link>
 
-      {/* Title */}
       <Typography variant="h4" sx={{ fontWeight: 600 }}>For You</Typography>
 
-      {/* Loading state */}
       {loading && (
         <Typography>Loading your top tracks...</Typography>
       )}
 
-      {/* Tracks Grid */}
       {!loading && topTracks.length > 0 && (
         <Box sx={{
           display: 'flex',
@@ -98,7 +80,6 @@ function ForYou({ accessToken, spotifyAPI }) {
         </Box>
       )}
 
-      {/* Empty state */}
       {!loading && topTracks.length === 0 && (
         <Typography>No top tracks found. Start listening to music to see your personalized recommendations!</Typography>
       )}

@@ -1,26 +1,13 @@
-import { useState, useEffect } from "react";
-import NavBar from "./NavBar";
-import MusicPlayer from "./MusicPlayer";
 import SearchBar from "./SearchBar";
 import ListContainerWrapper from "./ListContainerWrapper";
 import GenreCarousel from "./GenreCarousel";
-import { useMusicContext } from "./MusicContext";
 import SearchResults from "./SearchResults";
 
-function Home({setSearchResults, searchResults, getAccessToken, spotifyAPI, newReleases, whatsHot, handleRefresh, genres, accessToken}) {
-    const {
-        currentSongIndex,
-        isPlaying,
-        playPauseHandler,
-        nextSongHandler,
-        prevSongHandler,
-      } = useMusicContext();
-
+function Home({ setSearchResults, searchResults, newReleases, whatsHot, handleRefresh, genres, accessToken, market }) {
     return (
         <>
             <SearchBar
-                getAccessToken={getAccessToken}
-                spotifyAPI={spotifyAPI}
+                accessToken={accessToken}
                 onResultsFetched={setSearchResults}
             />
             {searchResults ? (
@@ -32,7 +19,6 @@ function Home({setSearchResults, searchResults, getAccessToken, spotifyAPI, newR
                         whatsHot={whatsHot}
                         handleRefresh={handleRefresh}
                         accessToken={accessToken}
-                        spotifyAPI={spotifyAPI}
                     />
                     <GenreCarousel genres={genres} />
                 </>
@@ -40,5 +26,5 @@ function Home({setSearchResults, searchResults, getAccessToken, spotifyAPI, newR
         </>
     )
 }
-export default Home;
 
+export default Home;

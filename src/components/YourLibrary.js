@@ -1,27 +1,18 @@
 import React, { useEffect, useState } from "react";
-// import MusicPlayer from "./MusicPlayer";
-// import NavBar from "./NavBar";
-import { useMusicContext } from "./MusicContext";
-import coverImage from "../images/coverImage.png";
-import artistImage from "../images/artistImage.png";
 import Box from "@mui/material/Box";
 import ArtistItem from "./ArtistItem";
 import SongMedium from "./SongMedium";
 import Typography from "@mui/material/Typography";
 import { Tabs, Tab } from "@mui/material";
 import AlbumPlaylistItem from "./AlbumPlaylistItem";
+import { spotifyAPI } from '../api/spotify-client';
 
-function YourLibrary({getAccessToken, spotifyAPI}) {
-
+function YourLibrary({ accessToken }) {
   const [selectedTab, setSelectedTab] = useState(0);
-
-  const {
-    currentSongIndex,
-    isPlaying,
-    playPauseHandler,
-    nextSongHandler,
-    prevSongHandler,
-  } = useMusicContext();
+  const [playlists, setPlaylists] = useState([]);
+  const [artists, setArtists] = useState([]);
+  const [songs, setSongs] = useState([]);
+  const [albums, setAlbums] = useState([]);
 
   const handleChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -34,12 +25,10 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
     opacity: 1,
     textTransform: 'none',
     fontSize: '1.1rem',
-    // padding: '10px 15px', // Padding added to each tab
     '&.Mui-selected': {
       marginTop: '15px',
       marginBottom: '15px',
-      
-     },
+    },
     '& .MuiTab-wrapper': {
       flexDirection: 'row',
       justifyContent: 'center',
@@ -55,120 +44,82 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
   });
 
   const songData = new Array(5).fill(null);
-  const albumData = new Array(1).fill(null); // Replace with actual data
-  const artistData = new Array(1).fill(null); // Replace with actual data
-  const playlistData = new Array(1).fill(null); // Replace with actual data
-
-  const [playlists, setPlaylists] = useState([])
-  const [artists, setArtists] = useState([])
-  const [songs, setSongs] = useState([])
-  const [albums, setAlbums] = useState([])
+  const albumData = new Array(1).fill(null);
+  const artistData = new Array(1).fill(null);
+  const playlistData = new Array(1).fill(null);
 
   useEffect(() => {
+    if (!accessToken) return;
 
     async function fetchPlaylists() {
-
-      const accessToken = await getAccessToken()
-
-      const response = await fetch(`${spotifyAPI}/browse/featured-playlists?country=US&limit=21`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
+      try {
+        const data = await spotifyAPI.directRequest('/browse/featured-playlists?country=US&limit=21');
+        if (data && data.playlists && data.playlists.items) {
+          setPlaylists(data.playlists.items);
         }
-      })
-
-        const data = await response.json()
-        setPlaylists(data.playlists.items)
+      } catch (error) {
+        console.error('[YourLibrary] Error fetching playlists:', error);
+      }
     }
 
     async function fetchArtists() {
+      try {
+        const artistIds = [
+          '3TVXtAsR1Inumwj472S9r4', '06HL4z0CvFAxyc27GXpf02', '4q3ewBCX7sLwd24euuV69X',
+          '1Xyo4u8uXC1ZmMpatF05PJ', '6qqNVTkY8uBg9cP3Jd7DAH', '6KImCVD70vtIoJWnq6nGn3',
+          '5de6jFMvo1aI3pSzzmWbWT', '6l3HvQ5sa6mXTsMTB19rO5', '5cj0lLjcoR7YOSnhnX0Po5',
+          '2YZyLoL8N0Wb9xBt1NhZWg', '0du5cEVh5yTK9QJze8zA0C', '6eUKZXaKkcviH0Ku9w2n3V',
+          '4NcMrSi3B8eUVy6e1Ni3wu', '4dpARuHxo51G3z768sgnrY', '4HzKw8XcD0piJmDrrPRCYk',
+          '60R4M19QBXvs0gO4IL6CpS', '1vyhD5VmyZ7KMfW5gqLgo5', '3BBN1P1JNw0sSdYEdBkOZK',
+          '3SozjO3Lat463tQICI9LcE', '6vWDO969PvNqNYHIOW5v0m', '20qISvAhX20dpIbOOzGK3q'
+        ];
 
-      const accessToken = await getAccessToken()
-
-      const artistIds = [
-        { id: 1, name: 'Drake', spotifyId: '3TVXtAsR1Inumwj472S9r4' },
-        { id: 2, name: 'Taylor Swift', spotifyId: '06HL4z0CvFAxyc27GXpf02' },
-        { id: 3, name: 'Bad Bunny', spotifyId: '4q3ewBCX7sLwd24euuV69X' },
-        { id: 4, name: 'The Weeknd', spotifyId: '1Xyo4u8uXC1ZmMpatF05PJ' },
-        { id: 5, name: 'Billie Eilish', spotifyId: '6qqNVTkY8uBg9cP3Jd7DAH' },
-        { id: 6, name: 'Harry Styles', spotifyId: '6KImCVD70vtIoJWnq6nGn3' },
-        { id: 7, name: 'Rell Nice', spotifyId: '5de6jFMvo1aI3pSzzmWbWT' },
-        { id: 8, name: 'J. Cole', spotifyId: '6l3HvQ5sa6mXTsMTB19rO5' },
-        { id: 9, name: 'Doja Cat', spotifyId: '5cj0lLjcoR7YOSnhnX0Po5' },
-        { id: 10, name: 'Kendrick Lamar', spotifyId: '2YZyLoL8N0Wb9xBt1NhZWg' },
-        { id: 11, name: 'Bruno Mars', spotifyId: '0du5cEVh5yTK9QJze8zA0C' },
-        { id: 12, name: 'Ed Sheeran', spotifyId: '6eUKZXaKkcviH0Ku9w2n3V' },
-        { id: 13, name: 'Ivy Sole', spotifyId: '4NcMrSi3B8eUVy6e1Ni3wu' },
-        { id: 14, name: 'Adele', spotifyId: '4dpARuHxo51G3z768sgnrY' },
-        { id: 15, name: 'Majid Jordan', spotifyId: '4HzKw8XcD0piJmDrrPRCYk' },
-        { id: 16, name: 'The Foreign Exchange', spotifyId: '60R4M19QBXvs0gO4IL6CpS' },
-        { id: 17, name: 'J Balvin', spotifyId: '1vyhD5VmyZ7KMfW5gqLgo5' },
-        { id: 18, name: 'Bathe', spotifyId: '3BBN1P1JNw0sSdYEdBkOZK' },
-        { id: 19, name: 'Tyla', spotifyId: '3SozjO3Lat463tQICI9LcE' },
-        { id: 20, name: 'Beyonce', spotifyId: '6vWDO969PvNqNYHIOW5v0m' },
-        { id: 21, name: 'Nas', spotifyId: '20qISvAhX20dpIbOOzGK3q' }
-      ]
-
-      const spotifyIds = artistIds.map(artist => artist.spotifyId)
-      const artistIdsString = spotifyIds.join(',')
-
-      const response = await fetch(`${spotifyAPI}/artists?ids=${artistIdsString}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
+        const artistIdsString = artistIds.join(',');
+        const data = await spotifyAPI.directRequest(`/artists?ids=${artistIdsString}`);
+        if (data && data.artists) {
+          setArtists(data.artists);
         }
-      })
-
-      const data = await response.json()
-      setArtists(data.artists)
+      } catch (error) {
+        console.error('[YourLibrary] Error fetching artists:', error);
+      }
     }
 
     async function fetchSongs() {
-
-      const accessToken = await getAccessToken()
-  
-      const response = await fetch(`${spotifyAPI}/recommendations?country=US&limit=21&seed_genres=hip-hop,r-n-b,afrobeat,pop&min_popularity=75`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
+      try {
+        const data = await spotifyAPI.getRecommendations({
+          seedGenres: 'hip-hop,r-n-b,afrobeat,pop',
+          limit: 21,
+          market: 'US'
+        });
+        if (data && data.tracks) {
+          const topTracks = data.tracks.sort((a, b) => b.popularity - a.popularity);
+          setSongs(topTracks);
         }
-      })
-  
-      const data = await response.json()
-      const topTracks = data.tracks.sort((a, b) => b.popularity - a.popularity);
-      setSongs(topTracks);
-    
+      } catch (error) {
+        console.error('[YourLibrary] Error fetching songs:', error);
+      }
     }
 
     async function fetchAlbums() {
-
-      const accessToken = await getAccessToken()
-        
-        const response = await fetch(`${spotifyAPI}/browse/new-releases?country=US&limit=21`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`
-          }
-        })
-  
-          const data = await response.json()
-          setAlbums(data.albums.items)
+      try {
+        const data = await spotifyAPI.directRequest('/browse/new-releases?country=US&limit=21');
+        if (data && data.albums && data.albums.items) {
+          setAlbums(data.albums.items);
+        }
+      } catch (error) {
+        console.error('[YourLibrary] Error fetching albums:', error);
       }
+    }
 
-    fetchSongs()
-    fetchAlbums()
-    fetchArtists()
-    fetchPlaylists()
-    
-  }, [])
-
+    fetchSongs();
+    fetchAlbums();
+    fetchArtists();
+    fetchPlaylists();
+  }, [accessToken]);
 
   return (
-
     <div>
-
       <Box sx={{ display: 'flex', flexDirection: 'column', maxWidth: 1296, margin: '10px auto', padding: '0 30px', gap: '20px' }}>
-
         <Box sx={{
           backgroundColor: '#F4F2F7',
           borderRadius: '8px',
@@ -183,7 +134,7 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
           <Tabs
             value={selectedTab}
             onChange={handleChange}
-            variant="scrollable" // Changed to scrollable
+            variant="scrollable"
             scrollButtons="auto"
             TabIndicatorProps={{ style: { display: 'none' }}}
             sx={{
@@ -203,83 +154,81 @@ function YourLibrary({getAccessToken, spotifyAPI}) {
                 key={label}
                 label={
                   <span>
-                    {label} <span className="count">{[songData, albumData, artistData, playlistData][index].length}</span>
+                    {label} <span className="count">{[songs, albums, artists, playlists][index].length}</span>
                   </span>
                 }
-                sx={tabStyle(selectedTab === index)} // Added padding
+                sx={tabStyle(selectedTab === index)}
               />
             ))}
           </Tabs>
         </Box>
 
+        {selectedTab === 0 && (
+          <>
+            <Typography variant="h5">Popular Songs</Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+              {songs.map((song, index) => (
+                <SongMedium
+                  song={song}
+                  key={index}
+                />
+              ))}
+            </Box>
+          </>
+        )}
 
-      {selectedTab === 0 && (
-        <>
-          <Typography variant="h5">Popular Songs</Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-            {songs.map((song, index) => (
-              <SongMedium 
-                song={song}
-                key={index}
-              />
-            ))}
-          </Box>
-        </>
-      )}
+        {selectedTab === 1 && (
+          <>
+            <Typography variant="h5">Top Albums</Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+              {albums.map((album, index) => (
+                <AlbumPlaylistItem
+                  key={index}
+                  imageUrl={album.images[0].url}
+                  album={album}
+                  textLine1={album.name}
+                  textLine2={album.artists[0].name}
+                />
+              ))}
+            </Box>
+          </>
+        )}
 
-      {selectedTab === 1 && (
-        <>
-          <Typography variant="h5">Top Albums</Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-            {albums.map((album, index) => (
-              <AlbumPlaylistItem
-                key={index}
-                imageUrl={album.images[0].url}
-                album={album}
-                textLine1={album.name}
-                textLine2={album.artists[0].name}
-              />
-            ))}
-          </Box>
-        </>
-      )}
+        {selectedTab === 2 && (
+          <>
+            <Typography variant="h5">Top Artists</Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+              {artists.map((artist, index) => (
+                <ArtistItem
+                  key={index}
+                  artist={artist}
+                  imageUrl={artist.images[0].url}
+                  textLine1={artist.name}
+                />
+              ))}
+            </Box>
+          </>
+        )}
 
-      {selectedTab === 2 && (
-        <>
-          <Typography variant="h5">Top Artists</Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-            {artists.map((artist, index) => (
-              <ArtistItem
-                key={index}
-                artist={artist}
-                imageUrl={artist.images[0].url}
-                textLine1={artist.name}
-              />
-            ))}
-          </Box>
-        </>
-      )}
-
-      {selectedTab === 3 && (
-        <>
-          <Typography variant="h5">Popular Playlists</Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-            {playlists.map((playlist, index) => (
-              <AlbumPlaylistItem
-                key={index}
-                playlist={playlist}
-                imageUrl={playlist.images[0].url}
-                textLine1={playlist.name}
-                textLine2={playlist.owner.display_name}
-              />
-            ))}
-          </Box>
-        </>
-      )}
-    </Box>
-    </div >
+        {selectedTab === 3 && (
+          <>
+            <Typography variant="h5">Top Playlists</Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+              {playlists.map((playlist, index) => (
+                <AlbumPlaylistItem
+                  key={index}
+                  imageUrl={playlist.images[0].url}
+                  playlist={playlist}
+                  textLine1={playlist.name}
+                  textLine2={playlist.description}
+                />
+              ))}
+            </Box>
+          </>
+        )}
+      </Box>
+    </div>
   );
 }
 
 export default YourLibrary;
-
