@@ -26,6 +26,13 @@
     -->
     <title>React App</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+      // Define a placeholder callback to prevent SDK error
+      // React will override this when the app loads
+      window.onSpotifyWebPlaybackSDKReady = () => {
+        console.log('[Spotify SDK] Ready - waiting for React app to initialize player');
+      };
+    </script>
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
   </head>
   <body>
