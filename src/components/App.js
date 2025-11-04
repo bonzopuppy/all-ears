@@ -8,6 +8,7 @@ import YourLibrary from './YourLibrary';
 import Explore from './Explore';
 import ForYou from './ForYou';
 import NewReleases from './NewReleases';
+import RecentlyPlayed from './RecentlyPlayed';
 import Album from './Album';
 import Playlist from './Playlist';
 import Genre from './Genre';
@@ -239,6 +240,9 @@ function App() {
                   } />
                   <Route path="/new-releases" element={
                     <NewReleases accessToken={accessToken} />
+                  } />
+                  <Route path="/recently-played" element={
+                    <RecentlyPlayed accessToken={accessToken} />
                   } />
                   <Route path="/album/:albumId" element={
                     <Album accessToken={accessToken} />

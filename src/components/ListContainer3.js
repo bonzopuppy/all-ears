@@ -1,8 +1,9 @@
 import React from 'react';
 import { Box, Typography, Link } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
 import SongSmall from './SongSmall';
 
-function ListContainer3({ title, recentlyPlayed }) {
+function ListContainer3({ title, recentlyPlayed, viewAllLink = '/recently-played' }) {
     return (
         <Box sx={{
             width: 413,
@@ -15,7 +16,13 @@ function ListContainer3({ title, recentlyPlayed }) {
             {/* Title */}
             <Box sx={{ display: 'flex', justifyContent: 'space-between', margin: '4px 0 20px 8px' }}>
                 <Typography variant="h6">{title}</Typography>
-                <Link href="#" sx={{ textDecoration: 'none', fontWeight: '500', color: 'primary.main', fontFamily: "'Prompt', sans serif", margin: '3px 12px 0 0', '&:hover': { color: 'secondary.main' }, fontSize: '14px'}}>View All</Link>
+                <Link
+                    component={RouterLink}
+                    to={viewAllLink}
+                    sx={{ textDecoration: 'none', fontWeight: '500', color: 'primary.main', fontFamily: "'Prompt', sans serif", margin: '3px 12px 0 0', '&:hover': { color: 'secondary.main' }, fontSize: '14px'}}
+                >
+                    View All
+                </Link>
             </Box>
 
             {/* List Items */}

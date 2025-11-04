@@ -28,7 +28,7 @@ function ListContainerWrapper({newReleases, forYou, recentlyPlayed, handleRefres
                 handleRefresh={handleRefresh}
                 viewAllLink={forYouCategoryId ? `/genre/${forYouCategoryId}` : '/for-you'}
             />
-            <ListContainer3 title={"Recent Selections"} recentlyPlayed={recentlyPlayed}/>
+            <ListContainer3 title={"Recent Selections"} recentlyPlayed={recentlyPlayed} viewAllLink="/recently-played" />
 
         </Box>
     );
