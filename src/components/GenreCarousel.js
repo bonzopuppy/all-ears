@@ -90,8 +90,9 @@ function GenreCarousel({genres}) {
             <CustomPrevArrow />
             <CustomNextArrow />
             <Slider ref={sliderRef} {...settings}>
-                {genres.map((genre, index) => 
-                    <GenreComponent 
+                {/* Skip first two genres (they're shown in top boxes as New Releases and For You) */}
+                {genres.slice(2).map((genre, index) =>
+                    <GenreComponent
                         id={genre.id}
                         key={index}
                         url={genre.url}

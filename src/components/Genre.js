@@ -3,12 +3,17 @@ import { useParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
+import Button from "@mui/material/Button";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import ShuffleIcon from '@mui/icons-material/Shuffle';
 import { Link as RouterLink } from 'react-router-dom';
 import SongMedium from "./SongMedium";
 import { spotifyAPI } from '../api/spotify-client';
+import { useMusicContext } from './MusicContext';
 
 function Genre({ accessToken, genres }) {
+  const { playAll, shuffleAll } = useMusicContext();
   const { genreId } = useParams();
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,96 +26,40 @@ function Genre({ accessToken, genres }) {
       try {
         if (!accessToken || !genreId || !genre) {
           console.warn('[Genre Page] No access token, genre ID, or genre data available');
+          setLoading(false);
           return;
         }
 
-        // First, fetch all available categories to see what's actually available
-        console.log('[Genre Page] Fetching all available Spotify categories...');
-        const categoriesData = await spotifyAPI.directRequest('/browse/categories?limit=50&locale=en_US');
+        console.log('[Genre Page] Fetching tracks for category:', genreId, genre.title);
 
-        if (categoriesData && categoriesData.categories && categoriesData.categories.items) {
-          console.log('[Genre Page] Available categories:', categoriesData.categories.items.map(c => ({ id: c.id, name: c.name })));
+        // Search for playlists related to this genre
+        console.log('[Genre Page] Searching for playlists with query:', genre.title);
+        const searchData = await spotifyAPI.search(genre.title, 'playlist', 20);
+        console.log('[Genre Page] Search response:', searchData);
 
-          // Try to find a matching category
-          const matchingCategory = categoriesData.categories.items.find(cat =>
-            cat.name.toLowerCase().includes(genre.title.toLowerCase()) ||
-            genre.title.toLowerCase().includes(cat.name.toLowerCase())
-          );
+        if (searchData.playlists && searchData.playlists.items && searchData.playlists.items.length > 0) {
+          // Filter out null playlists
+          const validPlaylists = searchData.playlists.items.filter(p => p !== null && p.id);
 
-          if (matchingCategory) {
-            console.log('[Genre Page] Found matching category:', matchingCategory.id, matchingCategory.name);
+          if (validPlaylists.length === 0) {
+            console.warn('[Genre Page] No valid playlists found in search results');
+            setLoading(false);
+            return;
+          }
 
-            // Try using the browse/categories endpoint with country parameter
-            const categoryId = matchingCategory.id;
-            console.log('[Genre Page] Fetching playlists for category:', categoryId);
+          const playlist = validPlaylists[0];
+          const playlistId = playlist.id;
+          console.log('[Genre Page] Using playlist from search:', playlist.name, 'Playlist ID:', playlistId);
 
-            try {
-              const playlistsData = await spotifyAPI.directRequest(`/browse/categories/${categoryId}/playlists?country=US&limit=10`);
+          // Fetch tracks from that playlist
+          const tracksData = await spotifyAPI.directRequest(`/playlists/${playlistId}/tracks?limit=50`);
 
-              if (playlistsData && playlistsData.playlists && playlistsData.playlists.items && playlistsData.playlists.items.length > 0) {
-                // Get the first playlist
-                const playlistId = playlistsData.playlists.items[0].id;
-                console.log('[Genre Page] Using playlist from browse:', playlistsData.playlists.items[0].name);
-
-                // Fetch tracks from that playlist
-                const tracksData = await spotifyAPI.directRequest(`/playlists/${playlistId}/tracks?limit=50`);
-
-                if (tracksData && tracksData.items) {
-                  const trackObjects = tracksData.items.map(item => item.track).filter(track => track !== null);
-                  setTracks(trackObjects);
-                }
-              } else {
-                console.warn('[Genre Page] No playlists found for category:', categoryId);
-              }
-            } catch (error) {
-              // If browse fails, fall back to search
-              console.warn('[Genre Page] Browse endpoint failed:', error);
-              console.warn('[Genre Page] Falling back to search');
-
-              // Try multiple search variations for better results
-              let searchQuery = matchingCategory.name;
-              // For "Hip-Hop", also try "Hip Hop" and "hiphop"
-              if (searchQuery.includes('-')) {
-                searchQuery = searchQuery.replace('-', ' ');
-              }
-
-              console.log('[Genre Page] Searching for playlists with query:', searchQuery);
-
-              try {
-                const searchData = await spotifyAPI.search(searchQuery, 'playlist', 20);
-                console.log('[Genre Page] Search response:', searchData);
-
-                if (searchData.playlists && searchData.playlists.items && searchData.playlists.items.length > 0) {
-                  // Filter out null playlists
-                  const validPlaylists = searchData.playlists.items.filter(p => p !== null && p.id);
-
-                  if (validPlaylists.length === 0) {
-                    console.warn('[Genre Page] No valid playlists found in search results');
-                    setLoading(false);
-                    return;
-                  }
-
-                  const playlist = validPlaylists[0];
-                  const playlistId = playlist.id;
-                  console.log('[Genre Page] Using playlist from search:', playlist.name, 'Playlist ID:', playlistId);
-
-                  // Fetch tracks from that playlist
-                  const tracksData = await spotifyAPI.directRequest(`/playlists/${playlistId}/tracks?limit=50`);
-
-                  if (tracksData && tracksData.items) {
-                    const trackObjects = tracksData.items.map(item => item.track).filter(track => track !== null);
-                    setTracks(trackObjects);
-                  }
-                }
-              } catch (searchError) {
-                console.error('[Genre Page] Search also failed:', searchError);
-              }
-            }
-          } else {
-            console.warn('[Genre Page] No matching category found for:', genre.title);
+          if (tracksData && tracksData.items) {
+            const trackObjects = tracksData.items.map(item => item.track).filter(track => track !== null);
+            setTracks(trackObjects);
           }
         } else {
-          console.error('[Genre Page] Failed to fetch categories or empty response');
+          console.warn('[Genre Page] No playlists found for:', genre.title);
         }
       } catch (error) {
         console.error('[Genre Page] Error:', error);
@@ -120,7 +69,7 @@ function Genre({ accessToken, genres }) {
     }
 
     fetchGenreTracks();
-  }, [accessToken, spotifyAPI, genreId, genre]);
+  }, [accessToken, genreId, genre]);
 
   if (loading) {
     return (
@@ -166,10 +115,42 @@ function Genre({ accessToken, genres }) {
         Back to Home
       </Link>
 
-      {/* Title */}
-      <Typography variant="h4" sx={{ fontWeight: 600 }}>
-        {genre?.title || 'Genre'}
-      </Typography>
+      {/* Title and Buttons */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h4" sx={{ fontWeight: 600 }}>
+          {genre?.title || 'Genre'}
+        </Typography>
+        {tracks.length > 0 && (
+          <Box sx={{ display: 'flex', gap: '10px' }}>
+            <Button
+              variant="contained"
+              startIcon={<PlayArrowIcon />}
+              onClick={() => playAll(tracks)}
+              sx={{
+                backgroundColor: 'primary.main',
+                '&:hover': { backgroundColor: 'secondary.main' },
+                textTransform: 'none',
+                fontWeight: 600
+              }}
+            >
+              Play All
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<ShuffleIcon />}
+              onClick={() => shuffleAll(tracks)}
+              sx={{
+                backgroundColor: 'primary.main',
+                '&:hover': { backgroundColor: 'secondary.main' },
+                textTransform: 'none',
+                fontWeight: 600
+              }}
+            >
+              Shuffle
+            </Button>
+          </Box>
+        )}
+      </Box>
 
       {/* Tracks Grid */}
       {tracks.length > 0 && (

@@ -38,15 +38,26 @@ export const useSpotifyPlayer = (accessToken) => {
       });
 
       // Playback status updates
+      let previousTrackUri = null;
       spotifyPlayer.addListener('player_state_changed', state => {
         if (!state) return;
+
+        const currentTrackUri = state.track_window.current_track?.uri;
 
         console.log('🎵 Player state changed:', {
           track: state.track_window.current_track,
           paused: state.paused,
           position: state.position,
-          duration: state.duration
+          duration: state.duration,
+          trackChanged: previousTrackUri !== currentTrackUri
         });
+
+        // Detect track change
+        if (previousTrackUri && previousTrackUri !== currentTrackUri) {
+          console.log('🔄 Track changed from', previousTrackUri, 'to', currentTrackUri);
+        }
+
+        previousTrackUri = currentTrackUri;
 
         setCurrentTrack(state.track_window.current_track);
         setIsPaused(state.paused);
@@ -95,14 +106,24 @@ export const useSpotifyPlayer = (accessToken) => {
   }, [accessToken]);
 
   const play = async (spotify_uri, context_uri = null) => {
-    if (!deviceId || !accessToken) return;
+    if (!deviceId || !accessToken) {
+      console.error('[useSpotifyPlayer] Cannot play - missing deviceId or accessToken:', { deviceId, hasToken: !!accessToken });
+      return;
+    }
+
+    if (!isReady) {
+      console.error('[useSpotifyPlayer] Cannot play - player not ready yet');
+      return;
+    }
+
+    console.log('[useSpotifyPlayer] Playing:', { spotify_uri, context_uri, deviceId });
 
     try {
       const body = context_uri
         ? JSON.stringify({ context_uri }) // Play album/playlist context
         : JSON.stringify({ uris: [spotify_uri] }); // Play single track
 
-      await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+      const response = await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
         method: 'PUT',
         body: body,
         headers: {
@@ -110,8 +131,15 @@ export const useSpotifyPlayer = (accessToken) => {
           'Authorization': `Bearer ${accessToken}`
         },
       });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[useSpotifyPlayer] Play request failed:', response.status, errorText);
+      } else {
+        console.log('[useSpotifyPlayer] Play request successful');
+      }
     } catch (error) {
-      console.error('Error playing track:', error);
+      console.error('[useSpotifyPlayer] Error playing track:', error);
     }
   };
 
@@ -139,6 +167,33 @@ export const useSpotifyPlayer = (accessToken) => {
     }
   };
 
+  const addToQueue = async (spotify_uri) => {
+    if (!deviceId || !accessToken) {
+      console.error('[useSpotifyPlayer] Cannot add to queue - missing deviceId or accessToken');
+      return;
+    }
+
+    console.log('[useSpotifyPlayer] Adding to queue:', spotify_uri);
+
+    try {
+      const response = await fetch(`https://api.spotify.com/v1/me/player/queue?uri=${encodeURIComponent(spotify_uri)}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[useSpotifyPlayer] Add to queue failed:', response.status, errorText);
+      } else {
+        console.log('[useSpotifyPlayer] Successfully added to queue');
+      }
+    } catch (error) {
+      console.error('[useSpotifyPlayer] Error adding track to queue:', error);
+    }
+  };
+
   return {
     player,
     deviceId,
@@ -151,6 +206,7 @@ export const useSpotifyPlayer = (accessToken) => {
     togglePlay,
     nextTrack,
     previousTrack,
-    seek
+    seek,
+    addToQueue
   };
 };

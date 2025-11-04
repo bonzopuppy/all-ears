@@ -7,8 +7,16 @@ export default function handler(req, res) {
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const redirectUri = process.env.REDIRECT_URI;
 
+  console.log('[Login] Environment check:', {
+    hasClientId: !!clientId,
+    hasRedirectUri: !!redirectUri,
+    clientId: clientId ? `${clientId.substring(0, 8)}...` : 'MISSING',
+    redirectUri: redirectUri || 'MISSING'
+  });
+
   if (!clientId || !redirectUri) {
     console.error('[Login] Missing environment variables');
+    console.error('[Login] Available env vars:', Object.keys(process.env).filter(k => k.includes('SPOTIFY')));
     return res.status(500).json({ error: 'Server configuration error' });
   }
 
@@ -18,6 +26,7 @@ export default function handler(req, res) {
     'user-modify-playback-state',
     'user-read-email',
     'user-read-private',
+    'user-read-recently-played',
     'playlist-read-private',
     'playlist-read-collaborative',
     'user-top-read',
@@ -35,5 +44,9 @@ export default function handler(req, res) {
   authUrl.searchParams.append('state', state);
   authUrl.searchParams.append('show_dialog', 'false');
 
-  res.redirect(302, authUrl.toString());
+  const finalUrl = authUrl.toString();
+  console.log('[Login] Redirecting to:', finalUrl);
+  console.log('[Login] Redirect URI in request:', redirectUri);
+
+  res.redirect(302, finalUrl);
 }

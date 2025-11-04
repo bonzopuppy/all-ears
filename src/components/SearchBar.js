@@ -6,9 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { spotifyAPI } from '../api/spotify-client';
 
-function SearchBar({ accessToken, onResultsFetched }) {
-    const [searchQuery, setSearchQuery] = useState('');
-
+function SearchBar({ accessToken, onResultsFetched, searchQuery, setSearchQuery }) {
     function handleQueryChange(e) {
         setSearchQuery(e.target.value);
     }

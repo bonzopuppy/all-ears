@@ -2,9 +2,9 @@ import React from 'react';
 import { Box, Typography, Link } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 // import musicPlayerAlbum from './musicPlayerAlbum.png';
-import AlbumSmall from './AlbumSmall';
+import SongSmall from './SongSmall';
 
-function ListContainer({ title, newReleases, accessToken, spotifyAPI }) {
+function ListContainer({ title, newReleases, accessToken, spotifyAPI, viewAllLink = '/new-releases' }) {
 
     return (
         <Box sx={{
@@ -20,7 +20,7 @@ function ListContainer({ title, newReleases, accessToken, spotifyAPI }) {
                 <Typography variant="h6">{title}</Typography>
                 <Link
                     component={RouterLink}
-                    to="/new-releases"
+                    to={viewAllLink}
                     sx={{ textDecoration: 'none', fontWeight: '500', color: 'primary.main', fontFamily: "'Prompt', sans serif", margin: '3px 12px 0 0', '&:hover': { color: 'secondary.main' }, fontSize: '14px'}}>
                     View All
                 </Link>
@@ -35,7 +35,7 @@ function ListContainer({ title, newReleases, accessToken, spotifyAPI }) {
                     marginBottom: '10px' // Spacing between items
                 }
             }}>
-                {newReleases && newReleases.map(release => <AlbumSmall key={release.id} release={release} accessToken={accessToken} spotifyAPI={spotifyAPI} /> )}
+                {newReleases && newReleases.map(track => <SongSmall key={track.id} hotTrack={track} /> )}
             </Box>
         </Box>
     );

@@ -2,18 +2,22 @@ import React from 'react';
 import { Box, Button, Typography, Container } from '@mui/material';
 import { useSpotifyAuth } from '../hooks/useSpotifyAuth';
 
-function Login() {
+function Login({ error }) {
   const { login } = useSpotifyAuth();
 
+  console.log('[Login Component] Rendering, error:', error);
+
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" sx={{ backgroundColor: 'white', minHeight: '100vh' }}>
       <Box
         sx={{
           marginTop: 20,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          textAlign: 'center'
+          textAlign: 'center',
+          padding: 4,
+          backgroundColor: 'white'
         }}
       >
         <Typography variant="h3" gutterBottom sx={{ fontWeight: 600 }}>

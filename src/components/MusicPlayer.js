@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, IconButton, Slider, Typography } from "@mui/material";
+import { Box, IconButton, Slider, Typography, Badge } from "@mui/material";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import PauseIcon from "@mui/icons-material/Pause";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
@@ -10,6 +10,7 @@ import RadioIcon from "@mui/icons-material/Radio";
 import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import { useMusicContext } from './MusicContext';
 import { useNavigate } from 'react-router-dom';
+import QueueViewer from './QueueViewer';
 
 function formatTime(milliseconds) {
   const totalSeconds = Math.floor(milliseconds / 1000);
@@ -25,15 +26,25 @@ function MusicPlayer() {
     playPauseHandler,
     nextSongHandler,
     prevSongHandler,
-    spotifyPlayer
+    spotifyPlayer,
+    queuedTracks,
+    clearQueue,
+    playTrack,
+    removeFromQueue,
+    addToQueueNext,
+    reorderQueue
   } = useMusicContext();
+
+  const [queueOpen, setQueueOpen] = useState(false);
 
   const navigate = useNavigate();
   const [localPosition, setLocalPosition] = useState(0);
 
   const handleRadioClick = () => {
-    if (currentTrack && currentTrack.id) {
-      navigate(`/radio/${currentTrack.id}`);
+    if (currentTrack && currentTrack.uri) {
+      // Extract track ID from Spotify URI (format: spotify:track:xxxx)
+      const trackId = currentTrack.uri.split(':')[2];
+      navigate(`/radio/${trackId}`);
     }
   };
 
@@ -242,8 +253,11 @@ function MusicPlayer() {
         </IconButton>
         <IconButton
           sx={{ color: "primary.main", "&:hover": { color: "secondary.main" } }}
+          onClick={() => setQueueOpen(true)}
         >
-          <QueueMusicIcon sx={{ fontSize: 32 }} />
+          <Badge badgeContent={currentTrack ? queuedTracks.length + 1 : queuedTracks.length} color="secondary">
+            <QueueMusicIcon sx={{ fontSize: 32 }} />
+          </Badge>
         </IconButton>
         <IconButton
           sx={{ color: "primary.main", "&:hover": { color: "secondary.main" } }}
@@ -253,6 +267,42 @@ function MusicPlayer() {
           <RadioIcon sx={{ fontSize: 28 }} />
         </IconButton>
       </Box>
+
+      {/* Queue Viewer Drawer */}
+      <QueueViewer
+        open={queueOpen}
+        onClose={() => setQueueOpen(false)}
+        queuedTracks={queuedTracks}
+        currentTrack={currentTrack}
+        onClearQueue={() => {
+          clearQueue();
+          setQueueOpen(false);
+        }}
+        onPlayTrack={(track) => {
+          // Play track from queue by converting it to Spotify track format
+          const spotifyTrack = {
+            uri: track.uri,
+            name: track.title,
+            artists: [{ name: track.artist }],
+            album: { images: [{ url: track.image }] },
+            duration_ms: track.duration_ms
+          };
+          playTrack(spotifyTrack);
+        }}
+        onRemoveFromQueue={removeFromQueue}
+        onAddToQueueNext={(track) => {
+          // Convert queue track format to Spotify track format
+          const spotifyTrack = {
+            uri: track.uri,
+            name: track.title,
+            artists: [{ name: track.artist }],
+            album: track.album || { images: [{ url: track.image }] }, // Use existing album if available
+            duration_ms: track.duration_ms
+          };
+          addToQueueNext(spotifyTrack);
+        }}
+        onReorderQueue={reorderQueue}
+      />
     </Box>
   );
 }

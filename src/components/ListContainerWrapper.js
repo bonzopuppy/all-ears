@@ -4,7 +4,7 @@ import ListContainer from './ListContainer'; // Import your ListContainer compon
 import ListContainer2 from './ListContainer2'
 import ListContainer3 from './ListContainer3'; // Import your ListContainer component
 
-function ListContainerWrapper({newReleases, whatsHot, handleRefresh, accessToken, spotifyAPI}) {
+function ListContainerWrapper({newReleases, forYou, recentlyPlayed, handleRefresh, accessToken, spotifyAPI, newReleasesCategoryId, newReleasesCategoryTitle, forYouCategoryId, forYouCategoryTitle}) {
     return (
         <Box sx={{
             display: 'flex',
@@ -15,9 +15,20 @@ function ListContainerWrapper({newReleases, whatsHot, handleRefresh, accessToken
             padding: '0 30px', // Similar to the search bar
             gap: '20px' // Space between ListContainer components
         }}>
-            <ListContainer title={"New Releases"} newReleases={newReleases} accessToken={accessToken} spotifyAPI={spotifyAPI} />
-            <ListContainer2 title={"For You"} whatsHot={whatsHot} handleRefresh={handleRefresh}/>
-            <ListContainer3 title={"Recent Selections"}/>
+            <ListContainer
+                title={newReleasesCategoryTitle}
+                newReleases={newReleases}
+                accessToken={accessToken}
+                spotifyAPI={spotifyAPI}
+                viewAllLink={newReleasesCategoryId ? `/genre/${newReleasesCategoryId}` : '/new-releases'}
+            />
+            <ListContainer2
+                title={forYouCategoryTitle}
+                items={forYou}
+                handleRefresh={handleRefresh}
+                viewAllLink={forYouCategoryId ? `/genre/${forYouCategoryId}` : '/for-you'}
+            />
+            <ListContainer3 title={"Recent Selections"} recentlyPlayed={recentlyPlayed}/>
 
         </Box>
     );

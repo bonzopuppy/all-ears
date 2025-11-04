@@ -4,7 +4,7 @@ import { Link as RouterLink } from 'react-router-dom';
 // import musicPlayerAlbum from './musicPlayerAlbum.png';
 import SongSmall from './SongSmall';
 
-function ListContainer2({ title, whatsHot, handleRefresh }) {
+function ListContainer2({ title, items, handleRefresh, viewAllLink = '/for-you' }) {
 
     return (
         <Box sx={{
@@ -20,21 +20,21 @@ function ListContainer2({ title, whatsHot, handleRefresh }) {
                 <Typography variant="h6">{title}</Typography>
                 <Link
                 component={RouterLink}
-                to="/for-you"
+                to={viewAllLink}
                 sx={{ textDecoration: 'none', fontWeight: '500', color: 'primary.main', fontFamily: "'Prompt', sans serif", margin: '3px 12px 0 0', '&:hover': { color: 'secondary.main' }, fontSize: '14px'}}
                 >View All</Link>
             </Box>
 
             {/* List Items */}
-            <Box component="ul" sx={{ 
-                padding: 0, 
-                margin: 0, 
-                listStyleType: 'none', 
-                '& > li': { 
+            <Box component="ul" sx={{
+                padding: 0,
+                margin: 0,
+                listStyleType: 'none',
+                '& > li': {
                     marginBottom: '10px' // Spacing between items
                 }
             }}>
-                {whatsHot && whatsHot.map(hotTrack => <SongSmall hotTrack={hotTrack} />)}
+                {items && items.map(item => <SongSmall hotTrack={item} key={item.id} />)}
             </Box>
         </Box>
     );

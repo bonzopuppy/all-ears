@@ -3,10 +3,11 @@ import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import PlayHover from "./PlayHover";
 
-const ArtistItem = ({ imageUrl, textLine1, followers, artist }) => {
-  
+const ArtistItem = ({ imageUrl, textLine1, followers, artist, onClick }) => {
+
     return (
       <Box
+        onClick={onClick}
         sx={{
           width: 166,
           height: 248,

@@ -151,7 +151,8 @@ export const useSpotifyAuth = () => {
   }, [isAuthenticated, expiresAt, refreshAccessToken]);
 
   const login = useCallback(() => {
-    window.location.href = API_ENDPOINTS.AUTH.LOGIN;
+    // Use replace to avoid browser extension interference
+    window.location.replace(API_ENDPOINTS.AUTH.LOGIN);
   }, []);
 
   return {

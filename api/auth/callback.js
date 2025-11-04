@@ -1,5 +1,15 @@
 // Vercel Serverless Function: Handle OAuth callback and exchange code for tokens
 export default async function handler(req, res) {
+  console.log('[Callback] Request received:', {
+    method: req.method,
+    url: req.url,
+    query: req.query,
+    headers: {
+      host: req.headers.host,
+      referer: req.headers.referer
+    }
+  });
+
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -46,6 +56,14 @@ export default async function handler(req, res) {
     }
 
     const tokenData = await tokenResponse.json();
+
+    console.log('[Callback] Token data received:', {
+      hasAccessToken: !!tokenData.access_token,
+      hasRefreshToken: !!tokenData.refresh_token,
+      expiresIn: tokenData.expires_in,
+      scope: tokenData.scope,
+      tokenType: tokenData.token_type
+    });
 
     // Redirect to frontend with tokens in URL hash
     const frontendUrl = process.env.FRONTEND_URL || req.headers.origin || 'http://localhost:3000';

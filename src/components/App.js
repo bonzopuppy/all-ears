@@ -9,6 +9,7 @@ import Explore from './Explore';
 import ForYou from './ForYou';
 import NewReleases from './NewReleases';
 import Album from './Album';
+import Playlist from './Playlist';
 import Genre from './Genre';
 import Radio from './Radio';
 import Login from './Login';
@@ -53,57 +54,124 @@ const theme = createTheme({
   },
 });
 
-const genres = [
-  { id: '1', title: 'Rock', background: '#31334F', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFDXXwE9BDJAr', imageUrl: blueOvals },
-  { id: '2', title: 'Pop', background: '#EA9633', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFEC4WFtoNRpw', imageUrl: orangeOvals },
-  { id: '3', title: 'Hip Hop', background: '#8340D9', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFQ00XGBls6ym', imageUrl: purpleOvals },
-  { id: '4', title: 'Jazz', background: '#E13535', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFAJ5xb0fwo9m', imageUrl: redOvals },
-  { id: '5', title: 'Country', background: '#75C6F4', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFKLfwjuJMoNC', imageUrl: lightBlueOvals },
-  { id: '6', title: 'Classical', background: '#31334F', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFPrEiAOxgac3', imageUrl: blueOvals },
-  { id: '7', title: 'Electronic', background: '#EA9633', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFHOzuVTgTizF', imageUrl: orangeOvals },
-  { id: '8', title: 'Folk', background: '#8340D9', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFy78wprEpAjl', imageUrl: purpleOvals },
-  { id: '9', title: 'R&B', background: '#E13535', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFEZPnFQSFB1T', imageUrl: redOvals },
-  { id: '10', title: 'Caribbean', background: '#75C6F4', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFObNLOHydSW8', imageUrl: lightBlueOvals },
-  { id: '11', title: 'Blues', background: '#31334F', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFQiK2EHwyjcU', imageUrl: blueOvals },
-  { id: '12', title: 'Metal', background: '#EA9633', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFDkd668ypn6O', imageUrl: orangeOvals },
-  { id: '13', title: 'Funk & Disco', background: '#8340D9', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFFsW9N8maB6z', imageUrl: purpleOvals },
-  { id: '14', title: 'Latin', background: '#E13535', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFxXaXKP7zcDp', imageUrl: redOvals },
-  { id: '15', title: 'Afrobeats', background: '#75C6F4', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFNQ0fGp4byGU', imageUrl: lightBlueOvals },
-  { id: '16', title: 'Soul', background: '#31334F', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFIpEuaCnimBj', imageUrl: blueOvals },
-  { id: '17', title: 'Punk', background: '#EA9633', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFAjfauKLOZiv', imageUrl: orangeOvals },
-  { id: '18', title: 'Gospel', background: '#8340D9', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFy0OenPG51Av', imageUrl: purpleOvals },
-  { id: '19', title: 'Indie', background: '#E13535', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFCWjUTdzaG0e', imageUrl: redOvals },
-  { id: '20', title: 'Alternative', background: '#75C6F4', url: 'https://open.spotify.com/genre/0JQ5DAqbMKFFtlLYUHv8bT', imageUrl: lightBlueOvals },
-];
-
 function App() {
   const { isAuthenticated, accessToken, user, logout, error: authError } = useSpotifyAuth();
   const spotifyPlayer = useSpotifyPlayer(accessToken);
   const market = useMarket(accessToken);
 
   const [newReleases, setNewReleases] = useState([]);
-  const [whatsHot, setWhatsHot] = useState([]);
+  const [forYou, setForYou] = useState([]);
+  const [recentlyPlayed, setRecentlyPlayed] = useState([]);
   const [searchResults, setSearchResults] = useState(null);
+  const [genres, setGenres] = useState([]);
+  const [newReleasesCategoryId, setNewReleasesCategoryId] = useState(null);
+  const [newReleasesCategoryTitle, setNewReleasesCategoryTitle] = useState('New Releases');
+  const [forYouCategoryId, setForYouCategoryId] = useState(null);
+  const [forYouCategoryTitle, setForYouCategoryTitle] = useState('For You');
 
-  // Fetch new releases and user's top tracks
+  // Fetch new releases, featured playlists, and recently played
   useEffect(() => {
     if (!accessToken) return;
 
     async function fetchHomeData() {
-      try {
-        // Fetch new releases
-        const newReleasesData = await spotifyAPI.directRequest('/browse/new-releases?country=US&limit=3');
-        if (newReleasesData && newReleasesData.albums && newReleasesData.albums.items) {
-          setNewReleases(newReleasesData.albums.items);
-        }
+      // Fetch recently played
+      console.log('[App] Fetching recently played...');
+      spotifyAPI.directRequest('/me/player/recently-played?limit=3')
+        .then(recentlyPlayedData => {
+          console.log('[App] Recently played data:', recentlyPlayedData);
+          if (recentlyPlayedData && recentlyPlayedData.items) {
+            const tracks = recentlyPlayedData.items.map(item => item.track);
+            setRecentlyPlayed(tracks);
+            console.log('[App] Set recently played:', tracks.length);
+          }
+        })
+        .catch(error => console.error('[App] Error fetching recently played:', error));
 
-        // Fetch user's top tracks
-        const topTracksData = await spotifyAPI.directRequest('/me/top/tracks?time_range=short_term&limit=3');
-        if (topTracksData && topTracksData.items && topTracksData.items.length > 0) {
-          setWhatsHot(topTracksData.items);
+      // Fetch genres/categories from Spotify
+      console.log('[App] Fetching Spotify categories...');
+      try {
+        const categoriesData = await spotifyAPI.directRequest('/browse/categories?limit=20&locale=en_US');
+        console.log('[App] Categories data:', categoriesData);
+
+        if (categoriesData && categoriesData.categories && categoriesData.categories.items) {
+          const categories = categoriesData.categories.items;
+
+          // Transform Spotify categories into our genre format
+          const colors = ['#31334F', '#EA9633', '#8340D9', '#E13535', '#75C6F4'];
+          const images = [blueOvals, orangeOvals, purpleOvals, redOvals, lightBlueOvals];
+
+          const transformedGenres = categories.map((cat, index) => ({
+            id: cat.id,
+            title: cat.name,
+            background: colors[index % colors.length],
+            imageUrl: images[index % images.length],
+            url: `#/genre/${cat.id}`
+          }));
+
+          // Set all genres (Genre component needs first two for View All pages)
+          setGenres(transformedGenres);
+          console.log('[App] Set genres:', transformedGenres.length);
+
+          // Fetch tracks for first category (New Releases)
+          if (categories[0]) {
+            const firstCategory = categories[0];
+            setNewReleasesCategoryId(firstCategory.id);
+            setNewReleasesCategoryTitle(firstCategory.name);
+            console.log('[App] Fetching tracks for first category:', firstCategory.name);
+
+            try {
+              const searchData = await spotifyAPI.search(firstCategory.name, 'playlist', 20);
+              if (searchData.playlists && searchData.playlists.items) {
+                const validPlaylists = searchData.playlists.items.filter(p => p !== null && p.id);
+
+                if (validPlaylists.length > 0) {
+                  const playlist = validPlaylists[0];
+                  console.log('[App] Using playlist for New Releases:', playlist.name);
+
+                  const tracksData = await spotifyAPI.directRequest(`/playlists/${playlist.id}/tracks?limit=3`);
+                  if (tracksData && tracksData.items) {
+                    const tracks = tracksData.items.map(item => item.track).filter(track => track !== null);
+                    setNewReleases(tracks);
+                    console.log('[App] Set New Releases tracks:', tracks.length);
+                  }
+                }
+              }
+            } catch (error) {
+              console.error('[App] Error fetching New Releases tracks:', error);
+            }
+          }
+
+          // Fetch tracks for second category (For You)
+          if (categories[1]) {
+            const secondCategory = categories[1];
+            setForYouCategoryId(secondCategory.id);
+            setForYouCategoryTitle(secondCategory.name);
+            console.log('[App] Fetching tracks for second category:', secondCategory.name);
+
+            try {
+              const searchData = await spotifyAPI.search(secondCategory.name, 'playlist', 20);
+              if (searchData.playlists && searchData.playlists.items) {
+                const validPlaylists = searchData.playlists.items.filter(p => p !== null && p.id);
+
+                if (validPlaylists.length > 0) {
+                  const playlist = validPlaylists[0];
+                  console.log('[App] Using playlist for For You:', playlist.name);
+
+                  const tracksData = await spotifyAPI.directRequest(`/playlists/${playlist.id}/tracks?limit=3`);
+                  if (tracksData && tracksData.items) {
+                    const tracks = tracksData.items.map(item => item.track).filter(track => track !== null);
+                    setForYou(tracks);
+                    console.log('[App] Set For You tracks:', tracks.length);
+                  }
+                }
+              }
+            } catch (error) {
+              console.error('[App] Error fetching For You tracks:', error);
+            }
+          }
         }
       } catch (error) {
-        console.error('[App] Error fetching home data:', error);
+        console.error('[App] Error fetching categories:', error);
       }
     }
 
@@ -114,14 +182,14 @@ function App() {
     e.preventDefault();
     if (!accessToken) return;
 
-    spotifyAPI.directRequest('/me/top/tracks?time_range=short_term&limit=3')
+    spotifyAPI.directRequest('/me/player/recently-played?limit=3')
       .then(data => {
-        if (data && data.items && data.items.length > 0) {
-          setWhatsHot(data.items);
+        if (data && data.items) {
+          setRecentlyPlayed(data.items.map(item => item.track));
         }
       })
       .catch(error => {
-        console.error('[App] Error refreshing top tracks:', error);
+        console.error('[App] Error refreshing recently played:', error);
       });
   }
 
@@ -146,13 +214,18 @@ function App() {
                   <Route path="/" element={
                     <Home
                       newReleases={newReleases}
-                      whatsHot={whatsHot}
+                      forYou={forYou}
+                      recentlyPlayed={recentlyPlayed}
                       handleRefresh={handleRefresh}
                       genres={genres}
                       searchResults={searchResults}
                       setSearchResults={setSearchResults}
                       accessToken={accessToken}
                       market={market}
+                      newReleasesCategoryId={newReleasesCategoryId}
+                      newReleasesCategoryTitle={newReleasesCategoryTitle}
+                      forYouCategoryId={forYouCategoryId}
+                      forYouCategoryTitle={forYouCategoryTitle}
                     />
                   } />
                   <Route path="/library" element={
@@ -169,6 +242,9 @@ function App() {
                   } />
                   <Route path="/album/:albumId" element={
                     <Album accessToken={accessToken} />
+                  } />
+                  <Route path="/playlist/:playlistId" element={
+                    <Playlist accessToken={accessToken} />
                   } />
                   <Route path="/genre/:genreId" element={
                     <Genre

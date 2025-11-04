@@ -1,12 +1,8 @@
 import React from 'react';
 import { Box, Typography, Link } from '@mui/material';
-import AlbumPlaylistItem from './AlbumPlaylistItem';
-import ArtistItem from './ArtistItem';
-import coverImage from '../images/coverImage.png';
-import artistImage from '../images/artistImage.png';
-import ArtistItemHome from './ArtistItemHome';
+import SongSmall from './SongSmall';
 
-function ListContainer3({ title }) {
+function ListContainer3({ title, recentlyPlayed }) {
     return (
         <Box sx={{
             width: 413,
@@ -23,25 +19,15 @@ function ListContainer3({ title }) {
             </Box>
 
             {/* List Items */}
-            <Box component="ul" sx={{ 
-                display: 'flex',  // Set display to flex
-                flexDirection: 'row', // Align items side by side
-                justifyContent: 'center', // Adjust space between items
-                padding: 0, 
-                margin: 0, 
-                gap: '24px', // Space between ListContainer components
-                listStyleType: 'none', 
+            <Box component="ul" sx={{
+                padding: 0,
+                margin: 0,
+                listStyleType: 'none',
+                '& > li': {
+                    marginBottom: '10px' // Spacing between items
+                }
             }}>
-                <AlbumPlaylistItem
-                    imageUrl={coverImage}
-                    textLine1="The Beatles"
-                    textLine2="Abbey Road"
-                />
-                <ArtistItemHome
-                    imageUrl={artistImage}
-                    artist="Ariana Grande"
-                    followers="80,308,012"
-                />
+                {recentlyPlayed && recentlyPlayed.map(track => <SongSmall hotTrack={track} key={track.id} />)}
             </Box>
         </Box>
     );

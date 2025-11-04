@@ -11,40 +11,32 @@ import SongMedium from "./SongMedium";
 import { useMusicContext } from './MusicContext';
 import { spotifyAPI } from '../api/spotify-client';
 
-function Album({ accessToken }) {
-  const { albumId } = useParams();
-  const [album, setAlbum] = useState(null);
+function Playlist({ accessToken }) {
+  const { playlistId } = useParams();
+  const [playlist, setPlaylist] = useState(null);
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(true);
   const { playAll } = useMusicContext();
 
   useEffect(() => {
-    if (!accessToken || !albumId) return;
+    if (!accessToken || !playlistId) return;
 
-    async function fetchAlbum() {
+    async function fetchPlaylist() {
       try {
-        const data = await spotifyAPI.directRequest(`/albums/${albumId}`);
-        setAlbum(data);
-        // Add album info to each track so playTrack can access album images
-        const tracksWithAlbum = data.tracks.items.map(track => ({
-          ...track,
-          album: {
-            images: data.images,
-            name: data.name
-          }
-        }));
-        setTracks(tracksWithAlbum);
+        const data = await spotifyAPI.directRequest(`/playlists/${playlistId}`);
+        setPlaylist(data);
+        setTracks(data.tracks.items.map(item => item.track).filter(track => track));
       } catch (error) {
-        console.error('[Album] Error fetching album:', error);
+        console.error('[Playlist] Error fetching playlist:', error);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchAlbum();
-  }, [accessToken, albumId]);
+    fetchPlaylist();
+  }, [accessToken, playlistId]);
 
-  const handlePlayAlbum = () => {
+  const handlePlayPlaylist = () => {
     if (tracks.length > 0 && playAll) {
       playAll(tracks);
     }
@@ -53,15 +45,15 @@ function Album({ accessToken }) {
   if (loading) {
     return (
       <Box sx={{ maxWidth: 1296, margin: '10px auto', padding: '0 30px' }}>
-        <Typography>Loading album...</Typography>
+        <Typography>Loading playlist...</Typography>
       </Box>
     );
   }
 
-  if (!album) {
+  if (!playlist) {
     return (
       <Box sx={{ maxWidth: 1296, margin: '10px auto', padding: '0 30px' }}>
-        <Typography>Album not found.</Typography>
+        <Typography>Playlist not found.</Typography>
       </Box>
     );
   }
@@ -98,8 +90,8 @@ function Album({ accessToken }) {
       <Box sx={{ display: 'flex', gap: '30px', alignItems: 'flex-start' }}>
         <Box
           component="img"
-          src={album.images[0]?.url}
-          alt={album.name}
+          src={playlist.images?.[0]?.url}
+          alt={playlist.name}
           sx={{
             width: 240,
             height: 240,
@@ -109,18 +101,18 @@ function Album({ accessToken }) {
         />
         <Box sx={{ flex: 1 }}>
           <Typography variant="h4" sx={{ fontWeight: 600, marginBottom: 1 }}>
-            {album.name}
+            {playlist.name}
           </Typography>
           <Typography variant="h6" sx={{ color: 'text.secondary', marginBottom: 2 }}>
-            {album.artists.map(artist => artist.name).join(', ')}
+            Curated by {playlist.owner?.display_name}
           </Typography>
           <Typography variant="body2" sx={{ marginBottom: 2 }}>
-            {album.release_date?.substring(0, 4)} • {tracks.length} tracks
+            {tracks.length} tracks
           </Typography>
           <Button
             variant="contained"
             startIcon={<PlayArrowIcon />}
-            onClick={handlePlayAlbum}
+            onClick={handlePlayPlaylist}
             sx={{
               backgroundColor: 'secondary.main',
               '&:hover': {
@@ -128,7 +120,7 @@ function Album({ accessToken }) {
               }
             }}
           >
-            Play Album
+            Play Playlist
           </Button>
         </Box>
       </Box>
@@ -145,4 +137,4 @@ function Album({ accessToken }) {
   );
 }
 
-export default Album;
+export default Playlist;

@@ -1,13 +1,55 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import AlbumPlaylistItem from "./AlbumPlaylistItem";
 import coverImage from "../images/coverImage.png";
 import artistImage from "../images/artistImage.png";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import ArtistItem from "./ArtistItem";
 import SongMedium from "./SongMedium";
 import Typography from "@mui/material/Typography";
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import ShuffleIcon from '@mui/icons-material/Shuffle';
+import { useMusicContext } from './MusicContext';
+import { spotifyAPI } from '../api/spotify-client';
 
-function SearchResults({ results }) {
+function SearchResults({ results, accessToken, onSearch, setSearchQuery }) {
+  const { playAll, shuffleAll } = useMusicContext();
+  const navigate = useNavigate();
+  const tracks = results.tracks.items.filter(track => track);
+
+  const handleArtistClick = async (artistName) => {
+    try {
+      // Scroll to top of page
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Update search query to show artist name in search bar
+      if (setSearchQuery) {
+        setSearchQuery(artistName);
+      }
+
+      const data = await spotifyAPI.search(artistName, 'track,artist,album,playlist', 10);
+      if (onSearch) {
+        onSearch(data);
+      }
+    } catch (error) {
+      console.error('[SearchResults] Artist search failed:', error);
+    }
+  };
+
+  const handleAlbumClick = (albumId) => {
+    // Scroll to top of page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Navigate to album page
+    navigate(`/album/${albumId}`);
+  };
+
+  const handlePlaylistClick = (playlistId) => {
+    // Scroll to top of page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Navigate to playlist page
+    navigate(`/playlist/${playlistId}`);
+  };
 
   return (
 
@@ -20,13 +62,45 @@ function SearchResults({ results }) {
       gap: '30px' // Increase gap for better separation of sections
     }}>
 
-      <Typography variant="h5">Songs</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h5">Songs</Typography>
+        {tracks.length > 0 && (
+          <Box sx={{ display: 'flex', gap: '10px' }}>
+            <Button
+              variant="contained"
+              startIcon={<PlayArrowIcon />}
+              onClick={() => playAll(tracks)}
+              sx={{
+                backgroundColor: 'primary.main',
+                '&:hover': { backgroundColor: 'secondary.main' },
+                textTransform: 'none',
+                fontWeight: 600
+              }}
+            >
+              Play All
+            </Button>
+            <Button
+              variant="contained"
+              startIcon={<ShuffleIcon />}
+              onClick={() => shuffleAll(tracks)}
+              sx={{
+                backgroundColor: 'primary.main',
+                '&:hover': { backgroundColor: 'secondary.main' },
+                textTransform: 'none',
+                fontWeight: 600
+              }}
+            >
+              Shuffle
+            </Button>
+          </Box>
+        )}
+      </Box>
       <Box sx={{
         display: 'flex',
         flexWrap: 'wrap',
         gap: '10px'
       }}>
-        {results.tracks.items.filter(track => track).map(track => (
+        {tracks.map(track => (
         <SongMedium
           key={track.id}
           song={track}
@@ -46,6 +120,7 @@ function SearchResults({ results }) {
             imageUrl={album.images[0].url || coverImage}
             textLine1={album.name}
             textLine2={album.artists[0].name}
+            onClick={() => handleAlbumClick(album.id)}
           />
         ))}
       </Box>
@@ -60,9 +135,8 @@ function SearchResults({ results }) {
           <ArtistItem
             key={artist.id}
             imageUrl={artist.images?.[0]?.url || artistImage}
-            artist={artist.name}
-            albumCount="Unknown" // Spotify API does not provide album count in search results
-            songCount="Unknown" // Spotify API does not provide song count in search results
+            artist={artist}
+            onClick={() => handleArtistClick(artist.name)}
           />
         ))}
       </Box>
@@ -79,6 +153,7 @@ function SearchResults({ results }) {
             imageUrl={playlist.images[0]?.url || coverImage} // Using the first image or a default cover image
             textLine1={playlist.name}
             textLine2={`Curated by ${playlist.owner.display_name}`} // Example of using the playlist owner's name
+            onClick={() => handlePlaylistClick(playlist.id)}
           />
         ))}
       </Box>

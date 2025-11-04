@@ -1,0 +1,1079 @@
+MUSICAL JOURNEY APP - PROJECT OVERVIEW & PLANNING DOCUMENT
+===========================================================
+
+Last Updated: November 3, 2025
+Project Status: Planning & Requirements Phase
+
+===========================================================
+EXECUTIVE SUMMARY
+===========================================================
+
+A music discovery and education platform where users can start with ANY 
+song, artist, or genre and explore musical connections in any direction. 
+AI generates personalized pathways showing influences, collaborators, 
+evolution, and related artists - creating an infinite web of musical 
+discovery.
+
+CORE CONCEPT: "Choose Any Door, Explore in Any Direction"
+
+Users pick a starting point:
+- A song ("Psycho Killer" by Talking Heads)
+- An artist (Fela Kuti)
+- A genre (Afrobeat)
+
+AI instantly generates 3-5 pathways FROM that point:
+- What influenced this?
+- Who did this influence?
+- Who collaborated on this?
+- What's the genre evolution?
+- Similar sounds from different eras
+
+Each connection becomes a new door - click any node and it becomes the 
+new center with its own pathways. It's an infinite, explorable web.
+
+Unlike existing music apps that focus purely on recommendations or pure 
+encyclopedic information, this app combines:
+
+- Discovery (finding new music through connections)
+- Education (learning music history through exploration)
+- Storytelling (AI explains each connection)
+- Interactivity (conversational + visual exploration)
+
+Target User: Music enthusiasts who want to understand the "why" behind the 
+music they love, and discover music through context rather than algorithms.
+
+===========================================================
+EXPLORATION MODEL: "CHOOSE ANY DOOR"
+===========================================================
+
+THE CORE INTERACTION:
+
+1. USER PICKS A STARTING POINT
+   Examples:
+   - Song: "Once in a Lifetime" by Talking Heads
+   - Artist: David Bowie
+   - Genre: Post-Punk
+   - Album: Remain in Light
+
+2. AI GENERATES 3-5 PATHWAYS FROM THAT POINT
+   
+   Example starting from "Once in a Lifetime":
+   
+   PATH 1: "What influenced this?" (backward in time)
+   → Fela Kuti's Afrobeat
+   → James Brown's funk
+   → African polyrhythms
+   
+   PATH 2: "Who did this influence?" (forward in time)
+   → Vampire Weekend
+   → LCD Soundsystem
+   → Modern indie rock
+   
+   PATH 3: "Collaborators & Context"
+   → Brian Eno (producer)
+   → Bernie Worrell (keyboards)
+   → Tom Tom Club (side project)
+   
+   PATH 4: "Genre Evolution"
+   → New Wave origins
+   → Post-punk scene
+   → Art rock movement
+   
+   PATH 5: "Similar Sounds"
+   → Gang of Four (contemporary)
+   → Joy Division (contemporary)
+   → TV on the Radio (modern)
+
+3. EACH NODE IS A NEW DOOR
+   - Click on "Fela Kuti" → Now HE'S the center
+   - AI generates HIS 3-5 pathways
+   - Infinite exploration in any direction
+
+4. AI EXPLAINS EACH CONNECTION
+   - Short narrative (2-3 sentences) for each node
+   - "David Byrne discovered Fela Kuti's music in a NYC record store 
+     in 1979. The complex polyrhythms and political urgency influenced 
+     Talking Heads' Remain in Light album."
+
+5. EVERY NODE HAS MUSIC
+   - 2-3 representative tracks you can play immediately
+   - Embedded Spotify player
+   - Add to playlist / save for later
+
+VISUAL REPRESENTATION:
+
+The interface shows this as a radial/web structure:
+
+```
+                    Fela Kuti
+                        ↑
+                        |
+    Brian Eno ← [STARTING POINT] → Vampire Weekend
+                  Once in a Lifetime
+                        |
+                        ↓
+                   James Brown
+```
+
+User clicks any node → that node moves to center → new connections appear
+
+IT'S NOT A LINEAR TIMELINE - IT'S A WEB
+
+The power is that there's no "right" path. You're not following a 
+predetermined journey. You're exploring based on YOUR curiosity.
+
+USER DOESN'T NEED TO KNOW WHERE THEY'RE GOING:
+- Start with a song you love
+- See what influenced it
+- Get curious about one influence
+- Click that, explore deeper
+- Discover something unexpected
+- Keep exploring
+
+PATHWAY TYPES (AI generates based on starting point):
+
+1. INFLUENCES (backward in time)
+   "What shaped this sound?"
+
+2. LEGACY (forward in time)
+   "Who did this inspire?"
+
+3. COLLABORATORS
+   "Who worked with this artist?"
+
+4. CONTEMPORARIES
+   "What else was happening at the same time?"
+
+5. GENRE CONNECTIONS
+   "How does this fit in the bigger picture?"
+
+6. GEOGRAPHICAL
+   "What's the regional scene connection?"
+
+7. THEMATIC
+   "Similar themes/lyrics/mood"
+
+AI picks the 3-5 most interesting/relevant pathways for each starting point.
+
+===========================================================
+THE MARKET GAP
+===========================================================
+
+WHAT EXISTS TODAY:
+
+1. Discovery-Focused Apps (Spotify, Pandora, Apple Music)
+   - Great at: Recommendations, similar artists
+   - Missing: Context, education, the "why"
+   - Example: "You might like Vampire Weekend" but no explanation of WHY
+
+2. Encyclopedia-Focused Resources (AllMusic, MusicBrainz, Wikipedia)
+   - Great at: Facts, dates, relationships
+   - Missing: Playback integration, interactivity, engaging storytelling
+   - Example: Dry text about influences, can't actually hear the music
+
+3. Educational Resources (music theory sites, YouTube channels)
+   - Great at: Deep dives on specific topics
+   - Missing: Personalized pathways, discovery element
+   - Example: Great if you want to learn about jazz, but no starting point
+
+THE GAP WE'RE FILLING:
+
+Nobody combines:
+- Music playback (Spotify integration)
+- Historical context (AI-generated narratives)
+- Interactive exploration (conversational interface)
+- Visual pathways (showing evolution and connections)
+
+===========================================================
+CORE VALUE PROPOSITION
+===========================================================
+
+"Discover music through stories, not just algorithms"
+
+Instead of: "You listened to Talking Heads, try Vampire Weekend"
+We offer: "Talking Heads discovered Afrobeat in 1979 through Fela Kuti, 
+creating the polyrhythmic sound in 'Remain in Light' that influenced Vampire 
+Weekend 30 years later. Let me show you this evolution..."
+
+USER BENEFITS:
+- Understand WHY you like certain music
+- Discover new music through historical connections
+- Learn music history in an engaging, interactive way
+- Explore at your own pace with conversational AI
+
+===========================================================
+CORE FEATURES (THE FOUR PILLARS)
+===========================================================
+
+FEATURE 1: AUTOMATICALLY GENERATE PATHWAYS
+-------------------------------------------
+What: AI reads music history and creates "evolution pathways"
+
+Examples:
+- "Blues → R&B → Soul → Funk → Hip-Hop"
+- "Punk → Post-Punk → New Wave → Alternative"
+- "Gospel → Soul → Motown → Modern R&B"
+
+How it works:
+1. User requests a pathway ("Show me how blues became rock")
+2. AI analyzes music history data (from Wikipedia, music databases, etc.)
+3. AI identifies key evolutionary steps
+4. AI creates a structured pathway with dates, artists, key albums
+
+Technical needs:
+- LLM API (GPT-4 or Claude) to analyze and structure data
+- Music history data sources (Wikipedia, MusicBrainz, AllMusic)
+- Pathway data structure (see technical architecture section)
+
+FEATURE 2: CURATE SMART PLAYLISTS
+----------------------------------
+What: AI picks representative tracks for each step in the pathway
+
+Example pathway step:
+"1950s Rock & Roll"
+- Representative tracks:
+  * "Johnny B. Goode" - Chuck Berry
+  * "That'll Be the Day" - Buddy Holly
+  * "Tutti Frutti" - Little Richard
+
+How it works:
+1. For each pathway node, AI identifies 3-5 essential tracks
+2. Searches Spotify API for these tracks
+3. Creates a playable playlist
+4. Orders tracks chronologically or by influence
+
+Technical needs:
+- Spotify Web API for search and playlist creation
+- AI to select "essential" tracks (not just popular, but historically important)
+- Track metadata (release dates, chart performance, critical acclaim)
+
+FEATURE 3: WRITE ENGAGING NARRATIVES
+-------------------------------------
+What: AI generates compelling stories that explain musical connections
+
+Example:
+"In 1979, David Byrne of Talking Heads discovered Fela Kuti's Afrobeat 
+while browsing in a New York record store. The complex polyrhythms and 
+political urgency of Kuti's music deeply influenced the band's next album, 
+'Remain in Light.' Producer Brian Eno helped them translate these African 
+rhythms into a new wave context, creating a sound that would influence 
+generations of alternative rock bands..."
+
+How it works:
+1. AI gathers context about each connection in the pathway
+2. Generates narrative in an engaging, accessible style
+3. Includes specific anecdotes, dates, and musical details
+4. Keeps it concise but informative (2-3 paragraphs per node)
+
+Technical needs:
+- LLM with long context window for historical research
+- Prompt engineering to ensure engaging writing style
+- Fact-checking mechanism (cross-reference multiple sources)
+
+FEATURE 4: MAKE IT CONVERSATIONAL
+----------------------------------
+What: Users can ask questions and explore deeper
+
+Example conversation:
+User: "Show me the evolution of punk rock"
+AI: [Creates pathway] "Punk started in the mid-1970s..."
+User: "Tell me more about the CBGB scene"
+AI: "CBGB was a small club in New York's Bowery neighborhood..."
+User: "Who played there?"
+AI: "Ramones, Talking Heads, Television, Blondie..."
+User: "Play me some Ramones"
+AI: [Creates playlist with early Ramones tracks]
+
+How it works:
+1. Chat interface (like ChatGPT but music-focused)
+2. AI maintains conversation context
+3. Can trigger pathway generation, playlist creation, or narrative expansion
+4. Natural language understanding for music queries
+
+Technical needs:
+- Chat interface (frontend)
+- Conversational AI backend
+- Session management (remember conversation context)
+- Tool calling (AI can invoke pathway generation, search, playlist creation)
+
+FEATURE 5: STORY PLAYLISTS (THE KILLER FEATURE)
+------------------------------------------------
+What: As users explore, automatically create playlists that combine songs + 
+AI-generated narratives explaining the connections
+
+THE CONCEPT:
+Unlike regular playlists (just songs), Story Playlists are:
+- Songs in the order you discovered them
+- AI narrative for each track explaining its place in your journey
+- Context showing how each track connects to the next
+- Shareable as both music AND story
+
+Example Story Playlist:
+"From Talking Heads to Kendrick: A Funk Journey"
+
+Track 1: Once in a Lifetime - Talking Heads
+  📝 "Your starting point. This 1980 track blended new wave with 
+      Afrobeat polyrhythms discovered by David Byrne..."
+
+Track 2: Water No Get Enemy - Fela Kuti  
+  📝 "David Byrne discovered Fela Kuti's complex rhythms in 1979,
+      which heavily influenced Remain in Light..."
+
+Track 3: Get Up (I Feel Like Being a) Sex Machine - James Brown
+  📝 "The Godfather of Soul's 1970 hit pioneered the funk groove
+      that influenced both Fela Kuti and Parliament..."
+
+Track 4: Flash Light - Parliament
+  📝 "George Clinton's 1977 P-Funk masterpiece took James Brown's
+      funk to cosmic levels..."
+
+Track 5: Wesley's Theory - Kendrick Lamar
+  📝 "Opening track of 'To Pimp a Butterfly' (2015), featuring
+      Thundercat's bass and clear Parliament influence..."
+
+USER INTERACTION:
+1. Button: "Start Recording Journey" (appears when exploring)
+2. Every node clicked = automatically added to journey
+3. AI picks 1-2 representative tracks per node
+4. At any point: "View My Journey Playlist"
+5. See linear playlist with narrative connecting tracks
+6. Options:
+   - Play Now (embedded Spotify player)
+   - Edit Journey (remove/reorder tracks, adjust narrative)
+   - Save & Share (get unique link)
+   - Export to Spotify (creates regular playlist in user's account)
+
+NARRATIVE STYLES (user can choose):
+- Educational: "This track represents the transition from..."
+- Story Mode: "When Muddy Waters plugged in his guitar..."
+- Minimal: "Chicago Blues → Electric guitar → Urban sound"
+- Conversational: "You've just discovered how funk evolved..."
+
+PLAYLIST TYPES:
+
+1. **Exploration Playlists** (auto-generated as you explore)
+   - Records your actual path through the web
+   - Unique to your curiosity
+   - "My journey from X to Y"
+
+2. **Curated Journey Playlists** (AI-generated)
+   - User requests: "Create a journey teaching me about jazz"
+   - AI generates optimal path + tracks + narrative
+   - Like a self-guided audio tour
+
+3. **Influence Chain Playlists**
+   - Trace influences backward from any artist
+   - "Kendrick Lamar ← Outkast ← P-Funk ← James Brown ← Gospel"
+   - Shows direct lineage
+
+4. **Around the World Playlists**
+   - Geographic journeys
+   - "Blues (Mississippi) → Afrobeat (Nigeria) → Reggae (Jamaica)"
+
+5. **Sound Evolution Playlists**
+   - "How guitar solos evolved: 1950s → 2020s"
+   - Same element across decades
+
+SHARING:
+- Unique URL for each Story Playlist
+- Others can view: tracks, narratives, visual path
+- Social media cards: "I explored from Talking Heads to Kendrick"
+- Embed in blogs/websites
+- Export as PDF "liner notes"
+
+TECHNICAL NEEDS:
+- Journey recording system (tracks clicked nodes)
+- AI narrative generation per track + connections
+- Playlist data structure (songs + narratives + metadata)
+- Export to Spotify API (create playlist in user's account)
+- Sharing/permalink system
+- UI for viewing/editing playlists
+
+WHY THIS IS THE KILLER FEATURE:
+- Nobody else does "playlists with context"
+- Makes discovery memorable (you remember the story)
+- Highly shareable (people want to share their discoveries)
+- Educational value (great for students/teachers)
+- Creates loop: explore → save story → share → others explore
+- Spotify integration (can export, bringing people back)
+
+This combines all four core features:
+✓ Pathways (your exploration creates the structure)
+✓ Curation (AI picks best tracks)
+✓ Narrative (AI explains connections)
+✓ Conversational (ask AI to adjust narrative/add tracks)
+
+===========================================================
+USER FLOW EXAMPLES
+===========================================================
+
+SCENARIO 1: CASUAL USER - "I JUST HEARD A COOL SONG"
+-----------------------------------------------------
+1. User opens app, sees search bar: "Start with any song, artist, or genre"
+2. Types: "Burning Down the House"
+3. AI shows the song in center with 5 pathways radiating out:
+   - PATH: "The Funk Influence" → Parliament, James Brown
+   - PATH: "Brian Eno's Touch" → Roxy Music, David Bowie collaborations
+   - PATH: "New Wave Peers" → Devo, B-52s
+   - PATH: "Modern Descendants" → The Rapture, !!! (Chk Chk Chk)
+   - PATH: "The Afrobeat Connection" → Fela Kuti
+4. User clicks "Fela Kuti" (curious!)
+5. Now Fela Kuti is center, new pathways appear:
+   - PATH: "Nigerian Music Roots" → Highlife, traditional Yoruba
+   - PATH: "Political Music" → Bob Marley, Gil Scott-Heron  
+   - PATH: "Who He Influenced" → Talking Heads, Paul Simon, Vampire Weekend
+   - PATH: "Afrobeat Evolution" → Antibalas, Seun Kuti
+6. User plays tracks from each node, discovers Antibalas
+7. Clicks Antibalas → explores modern Afrobeat scene
+8. 20 minutes later, has discovered 15 new artists
+
+SCENARIO 2: MUSIC STUDENT - "I NEED TO UNDERSTAND JAZZ"
+---------------------------------------------------------
+1. User types: "Jazz"
+2. AI presents genre at center with pathways:
+   - PATH: "Origins" → Blues, Ragtime, New Orleans
+   - PATH: "Evolution" → Bebop → Cool Jazz → Free Jazz → Fusion
+   - PATH: "Key Figures" → Louis Armstrong → Miles Davis → John Coltrane
+   - PATH: "Geographic Scenes" → New Orleans → Kansas City → New York
+   - PATH: "Modern Jazz" → Kamasi Washington, Robert Glasper
+3. User clicks "Bebop" 
+4. Sees: Charlie Parker, Dizzy Gillespie, Thelonious Monk as nodes
+5. Clicks Charlie Parker
+6. Pathways show: influences (swing era), peers (other bebop), legacy (modern jazz)
+7. AI narrative explains: "Charlie Parker revolutionized jazz in the 1940s..."
+8. User asks in chat: "Why was bebop so different?"
+9. AI explains fast tempos, complex harmonies, improvisation
+10. User creates custom playlist from explored nodes
+
+SCENARIO 3: NOSTALGIC USER - "I LOVED 90S ALT ROCK"
+----------------------------------------------------
+1. User types: "Radiohead"
+2. Center shows Radiohead with pathways:
+   - PATH: "What shaped their sound" → Pixies, R.E.M., Sonic Youth
+   - PATH: "OK Computer era peers" → Spiritualized, Mogwai
+   - PATH: "Electronic evolution" → Aphex Twin, Autechre influence
+   - PATH: "Their legacy" → Muse, Coldplay (early), Arctic Monkeys
+   - PATH: "Thom Yorke solo/side projects" → Atoms for Peace
+3. User clicks "Pixies" (never explored them deeply)
+4. Discovers Pixies' quiet-loud dynamics, surf rock influence
+5. Sees Pixies influenced: Nirvana, Radiohead, Weezer
+6. Clicks "Nirvana"
+7. Explores grunge scene: Soundgarden, Pearl Jam, Mudhoney
+8. Realizes whole thread of influence from punk → Pixies → grunge → 90s alt
+9. Saves 30+ songs to Spotify playlist
+10. Shares pathway on social media: "My musical journey today"
+
+SCENARIO 4: COMPLETE BEGINNER - "I DON'T KNOW WHAT I LIKE"
+------------------------------------------------------------
+1. User opens app, sees: "Explore a featured pathway" 
+2. Featured today: "The Blues → Rock & Roll Journey"
+3. Clicks, sees blues at center
+4. Pathways show different branches of blues evolution
+5. User clicks "Chicago Blues" 
+6. Hears Muddy Waters, discovers they love electric blues guitar
+7. Explores "Electric Blues" node
+8. AI shows: "Who played electric blues?" → B.B. King, Albert King, Freddie King
+9. User clicks B.B. King
+10. Discovers modern blues rock: Gary Clark Jr., Joe Bonamassa
+11. Now has a starting point for their taste
+12. Can explore similar artists or different directions
+
+SCENARIO 5: TEACHER - "I'M TEACHING ABOUT PROTEST MUSIC"
+----------------------------------------------------------
+1. Teacher types: "Protest music"
+2. AI creates thematic pathway:
+   - PATH: "Civil Rights Era" → Billie Holiday, Nina Simone, Sam Cooke
+   - PATH: "Vietnam War" → Bob Dylan, Joan Baez, Country Joe
+   - PATH: "Punk Politics" → The Clash, Dead Kennedys
+   - PATH: "Hip-Hop Activism" → Public Enemy, Kendrick Lamar
+   - PATH: "Global Protest" → Fela Kuti, Victor Jara, Pussy Riot
+3. Teacher saves entire web as a sharable link
+4. Students explore individually, each taking different paths
+5. Students click nodes, read AI narratives, listen to songs
+6. Class discussion next day about connections they found
+7. Teacher generates quiz questions from the pathway
+
+===========================================================
+TECHNICAL ARCHITECTURE (HIGH-LEVEL)
+===========================================================
+
+SYSTEM COMPONENTS:
+
+1. FRONTEND
+   - Web application (React or similar)
+   - Chat interface
+   - Visual pathway display (interactive graph/timeline)
+   - Embedded Spotify player
+   - Mobile-responsive design
+
+2. BACKEND
+   - API server (Python/Flask or Node.js)
+   - Handles Spotify API authentication
+   - Manages AI interactions
+   - Stores user sessions
+   - Caches generated pathways
+
+3. AI LAYER
+   - LLM API integration (Claude or GPT-4)
+   - Prompt templates for different tasks:
+     * Pathway generation
+     * Track selection
+     * Narrative writing
+     * Conversational responses
+   - Context management for conversations
+
+4. DATA LAYER
+   - User sessions (Redis or similar)
+   - Cached pathways (to avoid regenerating common requests)
+   - User-created pathways (optional, for logged-in users)
+   - Analytics (track popular pathways, common questions)
+
+5. EXTERNAL INTEGRATIONS
+   - Spotify Web API (music playback, search, track data)
+   - Music data sources (MusicBrainz API for relationships/metadata)
+   - Potential: Wikipedia API for historical context
+
+DATA STRUCTURES:
+
+Pathway Object:
+{
+  "id": "blues-to-rock",
+  "title": "The Evolution of Blues to Rock",
+  "created_at": "2025-11-03",
+  "nodes": [
+    {
+      "id": "node-1",
+      "era": "1920s-1940s",
+      "name": "Delta Blues",
+      "description": "Origins in Mississippi Delta...",
+      "key_artists": [
+        {"name": "Robert Johnson", "spotify_id": "..."},
+        {"name": "Muddy Waters", "spotify_id": "..."}
+      ],
+      "representative_tracks": [
+        {
+          "name": "Cross Road Blues",
+          "artist": "Robert Johnson",
+          "spotify_id": "...",
+          "spotify_url": "...",
+          "year": 1936,
+          "significance": "Defined the delta blues guitar style"
+        }
+      ],
+      "narrative": "In the Mississippi Delta during the 1920s..."
+    },
+    {
+      "id": "node-2",
+      "era": "1950s",
+      "name": "Rock & Roll",
+      "connections_from": ["node-1"],
+      "description": "Blues electrified and sped up...",
+      ...
+    }
+  ],
+  "connections": [
+    {
+      "from": "node-1",
+      "to": "node-2",
+      "relationship": "evolved into",
+      "description": "Blues musicians moved north, electrified their sound..."
+    }
+  ]
+}
+
+===========================================================
+TECHNOLOGY STACK RECOMMENDATIONS
+===========================================================
+
+FRONTEND:
+- React.js (component-based, good ecosystem)
+- D3.js or React Flow (for visual pathway display)
+- Spotify Web Playback SDK (for embedded player)
+- Tailwind CSS (for styling)
+
+BACKEND:
+- Python + Flask (easy Spotify API integration, great for AI)
+- Alternative: Node.js + Express
+- PostgreSQL or MongoDB (for storing pathways and user data)
+- Redis (for session management and caching)
+
+AI:
+- Anthropic Claude API (this is me! good at long-form content)
+- Alternative: OpenAI GPT-4
+- LangChain (optional, for complex AI workflows)
+
+HOSTING:
+- Vercel or Netlify (frontend)
+- Heroku, Railway, or AWS (backend)
+- Supabase or Firebase (database + auth if needed)
+
+===========================================================
+DATA SOURCES & APIs
+===========================================================
+
+PRIMARY DATA SOURCES:
+
+1. SPOTIFY WEB API
+   - Purpose: Music playback, track search, artist info
+   - What we get: Track metadata, audio features, artist relationships
+   - Limitations: Limited historical/influence data
+   - Authentication: OAuth 2.0 (Client Credentials for basic access)
+   - Documentation: https://developer.spotify.com/documentation/web-api
+
+2. MUSICBRAINZ API
+   - Purpose: Music metadata, artist relationships
+   - What we get: Artist IDs, genres, member relationships, release dates
+   - Limitations: "Influence" relationships are sparse
+   - Authentication: None (free, open)
+   - Documentation: https://musicbrainz.org/doc/MusicBrainz_API
+
+3. AI-GENERATED CONTENT
+   - Purpose: Pathways, narratives, track selection
+   - What we get: Historical context, influence explanations, curated lists
+   - How: LLM reads Wikipedia articles, music histories, and synthesizes
+   - Considerations: Need fact-checking, citation of sources
+
+SECONDARY/POTENTIAL DATA SOURCES:
+
+4. Wikipedia API
+   - Purpose: Historical context, artist biographies
+   - Useful for: AI research to generate narratives
+
+5. Last.fm API
+   - Purpose: Similar artists, tags
+   - Useful for: Validation of connections
+
+6. Every Noise at Once (Spotify genre data)
+   - Purpose: Genre relationships and characteristics
+   - Website: everynoise.com
+
+===========================================================
+MVP (MINIMUM VIABLE PRODUCT) SCOPE
+===========================================================
+
+GOAL: Build the simplest version that demonstrates the core "explore from 
+any starting point" concept
+
+MVP FEATURES:
+
+1. SEARCH & START
+   - Simple search box: "Enter a song, artist, or genre"
+   - Searches Spotify API for matches
+   - User selects their starting point
+   - Works with: artists and songs (genres in Phase 2)
+
+2. AI PATHWAY GENERATION
+   - Given a starting point, AI generates 3-5 connections
+   - Types of connections: influences, influenced by, collaborators, similar sounds
+   - Each node has:
+     * Name (artist/song)
+     * Brief description (1-2 sentences)
+     * 2-3 representative tracks
+     * Spotify IDs for playback
+   
+3. VISUAL WEB DISPLAY
+   - Center node (user's selection) 
+   - 3-5 surrounding nodes (AI-generated connections)
+   - Simple radial/web layout (CSS or basic D3.js)
+   - Click any node → it becomes new center → new connections appear
+   
+4. SPOTIFY PLAYBACK
+   - Embedded Spotify player
+   - Click track → plays immediately
+   - Simple "Play node" button (plays all tracks from that node)
+
+5. AI NARRATIVES
+   - Each connection has a short explanation
+   - AI generates: "David Byrne discovered Fela Kuti's music..."
+   - Appears when hovering/clicking on connection line
+
+6. BASIC CONVERSATIONAL INTERFACE
+   - Chat box: "Ask me anything about these connections"
+   - Limited to current visible nodes
+   - AI can explain deeper context
+   - Can suggest which path to explore next
+
+7. SIMPLE WEB INTERFACE
+   - Single page application
+   - Clean, minimal design
+   - Works on desktop (mobile in Phase 2)
+   - Dark theme (music app standard)
+
+8. BASIC STORY PLAYLIST RECORDING (MVP VERSION)
+   - "Start Recording Journey" button
+   - Tracks which nodes user visits
+   - Auto-picks 1 track per node visited
+   - "View My Journey" shows:
+     * List of tracks in order explored
+     * Basic AI narrative (1 sentence per track)
+     * "Play All" button
+   - Can't edit/save yet (that's Phase 2)
+   - Just demonstrates the concept
+
+WHAT'S NOT IN MVP:
+- User accounts / login / saving playlists
+- Exporting to Spotify account (requires OAuth)
+- Editing journey playlists
+- Multiple narrative styles
+- Sharing playlists (shareable links)
+- Genre starting points (only artists/songs)
+- Multiple pathway types (just start with influences + similar)
+- Advanced visualizations (force-directed graphs, etc.)
+- Search history
+- "Back" navigation (just search again)
+
+MVP USER FLOW:
+1. User searches "Talking Heads"
+2. Sees Talking Heads in center
+3. Clicks "Start Recording Journey"
+4. AI shows 5 nodes: Ramones, Brian Eno, Fela Kuti, Vampire Weekend, Pixies
+5. User clicks "Fela Kuti"
+6. Sees indicator: "2 stops in your journey"
+7. Fela Kuti moves to center, new nodes appear
+8. User clicks "James Brown"
+9. Indicator: "3 stops in your journey"
+10. User clicks "View My Journey"
+11. Sees playlist:
+    - Psycho Killer (Talking Heads) - "Your starting point..."
+    - Water No Get Enemy (Fela Kuti) - "Influenced Talking Heads..."
+    - Get Up (I Feel Like Being a) Sex Machine (James Brown) - "Pioneered the funk..."
+12. Clicks "Play All" - music plays through embedded Spotify player
+13. User asks in chat: "Why was James Brown so influential?"
+14. AI explains
+15. User continues exploring or starts new journey
+
+MVP SUCCESS = User:
+- Explores 5+ nodes in one session
+- Records a journey with 3+ tracks
+- Plays the journey playlist
+- Discovers something new
+
+MVP TIMELINE ESTIMATE:
+- Week 1: Backend setup
+  * Spotify API integration (auth, search, track data)
+  * AI integration (Claude/GPT API)
+  * Pathway generation logic
+  
+- Week 2: AI pathway prompt engineering
+  * Design prompts for generating connections
+  * Test with various starting points
+  * Ensure quality of narratives
+  * Add journey recording logic
+  
+- Week 3: Frontend
+  * Search interface
+  * Visual web display (center + surrounding nodes)
+  * Spotify player integration
+  * Click interactions (node → center)
+  * "Record Journey" UI
+  
+- Week 4: Chat + Journey Playlists + Polish
+  * Conversational AI integration
+  * Journey playlist view
+  * UI polish and user testing
+  * Deploy and share with testers
+
+===========================================================
+PHASE 2: AI-POWERED GENERATION
+===========================================================
+
+After MVP is working, add:
+
+1. PATHWAY GENERATION
+   - User types: "Show me the evolution of electronic music"
+   - AI generates pathway on demand
+   - Caches common pathways
+
+2. MULTIPLE PATHWAYS
+   - Browse existing pathways
+   - Search for pathways by genre, artist, era
+   - Community-contributed pathways (optional)
+
+3. IMPROVED VISUALIZATIONS
+   - Interactive graph showing connections
+   - Timeline view
+   - Artist relationship view
+
+4. PERSONALIZATION
+   - Connect Spotify account
+   - Pathways based on your listening history
+   - "Discover what influenced your favorite artists"
+
+===========================================================
+MONETIZATION IDEAS (FUTURE)
+===========================================================
+
+FREE TIER:
+- Limited pathways per month
+- Basic chat interactions
+- Ads (music-related, tasteful)
+
+PREMIUM ($5-10/month):
+- Unlimited pathway generation
+- Save and share custom pathways
+- No ads
+- Priority AI responses
+- Advanced features (audio analysis, deeper historical dives)
+
+EDUCATION LICENSE:
+- For schools, universities
+- Teacher tools (create assignments, track student engagement)
+- Curated educational pathways
+
+AFFILIATE:
+- Concert ticket links
+- Vinyl/merchandise links
+- Streaming service referrals
+
+===========================================================
+CASE STUDY: TALKING HEADS PATHWAY
+===========================================================
+
+This is the example we've been exploring:
+
+PATHWAY: "The Evolution Leading to Talking Heads"
+
+NODE 1: NYC Punk Scene (1974-1977)
+- Artists: Ramones, Television, Patti Smith
+- Tracks: "Blitzkrieg Bop" (Ramones), "Marquee Moon" (Television)
+- Narrative: "In 1974, CBGB opened in NYC's Bowery..."
+
+NODE 2: Talking Heads Early Days (1977)
+- Artists: Talking Heads
+- Tracks: "Psycho Killer", "Uh-Oh, Love Comes to Town"
+- Narrative: "David Byrne, Chris Frantz, and Tina Weymouth met at RISD..."
+
+NODE 3: Brian Eno Collaboration (1978-1980)
+- Artists: Talking Heads, Brian Eno
+- Tracks: "Once in a Lifetime", "Born Under Punches"
+- Narrative: "Producer Brian Eno brought experimental techniques..."
+
+NODE 4: Afrobeat Influence (1980)
+- Artists: Fela Kuti, Talking Heads
+- Tracks: "Zombie" (Fela Kuti), "The Great Curve" (Talking Heads)
+- Narrative: "David Byrne discovered Fela Kuti's Afrobeat..."
+
+NODE 5: Influence on Next Generation (2000s)
+- Artists: Vampire Weekend, LCD Soundsystem
+- Tracks: "A-Punk" (Vampire Weekend), "Losing My Edge" (LCD Soundsystem)
+- Narrative: "30 years later, bands like Vampire Weekend..."
+
+Conversational examples:
+- "Tell me more about Brian Eno" → Detailed bio + his other work
+- "Why was Afrobeat influential?" → Explains polyrhythms, political context
+- "Play me some Fela Kuti" → Creates Fela Kuti playlist
+
+===========================================================
+COMPETITIVE ANALYSIS
+===========================================================
+
+EXISTING COMPETITORS:
+
+1. Spotify (Primary platform)
+   - What they do well: Discovery algorithms, massive library
+   - What they lack: Context, education, "why"
+   - Our advantage: We explain the connections
+
+2. Apple Music Classical (Educational approach)
+   - What they do well: Curated playlists with detailed notes
+   - What they lack: Limited to classical, not conversational
+   - Our advantage: All genres, AI-powered conversations
+
+3. Songza/Google Play Music (RIP - mood-based)
+   - What they did well: Curated by context
+   - What they lacked: No historical education
+   - Our advantage: We're still alive! And educational
+
+4. Every Noise at Once (Genre exploration)
+   - What they do well: Visual genre relationships
+   - What they lack: No historical context, not user-friendly
+   - Our advantage: Narrative + playback integration
+
+5. Music Timeline (Various educational sites)
+   - What they do well: Factual timelines
+   - What they lack: Not interactive, no playback
+   - Our advantage: AI-powered, conversational, playback
+
+===========================================================
+RISKS & CHALLENGES
+===========================================================
+
+TECHNICAL CHALLENGES:
+
+1. Spotify API Limitations
+   - May not have all historical tracks
+   - Rate limits for API calls
+   - Mitigation: Cache data, use MusicBrainz for metadata
+
+2. AI Accuracy
+   - AI might generate incorrect historical information
+   - Mitigation: Fact-checking layer, cite sources, allow user corrections
+
+3. Data Quality
+   - Music influence data is subjective and sparse
+   - Mitigation: Start with well-documented pathways, crowd-source corrections
+
+4. Performance
+   - AI generation can be slow (5-10 seconds)
+   - Mitigation: Cache common pathways, show loading states
+
+BUSINESS CHALLENGES:
+
+1. User Acquisition
+   - How do we get initial users?
+   - Ideas: Social media, music subreddits, partnerships with music educators
+
+2. Retention
+   - Will users come back?
+   - Ideas: Email with new pathways, social features, gamification
+
+3. Spotify Dependency
+   - What if Spotify changes API terms?
+   - Mitigation: Design to support multiple streaming services
+
+LEGAL CONSIDERATIONS:
+
+1. Spotify Terms of Service
+   - Must comply with their developer agreement
+   - Cannot download/cache audio
+   - Review: https://developer.spotify.com/terms
+
+2. Content Licensing
+   - AI-generated content is okay (we own it)
+   - Must not reproduce copyrighted text (album reviews, etc.)
+
+3. Data Privacy
+   - If users connect Spotify accounts, must handle data responsibly
+   - GDPR compliance if serving EU users
+
+===========================================================
+SUCCESS METRICS
+===========================================================
+
+MVP SUCCESS CRITERIA:
+- 100 users try the MVP
+- 30% explore the full pathway
+- 20% engage with chat (ask at least one question)
+- Average session > 5 minutes
+- Positive feedback (survey/interviews)
+
+LONG-TERM METRICS:
+- Monthly Active Users (MAU)
+- Pathways generated per day
+- Chat interactions per session
+- Retention rate (30-day)
+- Conversion to premium (if applicable)
+- Tracks discovered and saved to Spotify
+
+QUALITATIVE METRICS:
+- User testimonials
+- Social media sharing
+- Teacher/educator adoption
+- Press coverage
+
+===========================================================
+NEXT STEPS
+===========================================================
+
+IMMEDIATE ACTIONS:
+
+1. SET UP DEVELOPMENT ENVIRONMENT
+   - Create Spotify Developer account
+   - Get API credentials
+   - Set up Claude/GPT API account
+   - Initialize git repository
+
+2. BUILD MVP - PHASE 1 (Backend)
+   - Spotify OAuth flow
+   - Basic API endpoints (get track, search, etc.)
+   - AI integration (simple prompt/response)
+
+3. BUILD MVP - PHASE 2 (Frontend)
+   - Create simple pathway visualization
+   - Embed Spotify player
+   - Build chat interface
+
+4. BUILD MVP - PHASE 3 (Content)
+   - Manually create first pathway (Blues → Rock → Punk → New Wave)
+   - Write narratives for each node
+   - Select representative tracks
+
+5. TEST & ITERATE
+   - Share with 10-20 friends/music enthusiasts
+   - Gather feedback
+   - Iterate on UX and content
+
+DECISIONS NEEDED:
+
+1. Tech stack finalization
+   - React vs. other frontend framework?
+   - Python vs. Node.js for backend?
+   - Which AI provider (Claude vs. GPT)?
+
+2. First pathway topic
+   - Blues → Rock → Punk → New Wave? (as discussed)
+   - Or something else more universal?
+
+3. Deployment strategy
+   - Where to host?
+   - Domain name?
+
+4. Design direction
+   - What's the visual style?
+   - Dark mode (music app standard)?
+   - Minimalist vs. information-dense?
+
+===========================================================
+RESOURCES & REFERENCES
+===========================================================
+
+TECHNICAL DOCUMENTATION:
+- Spotify Web API: https://developer.spotify.com/documentation/web-api
+- MusicBrainz API: https://musicbrainz.org/doc/MusicBrainz_API
+- Anthropic Claude API: https://docs.anthropic.com
+- OpenAI API: https://platform.openai.com/docs
+
+INSPIRATION:
+- Every Noise at Once: https://everynoise.com
+- Spotify "Behind the Lyrics" (Genius integration)
+- Music Map: https://www.music-map.com
+- AllMusic genre trees: https://www.allmusic.com
+
+LEARNING RESOURCES:
+- "How Music Works" by David Byrne (book)
+- "The Rest Is Noise" by Alex Ross (classical music history)
+- "Can't Stop Won't Stop" by Jeff Chang (hip-hop history)
+
+===========================================================
+DOCUMENT HISTORY
+===========================================================
+
+Version 1.0 - November 3, 2025
+- Initial planning document
+- Defined core features, MVP scope, and technical architecture
+- Created based on conversation about music discovery gaps
+- Ready for next phase: detailed requirements and prototyping
+
+===========================================================
+APPENDIX: KEY INSIGHTS FROM DISCOVERY
+===========================================================
+
+WHAT WE LEARNED:
+
+1. MusicBrainz has good metadata but limited influence relationships
+2. Spotify API is robust for playback and search
+3. The "influence" data will mostly come from AI synthesis
+4. Talking Heads is a perfect case study (complex influences, clear evolution)
+5. Users want to understand "why" not just "what"
+6. Education + Discovery + Story is an unserved niche
+
+KEY QUOTE:
+"There's a gap in the music discovery department... Nobody's connecting 
+the dots with context."
+
+This document should serve as the foundation for:
+- Technical specifications
+- Design mockups
+- Development roadmap
+- Pitch deck (if seeking funding/partners)
+- Prompt for future AI conversations

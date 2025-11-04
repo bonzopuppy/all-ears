@@ -104,7 +104,7 @@ function NavBar({ user, onLogout }) {
                       }}
                     onClick={() => handleLinkClick('library')}
                   >
-                    Explore
+                    Library
                   </Typography>
                 </NavLink>
                 <NavLink to="/explore"  style={{ color: 'inherit', textDecoration: 'none'}}>
