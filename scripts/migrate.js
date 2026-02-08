@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { sql } = require('@vercel/postgres');
+const { createClient } = require('@vercel/postgres');
 
 const MIGRATIONS_DIR = path.join(__dirname, '..', 'db', 'migrations');
 
@@ -14,17 +14,23 @@ async function run() {
 
   console.log(`[migrate] found ${files.length} migration(s)`);
 
-  for (const file of files) {
-    const fullPath = path.join(MIGRATIONS_DIR, file);
-    const sqlText = fs.readFileSync(fullPath, 'utf8');
+  const client = createClient();
+  await client.connect();
 
-    console.log(`[migrate] running ${file}...`);
-    // NOTE: @vercel/postgres `sql` is a tagged template; passing a full SQL string
-    // via interpolation executes as a single query.
-    await sql`${sqlText}`;
+  try {
+    for (const file of files) {
+      const fullPath = path.join(MIGRATIONS_DIR, file);
+      const sqlText = fs.readFileSync(fullPath, 'utf8');
+
+      console.log(`[migrate] running ${file}...`);
+      // Use simple query protocol (allows multiple statements per file).
+      await client.query(sqlText);
+    }
+
+    console.log('[migrate] done');
+  } finally {
+    await client.end();
   }
-
-  console.log('[migrate] done');
 }
 
 run().catch((e) => {
