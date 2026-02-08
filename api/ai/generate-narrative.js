@@ -1,5 +1,5 @@
-import { anthropicClient, safeJsonParse, withKvCache } from '../_lib/anthropic';
-import { getClientIp, rateLimit } from '../_lib/rateLimit';
+import { anthropicClient, safeJsonParse, withKvCache } from '../_lib/anthropic.js';
+import { getClientIp, rateLimit } from '../_lib/rateLimit.js';
 
 const DEFAULT_MODEL = process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-latest';
 

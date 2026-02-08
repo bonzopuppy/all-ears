@@ -1,6 +1,6 @@
-import { anthropicClient, safeJsonParse, withKvCache } from '../_lib/anthropic';
-import { sql } from '../_lib/db';
-import { getClientIp, rateLimit } from '../_lib/rateLimit';
+import { anthropicClient, safeJsonParse, withKvCache } from '../_lib/anthropic.js';
+import { sql } from '../_lib/db.js';
+import { getClientIp, rateLimit } from '../_lib/rateLimit.js';
 
 const DEFAULT_MODEL = process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-latest';
 
@@ -20,12 +20,14 @@ ${historyLine}
 
 Generate 3 to 5 pathways from this node. Each pathway should contain 2 to 4 nodes.
 
+CRITICAL: Pay strict attention to chronological direction. An artist active in the 1960s cannot be in the "legacy" pathway of an artist from the 2010s. Verify: for "influences", every node must have been active BEFORE ${nodeName}. For "legacy", every node must have emerged AFTER ${nodeName}.
+
 Allowed pathway types (use these exact strings):
-- influences
-- legacy
-- collaborators
-- contemporaries
-- genre_connections
+- influences — artists/genres that came BEFORE ${nodeName} and shaped their sound (e.g., for Taylor Swift: Shania Twain, Dolly Parton — NOT the Rolling Stones)
+- legacy — artists/genres that emerged AFTER ${nodeName} and were clearly shaped by them (only use this if ${nodeName} is old enough to have actually influenced later artists)
+- collaborators — artists who directly worked with or alongside ${nodeName} on recordings or tours
+- contemporaries — artists active in the same era/scene as ${nodeName} but not direct collaborators
+- genre_connections — related genres or subgenres
 
 For each pathway, include:
 - type (one of the allowed strings)
@@ -102,7 +104,7 @@ export default async function handler(req, res) {
 
       const msg = await client.messages.create({
         model: DEFAULT_MODEL,
-        max_tokens: 1200,
+        max_tokens: 4096,
         temperature: 0.6,
         messages: [{ role: 'user', content: prompt }]
       });

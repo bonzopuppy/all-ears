@@ -1,6 +1,6 @@
 import crypto from 'crypto';
-import { sql } from '../_lib/db';
-import { getBearerToken, fetchSpotifyMe } from '../_lib/spotifyAuth';
+import { sql } from '../_lib/db.js';
+import { getBearerToken, fetchSpotifyMe } from '../_lib/spotifyAuth.js';
 
 function randomShareToken() {
   return crypto.randomBytes(18).toString('base64url');

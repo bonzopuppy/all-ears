@@ -25,7 +25,7 @@ export function useStartJourney() {
     const center = { nodeType, nodeId, nodeName };
     setCenter(center);
     setGraph({
-      nodes: [{ id: `center:${nodeType}:${nodeId}`, position: { x: 0, y: 0 }, data: center }],
+      nodes: [{ id: `center:${nodeType}:${nodeId}`, position: { x: 0, y: 0 }, data: { ...center, label: nodeName } }],
       edges: []
     });
 

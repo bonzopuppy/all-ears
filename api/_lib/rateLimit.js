@@ -1,4 +1,4 @@
-import { kv } from './kv';
+import { kv } from './kv.js';
 
 /**
  * Very small rate limiter using KV.

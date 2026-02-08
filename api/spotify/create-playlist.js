@@ -1,5 +1,5 @@
-import { sql } from '../_lib/db';
-import { getBearerToken, fetchSpotifyMe } from '../_lib/spotifyAuth';
+import { sql } from '../_lib/db.js';
+import { getBearerToken, fetchSpotifyMe } from '../_lib/spotifyAuth.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });

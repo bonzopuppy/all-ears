@@ -18,74 +18,81 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Import Vercel functions and wrap them for Express
-const loginHandler = require('./api/auth/login');
-const callbackHandler = require('./api/auth/callback');
-const refreshHandler = require('./api/auth/refresh');
+// Lazy-load ESM handlers via dynamic import()
+const handlers = {};
 
-// Import Spotify API handlers
-const searchHandler = require('./api/spotify/search');
-const recommendationsHandler = require('./api/spotify/recommendations');
-const browseHandler = require('./api/spotify/browse');
-const userHandler = require('./api/spotify/user');
-const albumsHandler = require('./api/spotify/albums');
-const createPlaylistHandler = require('./api/spotify/create-playlist');
+async function loadHandlers() {
+  const [
+    loginMod, callbackMod, refreshMod,
+    searchMod, recommendationsMod, browseMod, userMod, albumsMod, createPlaylistMod,
+    generatePathwaysMod, generateNarrativeMod,
+    journeysIndexMod, journeysIdMod
+  ] = await Promise.all([
+    import('./api/auth/login.js'),
+    import('./api/auth/callback.js'),
+    import('./api/auth/refresh.js'),
+    import('./api/spotify/search.js'),
+    import('./api/spotify/recommendations.js'),
+    import('./api/spotify/browse.js'),
+    import('./api/spotify/user.js'),
+    import('./api/spotify/albums.js'),
+    import('./api/spotify/create-playlist.js'),
+    import('./api/ai/generate-pathways.js'),
+    import('./api/ai/generate-narrative.js'),
+    import('./api/journeys/index.js'),
+    import('./api/journeys/[id].js'),
+  ]);
 
-// Import AI handlers
-const generatePathwaysHandler = require('./api/ai/generate-pathways');
-const generateNarrativeHandler = require('./api/ai/generate-narrative');
+  handlers.login = loginMod.default;
+  handlers.callback = callbackMod.default;
+  handlers.refresh = refreshMod.default;
+  handlers.search = searchMod.default;
+  handlers.recommendations = recommendationsMod.default;
+  handlers.browse = browseMod.default;
+  handlers.user = userMod.default;
+  handlers.albums = albumsMod.default;
+  handlers.createPlaylist = createPlaylistMod.default;
+  handlers.generatePathways = generatePathwaysMod.default;
+  handlers.generateNarrative = generateNarrativeMod.default;
+  handlers.journeysIndex = journeysIndexMod.default;
+  handlers.journeysId = journeysIdMod.default;
+}
 
-// Import Journey handlers
-const journeysIndexHandler = require('./api/journeys/index');
-const journeysIdHandler = require('./api/journeys/[id]');
-
-// Wrap Vercel handlers for Express (Vercel functions export default, Express needs req/res)
-const wrapVercelHandler = (handler) => {
-  // Handle both default export and direct function export
-  const fn = handler.default || handler;
-  return (req, res) => {
-    // Ensure environment variables are available in the handler's process
-    // (they should already be, but this is a safety check)
-    fn(req, res);
-  };
-};
+// Wrap handler lookup for Express
+const wrapHandler = (name) => (req, res) => handlers[name](req, res);
 
 // API routes - Auth
-app.get('/api/auth/login', wrapVercelHandler(loginHandler));
-app.get('/api/auth/callback', wrapVercelHandler(callbackHandler));
-app.post('/api/auth/refresh', wrapVercelHandler(refreshHandler));
+app.get('/api/auth/login', wrapHandler('login'));
+app.get('/api/auth/callback', wrapHandler('callback'));
+app.post('/api/auth/refresh', wrapHandler('refresh'));
 
 // API routes - Spotify
-app.get('/api/spotify/search', wrapVercelHandler(searchHandler));
-app.get('/api/spotify/recommendations', wrapVercelHandler(recommendationsHandler));
-app.get('/api/spotify/browse', wrapVercelHandler(browseHandler));
-app.get('/api/spotify/user', wrapVercelHandler(userHandler));
-app.get('/api/spotify/albums', wrapVercelHandler(albumsHandler));
-app.post('/api/spotify/create-playlist', wrapVercelHandler(createPlaylistHandler));
+app.get('/api/spotify/search', wrapHandler('search'));
+app.get('/api/spotify/recommendations', wrapHandler('recommendations'));
+app.get('/api/spotify/browse', wrapHandler('browse'));
+app.get('/api/spotify/user', wrapHandler('user'));
+app.get('/api/spotify/albums', wrapHandler('albums'));
+app.post('/api/spotify/create-playlist', wrapHandler('createPlaylist'));
 
 // API routes - AI
-app.post('/api/ai/generate-pathways', wrapVercelHandler(generatePathwaysHandler));
-app.post('/api/ai/generate-narrative', wrapVercelHandler(generateNarrativeHandler));
+app.post('/api/ai/generate-pathways', wrapHandler('generatePathways'));
+app.post('/api/ai/generate-narrative', wrapHandler('generateNarrative'));
 
 // API routes - Journeys
-app.get('/api/journeys', wrapVercelHandler(journeysIndexHandler));
-app.post('/api/journeys', wrapVercelHandler(journeysIndexHandler));
-app.get('/api/journeys/:id', (req, res) => {
-  req.query = { ...(req.query || {}), id: req.params.id };
-  return wrapVercelHandler(journeysIdHandler)(req, res);
-});
-app.patch('/api/journeys/:id', (req, res) => {
-  req.query = { ...(req.query || {}), id: req.params.id };
-  return wrapVercelHandler(journeysIdHandler)(req, res);
-});
-app.put('/api/journeys/:id', (req, res) => {
-  req.query = { ...(req.query || {}), id: req.params.id };
-  return wrapVercelHandler(journeysIdHandler)(req, res);
-});
-app.delete('/api/journeys/:id', (req, res) => {
-  req.query = { ...(req.query || {}), id: req.params.id };
-  return wrapVercelHandler(journeysIdHandler)(req, res);
-});
+app.get('/api/journeys', wrapHandler('journeysIndex'));
+app.post('/api/journeys', wrapHandler('journeysIndex'));
+
+// Vercel [id].js reads req.query.id — in Express 5 req.query is a getter,
+// so we inject the param via the actual URL query string.
+const injectIdParam = (req, _res, next) => {
+  const sep = req.url.includes('?') ? '&' : '?';
+  req.url += `${sep}id=${encodeURIComponent(req.params.id)}`;
+  next();
+};
+app.get('/api/journeys/:id', injectIdParam, wrapHandler('journeysId'));
+app.patch('/api/journeys/:id', injectIdParam, wrapHandler('journeysId'));
+app.put('/api/journeys/:id', injectIdParam, wrapHandler('journeysId'));
+app.delete('/api/journeys/:id', injectIdParam, wrapHandler('journeysId'));
 
 // In development, proxy React app requests to the dev server
 if (process.env.NODE_ENV !== 'production') {
@@ -105,10 +112,17 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-app.listen(PORT, '127.0.0.1', () => {
-  console.log(`Server is running on http://127.0.0.1:${PORT}`);
-  console.log(`API routes available at http://127.0.0.1:${PORT}/api/auth/`);
-  if (process.env.NODE_ENV !== 'production') {
-    console.log(`Proxying React app from http://localhost:3001`);
-  }
-});
+loadHandlers()
+  .then(() => {
+    app.listen(PORT, '127.0.0.1', () => {
+      console.log(`Server is running on http://127.0.0.1:${PORT}`);
+      console.log(`API routes available at http://127.0.0.1:${PORT}/api/auth/`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`Proxying React app from http://localhost:3001`);
+      }
+    });
+  })
+  .catch((err) => {
+    console.error('[Server] Failed to load handlers:', err);
+    process.exit(1);
+  });

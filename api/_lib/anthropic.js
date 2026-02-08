@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { kv } from './kv';
+import { kv } from './kv.js';
 
 let _client;
 
@@ -35,7 +35,9 @@ export async function withKvCache(key, ttlSec, fn) {
 
 export function safeJsonParse(str) {
   try {
-    return { ok: true, value: JSON.parse(str) };
+    // Strip markdown code fences if present (```json ... ``` or ``` ... ```)
+    const cleaned = str.replace(/^```(?:json)?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
+    return { ok: true, value: JSON.parse(cleaned) };
   } catch (e) {
     return { ok: false, error: e };
   }
