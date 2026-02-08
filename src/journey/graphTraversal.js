@@ -57,7 +57,6 @@ export function pathwaysToGraph({ center, pathwaysResponse }) {
 
   nodes.push({
     id: centerId,
-    type: 'journeyNode',
     position: { x: 0, y: 0 },
     data: center
   });
@@ -70,7 +69,6 @@ export function pathwaysToGraph({ center, pathwaysResponse }) {
       const id = `node:${n.nodeType}:${n.nodeId}`;
       nodes.push({
         id,
-        type: 'journeyNode',
         position: { x: 250 * Math.cos(i), y: 250 * Math.sin(i) },
         data: {
           nodeType: n.nodeType,

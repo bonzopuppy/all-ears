@@ -1,9 +1,9 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import { Typography } from "@mui/material";
-import PlayHover from "./PlayHover";
+import { Typography, IconButton } from "@mui/material";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-const AlbumPlaylistItem = ({ imageUrl, textLine1, textLine2, onClick }) => {
+const AlbumPlaylistItem = ({ imageUrl, textLine1, textLine2, onClick, onMenuClick }) => {
     return (
       <Box
         onClick={onClick}
@@ -18,20 +18,37 @@ const AlbumPlaylistItem = ({ imageUrl, textLine1, textLine2, onClick }) => {
           alignItems: 'flex-start',
           position: 'relative',
           borderRadius: '8px',
-        '&:hover': {
-          backgroundColor: 'rgba(24, 28, 30, 0.08)', // Background color on hover
-          cursor: 'pointer',
-
-          // Show the play button on hover
-          // '.playButton': {
-          //   visibility: 'visible',
-          //   opacity: 1,
-          //   transition: 'opacity 0.3s ease'
-          //     }
+          '&:hover': {
+            backgroundColor: 'rgba(24, 28, 30, 0.08)',
+            cursor: 'pointer',
+            '.menuButton': {
+              visibility: 'visible',
+              opacity: 1
+            }
           }
         }}
       >
         <img src={imageUrl} alt="Album Cover" style={{ width: 150, height: 150, borderRadius: '4px' }} />
+
+        {onMenuClick && (
+          <IconButton
+            className="menuButton"
+            onClick={(e) => {
+              e.stopPropagation();
+              onMenuClick(e);
+            }}
+            sx={{
+              position: 'absolute',
+              top: 4,
+              right: 4,
+              visibility: 'hidden',
+              opacity: 0,
+              color: 'primary.main'
+            }}
+          >
+            <MoreVertIcon />
+          </IconButton>
+        )}
         {/* <Box className="playButton" 
         sx={{ 
           position: 'absolute', 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AlbumPlaylistItem from "./AlbumPlaylistItem";
 import coverImage from "../images/coverImage.png";
@@ -7,6 +7,10 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import ArtistItem from "./ArtistItem";
 import SongMedium from "./SongMedium";
+import SimpleContextMenu from './SimpleContextMenu';
+import StartJourneyMenuItem from './StartJourneyMenuItem';
+import { journeyEnabled } from '../utils/featureFlags';
+import { useStartJourney } from '../journey/useStartJourney';
 import Typography from "@mui/material/Typography";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
@@ -16,7 +20,20 @@ import { spotifyAPI } from '../api/spotify-client';
 function SearchResults({ results, accessToken, onSearch, setSearchQuery }) {
   const { playAll, shuffleAll } = useMusicContext();
   const navigate = useNavigate();
+  const startJourney = useStartJourney();
   const tracks = results.tracks.items.filter(track => track);
+
+  const [menuAnchor, setMenuAnchor] = useState(null);
+  const [menuEntity, setMenuEntity] = useState(null);
+
+  const openMenuFor = (entity) => (e) => {
+    setMenuEntity(entity);
+    setMenuAnchor(e.currentTarget);
+  };
+  const closeMenu = () => {
+    setMenuAnchor(null);
+    setMenuEntity(null);
+  };
 
   const handleArtistClick = async (artistName) => {
     try {
@@ -62,10 +79,25 @@ function SearchResults({ results, accessToken, onSearch, setSearchQuery }) {
       gap: '30px' // Increase gap for better separation of sections
     }}>
 
+      <SimpleContextMenu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={closeMenu}>
+        {journeyEnabled && menuEntity && (
+          <StartJourneyMenuItem
+            onClick={() => {
+              closeMenu();
+              startJourney({
+                nodeType: menuEntity.nodeType,
+                nodeId: menuEntity.nodeId,
+                nodeName: menuEntity.nodeName
+              });
+            }}
+          />
+        )}
+      </SimpleContextMenu>
+
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="h5">Songs</Typography>
         {tracks.length > 0 && (
-          <Box sx={{ display: 'flex', gap: '10px' }}>
+          <Box sx={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             <Button
               variant="contained"
               startIcon={<PlayArrowIcon />}
@@ -92,6 +124,20 @@ function SearchResults({ results, accessToken, onSearch, setSearchQuery }) {
             >
               Shuffle
             </Button>
+
+            {journeyEnabled && (
+              <Button
+                variant="outlined"
+                onClick={() => startJourney({
+                  nodeType: 'track',
+                  nodeId: tracks[0].id,
+                  nodeName: tracks[0].name
+                })}
+                sx={{ textTransform: 'none', fontWeight: 600 }}
+              >
+                Start Journey
+              </Button>
+            )}
           </Box>
         )}
       </Box>
@@ -121,6 +167,12 @@ function SearchResults({ results, accessToken, onSearch, setSearchQuery }) {
             textLine1={album.name}
             textLine2={album.artists[0].name}
             onClick={() => handleAlbumClick(album.id)}
+            onMenuClick={journeyEnabled ? openMenuFor({
+              kind: 'album',
+              nodeType: 'album',
+              nodeId: album.id,
+              nodeName: album.name
+            }) : undefined}
           />
         ))}
       </Box>
@@ -137,6 +189,12 @@ function SearchResults({ results, accessToken, onSearch, setSearchQuery }) {
             imageUrl={artist.images?.[0]?.url || artistImage}
             artist={artist}
             onClick={() => handleArtistClick(artist.name)}
+            onMenuClick={journeyEnabled ? openMenuFor({
+              kind: 'artist',
+              nodeType: 'artist',
+              nodeId: artist.id,
+              nodeName: artist.name
+            }) : undefined}
           />
         ))}
       </Box>

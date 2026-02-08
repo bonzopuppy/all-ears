@@ -10,11 +10,14 @@ export const useJourneyStore = create((set, get) => ({
   nodes: [],
   edges: [],
   visited: [],
+  tracks: [],
   isRecording: false,
   currentJourneyId: null,
 
+  setCurrentJourneyId: (id) => set({ currentJourneyId: id }),
   setCenter: (center) => set({ center }),
   setGraph: ({ nodes, edges }) => set({ nodes, edges }),
+  setTracks: (tracks) => set({ tracks: Array.isArray(tracks) ? tracks : [] }),
 
   startRecording: () => {
     const center = get().center;
@@ -29,6 +32,14 @@ export const useJourneyStore = create((set, get) => ({
   visitNode: (nodeData) => {
     if (!get().isRecording) return;
     set((s) => ({ visited: [...s.visited, nodeData] }));
+
+    if (nodeData?.nodeType === 'track') {
+      set((s) => {
+        const already = s.tracks.some((t) => t?.nodeId === nodeData?.nodeId);
+        if (already) return s;
+        return { tracks: [...s.tracks, nodeData] };
+      });
+    }
   },
 
   reset: () => set({
@@ -36,6 +47,7 @@ export const useJourneyStore = create((set, get) => ({
     nodes: [],
     edges: [],
     visited: [],
+    tracks: [],
     isRecording: false,
     currentJourneyId: null
   })

@@ -29,6 +29,15 @@ const recommendationsHandler = require('./api/spotify/recommendations');
 const browseHandler = require('./api/spotify/browse');
 const userHandler = require('./api/spotify/user');
 const albumsHandler = require('./api/spotify/albums');
+const createPlaylistHandler = require('./api/spotify/create-playlist');
+
+// Import AI handlers
+const generatePathwaysHandler = require('./api/ai/generate-pathways');
+const generateNarrativeHandler = require('./api/ai/generate-narrative');
+
+// Import Journey handlers
+const journeysIndexHandler = require('./api/journeys/index');
+const journeysIdHandler = require('./api/journeys/[id]');
 
 // Wrap Vercel handlers for Express (Vercel functions export default, Express needs req/res)
 const wrapVercelHandler = (handler) => {
@@ -52,6 +61,31 @@ app.get('/api/spotify/recommendations', wrapVercelHandler(recommendationsHandler
 app.get('/api/spotify/browse', wrapVercelHandler(browseHandler));
 app.get('/api/spotify/user', wrapVercelHandler(userHandler));
 app.get('/api/spotify/albums', wrapVercelHandler(albumsHandler));
+app.post('/api/spotify/create-playlist', wrapVercelHandler(createPlaylistHandler));
+
+// API routes - AI
+app.post('/api/ai/generate-pathways', wrapVercelHandler(generatePathwaysHandler));
+app.post('/api/ai/generate-narrative', wrapVercelHandler(generateNarrativeHandler));
+
+// API routes - Journeys
+app.get('/api/journeys', wrapVercelHandler(journeysIndexHandler));
+app.post('/api/journeys', wrapVercelHandler(journeysIndexHandler));
+app.get('/api/journeys/:id', (req, res) => {
+  req.query = { ...(req.query || {}), id: req.params.id };
+  return wrapVercelHandler(journeysIdHandler)(req, res);
+});
+app.patch('/api/journeys/:id', (req, res) => {
+  req.query = { ...(req.query || {}), id: req.params.id };
+  return wrapVercelHandler(journeysIdHandler)(req, res);
+});
+app.put('/api/journeys/:id', (req, res) => {
+  req.query = { ...(req.query || {}), id: req.params.id };
+  return wrapVercelHandler(journeysIdHandler)(req, res);
+});
+app.delete('/api/journeys/:id', (req, res) => {
+  req.query = { ...(req.query || {}), id: req.params.id };
+  return wrapVercelHandler(journeysIdHandler)(req, res);
+});
 
 // In development, proxy React app requests to the dev server
 if (process.env.NODE_ENV !== 'production') {

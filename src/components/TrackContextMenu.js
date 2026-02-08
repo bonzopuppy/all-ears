@@ -3,8 +3,10 @@ import { Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
 import AlbumIcon from '@mui/icons-material/Album';
+import ExploreIcon from '@mui/icons-material/Explore';
+import { journeyEnabled } from '../utils/featureFlags';
 
-function TrackContextMenu({ anchorEl, open, onClose, onAddToQueue, onPlayNext, onGoToAlbum }) {
+function TrackContextMenu({ anchorEl, open, onClose, onAddToQueue, onPlayNext, onGoToAlbum, onStartJourney }) {
   const handleAddToQueue = () => {
     onAddToQueue();
     onClose();
@@ -17,6 +19,11 @@ function TrackContextMenu({ anchorEl, open, onClose, onAddToQueue, onPlayNext, o
 
   const handleGoToAlbum = () => {
     onGoToAlbum();
+    onClose();
+  };
+
+  const handleStartJourney = () => {
+    if (onStartJourney) onStartJourney();
     onClose();
   };
 
@@ -63,6 +70,15 @@ function TrackContextMenu({ anchorEl, open, onClose, onAddToQueue, onPlayNext, o
         </ListItemIcon>
         <ListItemText primary="Go to Album" />
       </MenuItem>
+
+      {journeyEnabled && onStartJourney && (
+        <MenuItem onClick={handleStartJourney}>
+          <ListItemIcon>
+            <ExploreIcon sx={{ color: 'primary.main' }} />
+          </ListItemIcon>
+          <ListItemText primary="Start Journey From Here" />
+        </MenuItem>
+      )}
     </Menu>
   );
 }

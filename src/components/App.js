@@ -14,6 +14,8 @@ import Playlist from './Playlist';
 import Genre from './Genre';
 import Radio from './Radio';
 import Login from './Login';
+import JourneyPage from '../journey/JourneyPage';
+import { journeyEnabled } from '../utils/featureFlags';
 import ErrorBoundary from './common/ErrorBoundary';
 import { MusicProvider } from './MusicContext';
 import { useSpotifyAuth } from '../hooks/useSpotifyAuth';
@@ -262,6 +264,11 @@ function App() {
                       market={market}
                     />
                   } />
+
+                  {journeyEnabled && (
+                    <Route path="/journey/:id" element={<JourneyPage />} />
+                  )}
+
                   {/* Redirect old /all-ears path */}
                   <Route path="/all-ears" element={<Navigate to="/" replace />} />
                 </Routes>

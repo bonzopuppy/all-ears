@@ -6,10 +6,12 @@ import PlayHover from './PlayHover';
 import TrackContextMenu from './TrackContextMenu';
 import { useMusicContext } from './MusicContext';
 import { useNavigate } from 'react-router-dom';
+import { useStartJourney } from '../journey/useStartJourney';
 
 function SongMedium({song}) {
     const { playTrack, addToQueue, addToQueueNext } = useMusicContext();
     const navigate = useNavigate();
+    const startJourney = useStartJourney();
     const [menuAnchor, setMenuAnchor] = useState(null);
 
     const handleClick = () => {
@@ -153,6 +155,11 @@ function SongMedium({song}) {
                     onAddToQueue={handleAddToQueue}
                     onPlayNext={handlePlayNext}
                     onGoToAlbum={handleGoToAlbum}
+                    onStartJourney={() => startJourney({
+                        nodeType: 'track',
+                        nodeId: song.id,
+                        nodeName: song.name
+                    })}
                 />
             </li>
         );
