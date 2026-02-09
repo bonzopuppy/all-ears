@@ -144,7 +144,9 @@ function SongSmall({hotTrack}) {
                 onStartJourney={() => startJourney({
                     nodeType: 'track',
                     nodeId: hotTrack.id,
-                    nodeName: hotTrack.name
+                    nodeName: hotTrack.name,
+                    artistId: hotTrack.artists?.[0]?.id,
+                    artistName: hotTrack.artists?.[0]?.name
                 })}
             />
         </li>

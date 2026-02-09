@@ -10,22 +10,28 @@ export function useStartJourney() {
   const setCurrentJourneyId = useJourneyStore((s) => s.setCurrentJourneyId);
   const reset = useJourneyStore((s) => s.reset);
 
-  return useCallback(async ({ nodeType, nodeId, nodeName }) => {
+  return useCallback(async ({ nodeType, nodeId, nodeName, artistId, artistName }) => {
     reset();
+
+    // When starting from a track, resolve to the primary artist
+    const resolvedType = nodeType === 'track' ? 'artist' : nodeType;
+    const resolvedId = nodeType === 'track' ? (artistId || nodeId) : nodeId;
+    const resolvedName = nodeType === 'track' ? (artistName || nodeName) : nodeName;
+
     const resp = await journeyAPI.create({
-      startingNodeType: nodeType,
-      startingNodeId: nodeId,
-      startingNodeName: nodeName,
-      title: `Journey from ${nodeName}`
+      startingNodeType: resolvedType,
+      startingNodeId: resolvedId,
+      startingNodeName: resolvedName,
+      title: `Journey from ${resolvedName}`
     });
 
     const journeyId = resp?.id;
     setCurrentJourneyId(journeyId);
 
-    const center = { nodeType, nodeId, nodeName };
+    const center = { nodeType: resolvedType, nodeId: resolvedId, nodeName: resolvedName };
     setCenter(center);
     setGraph({
-      nodes: [{ id: `center:${nodeType}:${nodeId}`, position: { x: 0, y: 0 }, data: { ...center, label: nodeName } }],
+      nodes: [{ id: `center:${resolvedType}:${resolvedId}`, position: { x: 0, y: 0 }, data: { ...center, label: resolvedName } }],
       edges: []
     });
 

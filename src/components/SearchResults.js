@@ -87,7 +87,9 @@ function SearchResults({ results, accessToken, onSearch, setSearchQuery }) {
               startJourney({
                 nodeType: menuEntity.nodeType,
                 nodeId: menuEntity.nodeId,
-                nodeName: menuEntity.nodeName
+                nodeName: menuEntity.nodeName,
+                artistId: menuEntity.artistId,
+                artistName: menuEntity.artistName
               });
             }}
           />
@@ -131,7 +133,9 @@ function SearchResults({ results, accessToken, onSearch, setSearchQuery }) {
                 onClick={() => startJourney({
                   nodeType: 'track',
                   nodeId: tracks[0].id,
-                  nodeName: tracks[0].name
+                  nodeName: tracks[0].name,
+                  artistId: tracks[0].artists?.[0]?.id,
+                  artistName: tracks[0].artists?.[0]?.name
                 })}
                 sx={{ textTransform: 'none', fontWeight: 600 }}
               >

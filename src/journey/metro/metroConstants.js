@@ -57,8 +57,7 @@ export const PATHWAY_LABELS = {
 // Node sizes
 export const NODE_SIZE = {
   artist: 14,
-  genre: 14,
-  track: 8
+  genre: 14
 };
 
 // Default fallback color
@@ -68,10 +67,9 @@ export const DEFAULT_NODE_COLOR = '#78909C';
  * Resolve a color for a node (station marker).
  *
  * All stations are neutral — color lives ONLY on lines (PATHWAY_COLORS).
- * Shape distinguishes entity type (circle=artist, square=genre, small=track).
+ * Shape distinguishes entity type (circle=artist, square=genre).
  */
 export function resolveNodeColor(nodeData) {
   if (!nodeData) return DEFAULT_NODE_COLOR;
-  if (nodeData.nodeType === 'track') return '#BDBDBD';
   return '#E0E0E0';
 }

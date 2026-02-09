@@ -29,8 +29,7 @@ const LINES = Object.entries(PATHWAY_LABELS).map(([type, label]) => ({
 
 const STATIONS = [
   { label: 'Artist', shape: 'circle', size: 10 },
-  { label: 'Genre', shape: 'square', size: 10 },
-  { label: 'Track', shape: 'diamond', size: 8 }
+  { label: 'Genre', shape: 'square', size: 10 }
 ];
 
 function StationSample({ shape, size }) {
@@ -39,12 +38,6 @@ function StationSample({ shape, size }) {
     <svg width={14} height={14} style={{ flexShrink: 0 }}>
       {shape === 'circle' ? (
         <circle cx={7} cy={7} r={r} fill="none" stroke="#E0E0E0" strokeWidth={1.5} />
-      ) : shape === 'diamond' ? (
-        <rect
-          x={7 - r} y={7 - r} width={size} height={size}
-          fill="none" stroke="#BDBDBD" strokeWidth={1.5}
-          transform="rotate(45 7 7)"
-        />
       ) : (
         <rect
           x={7 - r} y={7 - r} width={size} height={size}

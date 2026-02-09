@@ -158,7 +158,9 @@ function SongMedium({song}) {
                     onStartJourney={() => startJourney({
                         nodeType: 'track',
                         nodeId: song.id,
-                        nodeName: song.name
+                        nodeName: song.name,
+                        artistId: song.artists?.[0]?.id,
+                        artistName: song.artists?.[0]?.name
                     })}
                 />
             </li>

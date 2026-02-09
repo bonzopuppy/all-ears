@@ -214,6 +214,7 @@ export default function JourneyPage() {
     for (const n of nodes) {
       const nodeType = n.data?.nodeType || 'artist';
       const baseSize = NODE_SIZE[nodeType] || NODE_SIZE.artist;
+
       const connCount = totalConns.get(n.id) || 0;
       const growth = Math.min(Math.max(0, connCount - 2), 5) * 2;
       const size = baseSize + growth;

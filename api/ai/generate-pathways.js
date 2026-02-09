@@ -33,8 +33,8 @@ For each pathway, include:
 - type (one of the allowed strings)
 - title (short human title)
 - nodes: array of nodes with:
-  - nodeType: 'artist' | 'track' | 'genre'
-  - nodeId: Spotify ID or a stable identifier for genres
+  - nodeType: 'artist' | 'genre' (only artists and genres — tracks belong in representativeTrackTitles, not as nodes)
+  - nodeId: Spotify ID for artists, or a stable kebab-case identifier for genres (e.g. "southern-rock")
   - nodeName
   - description: exactly 2 sentences explaining the connection
   - representativeTrackTitles: 1-2 track titles (strings) that represent the node

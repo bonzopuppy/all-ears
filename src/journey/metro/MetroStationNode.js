@@ -10,7 +10,6 @@ import { NODE_SIZE, resolveNodeColor } from './metroConstants';
  * Shapes:
  *  - artist: circle (capsule when stretched)
  *  - genre:  rounded square
- *  - track:  diamond (rotated square)
  *
  * States:
  *  - unvisited: hollow outline (border only, transparent fill)
@@ -29,9 +28,7 @@ function MetroStationNode({ data }) {
   const h = data?.ovalHeight || baseSize;
 
   const isGenre = nodeType === 'genre';
-  const isTrack = nodeType === 'track';
-  // Artist: capsule, Genre: rounded square, Track: diamond (rotated square)
-  const borderRadius = isGenre ? '3px' : isTrack ? '1px' : `${Math.min(w, h) / 2}px`;
+  const borderRadius = isGenre ? '3px' : `${Math.min(w, h) / 2}px`;
 
   const stationSx = {
     width: w,
@@ -41,13 +38,12 @@ function MetroStationNode({ data }) {
     backgroundColor: isVisited ? color : '#121212',
     transition: 'background-color 0.2s, transform 0.15s',
     cursor: 'pointer',
-    ...(isTrack && { transform: 'rotate(45deg)' }),
     ...(isCurrent && {
       animation: 'metroPulse 1.2s ease-in-out infinite',
       boxShadow: `0 0 12px 4px ${color}88`
     }),
     '&:hover': {
-      transform: isTrack ? 'rotate(45deg) scale(1.15)' : 'scale(1.15)'
+      transform: 'scale(1.15)'
     }
   };
 
@@ -60,7 +56,7 @@ function MetroStationNode({ data }) {
     maxWidth: 100,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    fontSize: nodeType === 'track' ? '0.6rem' : '0.7rem',
+    fontSize: '0.7rem',
     color: '#E0E0E0',
     backgroundColor: '#121212dd',
     padding: '1px 4px',
