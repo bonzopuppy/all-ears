@@ -14,13 +14,18 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import CircularProgress from '@mui/material/CircularProgress';
+import Chip from '@mui/material/Chip';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import SaveIcon from '@mui/icons-material/Save';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
+import QueueMusicIcon from '@mui/icons-material/QueueMusic';
+import CloseIcon from '@mui/icons-material/Close';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 import { journeyAPI } from '../api/journey-client';
 import { aiAPI } from '../api/ai-client';
 import { spotifyJourneyAPI } from '../api/spotify-journey-client';
+import { spotifyAPI } from '../api/spotify-client';
+import { useMusicContext } from '../components/MusicContext';
+import MusicPlayer from '../components/MusicPlayer';
 import { useJourneyStore } from './journeyStore';
 import { pathwaysToGraph, layoutFullGraph } from './graphTraversal';
 import MetroStationNode from './metro/MetroStationNode';
@@ -66,34 +71,132 @@ function mergeGraph({ existingNodes, existingEdges, newNodes, newEdges }) {
 export default function JourneyPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { playTrack: musicPlayTrack } = useMusicContext();
 
   const center = useJourneyStore((s) => s.center);
   const nodes = useJourneyStore((s) => s.nodes);
   const edges = useJourneyStore((s) => s.edges);
   const visited = useJourneyStore((s) => s.visited);
-  const tracks = useJourneyStore((s) => s.tracks);
-  const isRecording = useJourneyStore((s) => s.isRecording);
+  const playlist = useJourneyStore((s) => s.playlist);
   const setGraph = useJourneyStore((s) => s.setGraph);
   const setCenter = useJourneyStore((s) => s.setCenter);
-  const setTracks = useJourneyStore((s) => s.setTracks);
   const setCurrentJourneyId = useJourneyStore((s) => s.setCurrentJourneyId);
-  const startRecording = useJourneyStore((s) => s.startRecording);
-  const stopRecording = useJourneyStore((s) => s.stopRecording);
-  const visitNode = useJourneyStore((s) => s.visitNode);
+  const addToPlaylist = useJourneyStore((s) => s.addToPlaylist);
+  const removeFromPlaylist = useJourneyStore((s) => s.removeFromPlaylist);
+  const clearPlaylist = useJourneyStore((s) => s.clearPlaylist);
 
   const [loading, setLoading] = useState(true);
   const [isMapping, setIsMapping] = useState(false);
   const [status, setStatus] = useState('');
-  // eslint-disable-next-line no-unused-vars
-  const [exportResult, setExportResult] = useState(null);
   const [selectedNode, setSelectedNode] = useState(null);
+  const [showPlaylistDrawer, setShowPlaylistDrawer] = useState(false);
+  const [loadingTracks, setLoadingTracks] = useState(new Set());
+  const [isSaving, setIsSaving] = useState(false);
+
   const rfInstance = useRef(null);
   const autoExpandedRef = useRef(false);
+  const resolveCache = useRef(new Map());
 
   // The root node ID for layout (the starting node of the journey)
   const rootId = center
     ? `center:${center.nodeType}:${center.nodeId}`
     : null;
+
+  // --- Track resolution ---
+  const resolveTrack = useCallback(async (trackTitle, artistName) => {
+    const cacheKey = `${trackTitle}|${artistName}`;
+    if (resolveCache.current.has(cacheKey)) {
+      return resolveCache.current.get(cacheKey);
+    }
+
+    const query = artistName
+      ? `${trackTitle} artist:${artistName}`
+      : trackTitle;
+
+    const result = await spotifyAPI.search(query, 'track', 1);
+    const track = result?.tracks?.items?.[0] || null;
+
+    if (track) {
+      const resolved = {
+        uri: track.uri,
+        name: track.name,
+        artist: track.artists?.[0]?.name || '',
+        image: track.album?.images?.[0]?.url || '',
+        albumName: track.album?.name || '',
+        // Keep the full Spotify object for playTrack compatibility
+        _raw: track
+      };
+      resolveCache.current.set(cacheKey, resolved);
+      return resolved;
+    }
+
+    return null;
+  }, []);
+
+  // Helper to set loading state for a track key
+  const withTrackLoading = useCallback(async (title, artistName, fn) => {
+    const key = `${title}|${artistName}`;
+    setLoadingTracks((prev) => new Set(prev).add(key));
+    try {
+      await fn();
+    } finally {
+      setLoadingTracks((prev) => {
+        const next = new Set(prev);
+        next.delete(key);
+        return next;
+      });
+    }
+  }, []);
+
+  // --- Handlers for NodeDetailPanel ---
+  const handlePlayTrack = useCallback(async (title, artistName) => {
+    await withTrackLoading(title, artistName, async () => {
+      const resolved = await resolveTrack(title, artistName);
+      if (!resolved) {
+        setStatus(`Could not find "${title}" on Spotify`);
+        setTimeout(() => setStatus(''), 3000);
+        return;
+      }
+      musicPlayTrack(resolved._raw);
+    });
+  }, [resolveTrack, musicPlayTrack, withTrackLoading]);
+
+  const handleAddTrack = useCallback(async (title, artistName) => {
+    await withTrackLoading(title, artistName, async () => {
+      const resolved = await resolveTrack(title, artistName);
+      if (!resolved) {
+        setStatus(`Could not find "${title}" on Spotify`);
+        setTimeout(() => setStatus(''), 3000);
+        return;
+      }
+      addToPlaylist(resolved);
+    });
+  }, [resolveTrack, addToPlaylist, withTrackLoading]);
+
+  const handleSavePlaylist = useCallback(async () => {
+    if (playlist.length === 0) return;
+    setIsSaving(true);
+    setStatus('Saving to Spotify...');
+    try {
+      const trackUris = playlist.map((t) => t.uri);
+      const title = center?.nodeName
+        ? `Journey from ${center.nodeName}`
+        : 'Musical Journey';
+      await spotifyJourneyAPI.exportJourneyToPlaylist({
+        title,
+        description: `Musical journey playlist with ${playlist.length} tracks`,
+        trackUris
+      });
+      setStatus('Playlist saved to Spotify!');
+      setTimeout(() => setStatus(''), 3000);
+    } catch (e) {
+      console.error('[JourneyPage] save playlist failed', e);
+      setStatus(e?.message || 'Failed to save playlist');
+      setTimeout(() => setStatus(''), 4000);
+    } finally {
+      setIsSaving(false);
+    }
+  }, [playlist, center, id]);
 
   useEffect(() => {
     let mounted = true;
@@ -125,8 +228,6 @@ export default function JourneyPage() {
             edges: []
           });
         }
-
-        setTracks(Array.isArray(j?.tracks) ? j.tracks : []);
       } catch (e) {
         console.error('[JourneyPage] load failed', e);
         setStatus(e?.message || 'Failed to load journey');
@@ -137,7 +238,7 @@ export default function JourneyPage() {
 
     if (id) load();
     return () => { mounted = false; };
-  }, [id, setCenter, setCurrentJourneyId, setGraph, setTracks]);
+  }, [id, setCenter, setCurrentJourneyId, setGraph]);
 
   const onNodesChange = useCallback((changes) => {
     setGraph({ nodes: applyNodeChanges(changes, nodes), edges });
@@ -169,16 +270,13 @@ export default function JourneyPage() {
     : null;
 
   // Compute oval/capsule dimensions for each node based on edge directions.
-  // Nodes stretch into capsules when multiple lines run in the same direction,
-  // like real subway interchange stations.
   const ovalDims = useMemo(() => {
     const nodeMap = new Map(nodes.map((n) => [n.id, n]));
     const LINE_SPACING = 8;
     const dims = new Map();
 
-    // Classify each edge direction per node into top/bottom/left/right
     const totalConns = new Map();
-    const sideCounts = new Map(); // nodeId -> { top, bottom, left, right }
+    const sideCounts = new Map();
 
     for (const n of nodes) {
       sideCounts.set(n.id, { top: 0, bottom: 0, left: 0, right: 0 });
@@ -198,7 +296,6 @@ export default function JourneyPage() {
       );
       const absAngle = Math.abs(angle);
 
-      // Classify: which side of the node does this edge exit/enter?
       let srcSide, tgtSide;
       if (absAngle > 3 * Math.PI / 4) { srcSide = 'left'; tgtSide = 'right'; }
       else if (absAngle < Math.PI / 4) { srcSide = 'right'; tgtSide = 'left'; }
@@ -220,9 +317,7 @@ export default function JourneyPage() {
       const size = baseSize + growth;
 
       const c = sideCounts.get(n.id) || { top: 0, bottom: 0, left: 0, right: 0 };
-      // Vertical edges (top/bottom) need horizontal spread → wider
       const vertMax = Math.max(c.top, c.bottom);
-      // Horizontal edges (left/right) need vertical spread → taller
       const horizMax = Math.max(c.left, c.right);
 
       dims.set(n.id, {
@@ -260,12 +355,9 @@ export default function JourneyPage() {
   }, [nodes, edges, visitedIds, currentNodeKey, ovalDims]);
 
   // Decorate edges with Metro theme type + target node color + side-exit offsets.
-  // Single edge on a side → offset (0,0) so line goes to node center (opaque node covers overlap).
-  // Multiple edges on a side → distribute evenly along the border so lines run parallel.
   const decoratedEdges = useMemo(() => {
     const nodeMap = new Map(nodes.map((n) => [n.id, n]));
 
-    // Step 1: Classify each edge's exit/entry side per node
     const sideEdges = new Map();
     for (const n of nodes) {
       sideEdges.set(n.id, { top: [], bottom: [], left: [], right: [] });
@@ -294,7 +386,6 @@ export default function JourneyPage() {
       if (te) te[tgtSide].push({ edgeId: e.id, isSource: false, otherX: src.position.x, otherY: src.position.y });
     }
 
-    // Step 2: Compute exit/entry offsets per edge
     const EDGE_SPACING = 8;
     const exitMap = new Map();
 
@@ -306,7 +397,6 @@ export default function JourneyPage() {
       for (const [sideName, refs] of Object.entries(sides)) {
         if (!refs.length) continue;
 
-        // Sort by cross-axis position of the other node to prevent crossing
         const isHoriz = sideName === 'top' || sideName === 'bottom';
         refs.sort((a, b) => isHoriz ? a.otherX - b.otherX : a.otherY - b.otherY);
 
@@ -387,8 +477,6 @@ export default function JourneyPage() {
     const data = node?.data;
     if (!data?.nodeType || !data?.nodeId || !data?.nodeName) return;
 
-    visitNode(data);
-
     setIsMapping(true);
     setStatus('');
     try {
@@ -449,7 +537,7 @@ export default function JourneyPage() {
     } finally {
       setIsMapping(false);
     }
-  }, [context, edges, nodes, rootId, setGraph, visitNode]);
+  }, [context, edges, nodes, rootId, setGraph]);
 
   // Auto-expand the center node on fresh journeys (single node, no edges)
   useEffect(() => {
@@ -464,38 +552,9 @@ export default function JourneyPage() {
     handleExpandNode(centerNode);
   }, [loading, nodes, edges, isMapping, handleExpandNode]);
 
-  const handleSave = useCallback(async () => {
-    setStatus('Saving...');
-    try {
-      await journeyAPI.update(id, {
-        nodesVisited: visited,
-        tracks,
-        graph: { nodes, edges }
-      });
-      setStatus('Saved.');
-      setTimeout(() => setStatus(''), 1200);
-    } catch (e) {
-      console.error('[JourneyPage] save failed', e);
-      setStatus(e?.message || 'Save failed');
-    }
-  }, [edges, id, nodes, tracks, visited]);
-
-  const handleExport = useCallback(async () => {
-    setStatus('Exporting to Spotify...');
-    try {
-      const r = await spotifyJourneyAPI.exportJourneyToPlaylist({ journeyId: id });
-      setExportResult(r?.playlist || r);
-      setStatus('Exported.');
-    } catch (e) {
-      console.error('[JourneyPage] export failed', e);
-      setStatus(e?.message || 'Export failed');
-    }
-  }, [id]);
-
   const handleEnd = useCallback(() => {
-    stopRecording();
     navigate('/');
-  }, [navigate, stopRecording]);
+  }, [navigate]);
 
   const handlePaneClick = useCallback(() => {
     setSelectedNode(null);
@@ -504,16 +563,6 @@ export default function JourneyPage() {
   const miniMapNodeColor = useCallback((node) => {
     return resolveNodeColor(node.data);
   }, []);
-
-  const toolbarBtnSx = {
-    color: '#E0E0E0',
-    borderColor: '#555',
-    fontSize: '0.75rem',
-    textTransform: 'none',
-    minWidth: 0,
-    px: 1.5,
-    py: 0.5
-  };
 
   if (loading) {
     return (
@@ -524,7 +573,7 @@ export default function JourneyPage() {
   }
 
   return (
-    <Box sx={{ position: 'fixed', inset: 0, zIndex: 1200, backgroundColor: '#121212' }}>
+    <Box sx={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 88, zIndex: 1200, backgroundColor: '#121212' }}>
       {pulseKeyframes}
 
       {/* Full-screen graph */}
@@ -539,6 +588,7 @@ export default function JourneyPage() {
         onPaneClick={handlePaneClick}
         onInit={(instance) => { rfInstance.current = instance; }}
         nodesDraggable={false}
+        proOptions={{ hideAttribution: true }}
         fitView
         style={{ backgroundColor: '#121212' }}
       >
@@ -561,34 +611,162 @@ export default function JourneyPage() {
           left: 12,
           zIndex: 5,
           display: 'flex',
-          alignItems: 'center',
-          gap: 0.5,
-          backgroundColor: '#1E1E1Ecc',
-          borderRadius: '6px',
-          padding: '4px 8px',
-          backdropFilter: 'blur(8px)'
+          flexDirection: 'column',
+          gap: 0
         }}
       >
-        <IconButton size="small" onClick={handleEnd} sx={{ color: '#E0E0E0' }}>
-          <ArrowBackIcon fontSize="small" />
-        </IconButton>
+        {/* Top bar */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 0.5,
+            backgroundColor: '#1E1E1Ecc',
+            borderRadius: showPlaylistDrawer ? '6px 6px 0 0' : '6px',
+            padding: '4px 8px',
+            backdropFilter: 'blur(8px)'
+          }}
+        >
+          <IconButton size="small" onClick={handleEnd} sx={{ color: '#E0E0E0' }}>
+            <ArrowBackIcon fontSize="small" />
+          </IconButton>
 
-        <Typography variant="body2" sx={{ color: '#FAFAFA', fontWeight: 600, mr: 1, fontSize: '0.85rem' }}>
-          Journey
-        </Typography>
+          <Typography variant="body2" sx={{ color: '#FAFAFA', fontWeight: 600, mr: 1, fontSize: '0.85rem' }}>
+            Journey
+          </Typography>
 
-        {!isRecording ? (
-          <Button variant="outlined" size="small" onClick={startRecording} sx={toolbarBtnSx}>Record</Button>
-        ) : (
-          <Button variant="outlined" size="small" onClick={stopRecording} sx={{ ...toolbarBtnSx, borderColor: '#FF6E1D', color: '#FF6E1D' }}>Stop</Button>
+          <Chip
+            icon={<QueueMusicIcon sx={{ fontSize: 16, color: 'inherit !important' }} />}
+            label={`${playlist.length} track${playlist.length !== 1 ? 's' : ''}`}
+            size="small"
+            onClick={() => setShowPlaylistDrawer((v) => !v)}
+            sx={{
+              backgroundColor: playlist.length > 0 ? '#FF6E1D33' : '#333',
+              color: playlist.length > 0 ? '#FF6E1D' : '#9E9E9E',
+              fontWeight: 600,
+              fontSize: '0.75rem',
+              cursor: 'pointer',
+              border: playlist.length > 0 ? '1px solid #FF6E1D55' : '1px solid transparent',
+              '&:hover': { backgroundColor: playlist.length > 0 ? '#FF6E1D44' : '#444' }
+            }}
+          />
+
+          {playlist.length > 0 && (
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={handleSavePlaylist}
+              disabled={isSaving}
+              sx={{
+                color: '#4CAF50',
+                borderColor: '#4CAF5066',
+                fontSize: '0.7rem',
+                textTransform: 'none',
+                minWidth: 0,
+                px: 1.5,
+                py: 0.3,
+                ml: 0.5,
+                '&:hover': { borderColor: '#4CAF50', backgroundColor: '#4CAF5018' },
+                '&.Mui-disabled': { color: '#4CAF5066', borderColor: '#4CAF5033' }
+              }}
+            >
+              {isSaving ? 'Saving...' : 'Save to Spotify'}
+            </Button>
+          )}
+        </Box>
+
+        {/* Playlist drawer */}
+        {showPlaylistDrawer && (
+          <Box
+            sx={{
+              backgroundColor: '#1E1E1Ecc',
+              borderRadius: '0 0 6px 6px',
+              backdropFilter: 'blur(8px)',
+              maxHeight: 320,
+              overflowY: 'auto',
+              borderTop: '1px solid #333'
+            }}
+          >
+            {playlist.length === 0 ? (
+              <Typography
+                variant="body2"
+                sx={{ color: '#9E9E9E', fontSize: '0.75rem', p: 2, textAlign: 'center' }}
+              >
+                No tracks added yet. Click + on tracks in the detail panel.
+              </Typography>
+            ) : (
+              <>
+                {playlist.map((track) => (
+                  <Box
+                    key={track.uri}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      px: 1.5,
+                      py: 0.75,
+                      '&:hover': { backgroundColor: '#2A2A2A44' }
+                    }}
+                  >
+                    {track.image && (
+                      <Box
+                        component="img"
+                        src={track.image}
+                        alt=""
+                        sx={{ width: 28, height: 28, borderRadius: '3px', flexShrink: 0 }}
+                      />
+                    )}
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Typography
+                        variant="body2"
+                        noWrap
+                        sx={{ color: '#E0E0E0', fontSize: '0.75rem', lineHeight: 1.3 }}
+                      >
+                        {track.name}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        noWrap
+                        sx={{ color: '#9E9E9E', fontSize: '0.65rem', lineHeight: 1.2 }}
+                      >
+                        {track.artist}
+                      </Typography>
+                    </Box>
+                    <IconButton
+                      size="small"
+                      onClick={() => removeFromPlaylist(track.uri)}
+                      sx={{ color: '#9E9E9E', p: 0.3, '&:hover': { color: '#FF5252' } }}
+                    >
+                      <CloseIcon sx={{ fontSize: 14 }} />
+                    </IconButton>
+                  </Box>
+                ))}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    py: 0.75,
+                    borderTop: '1px solid #333'
+                  }}
+                >
+                  <Button
+                    size="small"
+                    onClick={clearPlaylist}
+                    startIcon={<DeleteOutlineIcon sx={{ fontSize: 14 }} />}
+                    sx={{
+                      color: '#9E9E9E',
+                      fontSize: '0.7rem',
+                      textTransform: 'none',
+                      '&:hover': { color: '#FF5252' }
+                    }}
+                  >
+                    Clear All
+                  </Button>
+                </Box>
+              </>
+            )}
+          </Box>
         )}
-
-        <IconButton size="small" onClick={handleSave} sx={{ color: '#E0E0E0' }} title="Save">
-          <SaveIcon fontSize="small" />
-        </IconButton>
-        <IconButton size="small" onClick={handleExport} sx={{ color: '#E0E0E0' }} title="Export Playlist">
-          <FileUploadIcon fontSize="small" />
-        </IconButton>
       </Box>
 
       {/* Status toast — top-center */}
@@ -608,16 +786,50 @@ export default function JourneyPage() {
         onClose={() => setSelectedNode(null)}
         onExpand={handleExpandNode}
         isExpanding={isMapping}
+        onPlayTrack={handlePlayTrack}
+        onAddTrack={handleAddTrack}
+        playlist={playlist}
+        loadingTracks={loadingTracks}
       />
+
+      {/* Music player — sits below the canvas in a dark wrapper */}
+      <Box
+        sx={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: 88,
+          zIndex: 1200,
+          // Dark theme overrides for MusicPlayer
+          '& > .MuiBox-root': {
+            backgroundColor: '#1A1A1A !important',
+            borderTop: '1px solid #2A2A2A'
+          },
+          '& .MuiTypography-subtitle1': { color: '#E0E0E0 !important' },
+          '& .MuiTypography-subtitle2': { color: '#9E9E9E !important' },
+          '& .MuiTypography-root': { color: '#BDBDBD' },
+          '& .MuiIconButton-root': { color: '#E0E0E0 !important' },
+          '& .MuiIconButton-root:hover': { color: '#FF6E1D !important' },
+          '& .MuiSlider-track': { color: '#E0E0E0 !important' },
+          '& .MuiSlider-rail': { color: '#555 !important' },
+          '& .MuiBadge-badge': { backgroundColor: '#FF6E1D !important' }
+        }}
+      >
+        <MusicPlayer />
+      </Box>
 
       {/* "Mapping new routes..." overlay */}
       {isMapping && (
         <Box
           sx={{
-            position: 'absolute',
-            inset: 0,
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             backgroundColor: 'rgba(18, 18, 18, 0.85)',
-            zIndex: 20,
+            zIndex: 1201,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',

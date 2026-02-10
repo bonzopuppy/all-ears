@@ -29,6 +29,7 @@ export default function handler(req, res) {
     'user-read-recently-played',
     'playlist-read-private',
     'playlist-read-collaborative',
+    'playlist-modify-private',
     'user-top-read',
     'user-library-read',
     'user-follow-read',

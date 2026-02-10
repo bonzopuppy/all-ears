@@ -37,7 +37,7 @@ For each pathway, include:
   - nodeId: Spotify ID for artists, or a stable kebab-case identifier for genres (e.g. "southern-rock")
   - nodeName
   - description: exactly 2 sentences explaining the connection
-  - representativeTrackTitles: 1-2 track titles (strings) that represent the node
+  - representativeTrackTitles: up to 5 track titles (strings) that represent the node
 
 Return STRICT JSON ONLY with this shape:
 {
